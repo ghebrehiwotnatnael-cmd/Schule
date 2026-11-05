@@ -40,6 +40,21 @@ and camera angles**, and **lots happening on screen** so it never feels monotono
 - Test hand poses fast without HyperFrames: copy `kit/tools/make.py` + `shot.js` into `<video>/build/handtest/`,
   run `python3 build/handtest/make.py hold,shield` then `node build/handtest/shot.js hold shield` from the video dir.
 
+## Working rules (from the creator)
+- Do NOT make a new video until the creator explicitly asks for one.
+- Any NEW idea or improvement: propose it first, wait for confirmation, only then use it.
+
+## Approved upgrades - apply from the next video on (approved by the creator)
+- Look: real shadows (shadow maps) instead of blob shadows, motion blur on fast camera moves, depth of field on
+  close-ups, more sets (supermarket, apartment with window, power plant, subway, hospital, beach), more character
+  animation (running, hugging, looking at phones, shivering).
+- Channel: frame 0 is the thumbnail, so show something spectacular from the first frame; offer 2-3 hook variants
+  of the first 3 s; make the end loop back into the start; deliver a ready TikTok description (hashtags,
+  CC-BY/music credits, a comment question) with every video; think in series ("What if ... disappeared",
+  "... for 5 seconds").
+- Workflow: send the shot list (table) before building; render a fast draft preview (`-q draft`) for approval
+  before the final render.
+
 ## Creator feedback - apply to EVERY video (latest first)
 - After "sun-pov" (liked it overall): **don't rush through the timeline.** Each stage needs room to breathe:
   2-4 shots per stage instead of one, so the viewer feels the time passing.
