@@ -15,6 +15,10 @@
 #hud-track{position:absolute;left:0;top:34px;width:560px;height:28px;border-radius:14px;overflow:hidden;
   background:linear-gradient(90deg,#4ade80 0%,#facc15 40%,#fb923c 70%,#ef4444 100%);box-shadow:0 0 0 4px rgba(43,38,63,.18);}
 #hud-cover{position:absolute;left:0;top:0;width:560px;height:28px;background:#8f8b9c;}
+#hud-timer{position:absolute;right:56px;top:176px;width:440px;height:120px;text-align:right;}
+#hud-tlabel{font:900 28px "WI Caption";color:#fff;letter-spacing:2px;-webkit-text-stroke:6px #2b263f;paint-order:stroke fill;}
+.hud-tval{position:absolute;right:0;top:36px;font:700 64px/1 "WI Display";white-space:nowrap;
+  -webkit-text-stroke:10px #2b263f;paint-order:stroke fill;filter:drop-shadow(0 5px 0 rgba(0,0,0,.3));}
 .hud-status{position:absolute;left:584px;top:22px;font:900 44px "WI Caption";
   -webkit-text-stroke:9px #2b263f;paint-order:stroke fill;white-space:nowrap;}
 </style>
@@ -24,6 +28,7 @@
   <div id="hud-t1" class="hud-title" style="color:#ffffff">MONDAY 9 AM</div><div id="hud-t2" class="hud-title" style="color:#ffffff">DAY 1</div><div id="hud-t3" class="hud-title" style="color:#ffffff">DAY 3</div><div id="hud-t4" class="hud-title" style="color:#ffffff">WEEK 1</div><div id="hud-t5" class="hud-title" style="color:#ffffff">WEEK 2</div><div id="hud-t6" class="hud-title" style="color:#ffd23f">PLOT TWIST</div><div id="hud-t7" class="hud-title" style="color:#ffffff">YOUR TURN</div>
   <div id="hud-meter"><div id="hud-label">CHAOS LEVEL</div><div id="hud-track"><div id="hud-cover"></div></div>
    <div id="hud-s0" class="hud-status" style="color:#4ade80">CALM</div><div id="hud-s1" class="hud-status" style="color:#a3e635">MESSY</div><div id="hud-s2" class="hud-status" style="color:#facc15">PANIC</div><div id="hud-s3" class="hud-status" style="color:#fb923c">CHAOS</div><div id="hud-s4" class="hud-status" style="color:#ef4444">COLLAPSE</div><div id="hud-s5" class="hud-status" style="color:#4ade80">BALANCED</div></div>
+  <div id="hud-timer"><div id="hud-tlabel"></div></div>
  </div>
 </div>
 <script>
