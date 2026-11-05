@@ -16,13 +16,28 @@ FONTS = ('@font-face{font-family:"WI Serif";src:url("assets/fonts/spectral-400-n
          '@font-face{font-family:"WI Serif";src:url("assets/fonts/spectral-500-normal.woff2") format("woff2");font-weight:500}\n'
          '@font-face{font-family:"WI Serif";src:url("assets/fonts/spectral-400-italic.woff2") format("woff2");font-weight:400;font-style:italic}')
 
+HIDDEN = [0.3, -0.9, -0.4, 0, 0, 0]
 DEFAULTS = {
-    "set": "park", "camPos": [0, 1.7, 6], "camLook": [0, 6, -60], "fov": 52,
+    "set": "park", "camPos": [0, 1.65, 6], "camLook": [0, 6, -60], "fov": 52, "roll": 0.0, "shake": 0.0, "bob": 0.0,
     "skyTop": "#7f8fb3", "skyHorizon": "#d9c9c4", "skyBottom": "#3c4a2f", "fogFar": 1400,
-    "sun": 1.0, "sunDir": [-0.45, 0.2, -1], "light": 1.0, "lightColor": "#ffe2b0", "ambient": 0.9,
-    "ambientColor": "#dfe6ff", "cold": 0.0, "frost": 0.0, "pondIce": 0.0, "people": 1.0, "cityLights": 0.15,
-    "moon": 1.0, "moonShow": 0.0, "moonPos": [120, 260, -700], "stars": 0.0, "snow": 0.0, "bunker": 0.0,
-    "volcano": 0.0, "ash": 0.0, "city": 1.0, "spaceCam": [0, 0, 34], "earthIce": 0.0, "earthSun": 0.0, "earthAmb": 0.2,
+    "sun": 1.0, "sunDir": [0.3, 0.3, -1], "light": 1.0, "lightColor": "#ffe2b0", "ambient": 0.9,
+    "ambientColor": "#dfe6ff", "cold": 0.0, "frost": 0.0, "pondIce": 0.0, "cityLights": 0.15, "city": 1.0, "village": 0.0,
+    "lamps": 0.0, "people": 1.0, "walk": 1.0, "lookUp": 0.0, "point": 0.0, "flee": 0.0, "phones": 0.0,
+    "traffic": 1.0, "cars": 1.0, "headlights": 0.0, "birds": 0.0, "scatter": 0.0,
+    "moon": 1.0, "moonShow": 0.0, "moonPos": [120, 260, -700], "stars": 0.0, "snow": 0.0, "wind": 0.0, "hatch": 0.0,
+    "volcano": 0.0, "ash": 0.0,
+    "handR": HIDDEN, "handL": HIDDEN, "item": "none", "torch": 0.0, "shiver": 0.0, "breath": 0.0, "frostLens": 0.0, "flash": 0.0,
+    "spaceCam": [0, 0, 34], "spaceFov": 40, "earthSun": 1.0, "earthLights": 1.0, "earthIce": 0.0,
+}
+# first-person hand poses (camera space: x right, y up, z forward is negative; then rx, ry, rz)
+POSES = {
+    "hidden": (HIDDEN, HIDDEN),
+    "hold": ([0.055, -0.125, -0.42, 0.95, 0.0, 0.12], HIDDEN),           # phone in the right hand, looking at it
+    "hold_low": ([0.085, -0.15, -0.45, 0.45, 0.0, 0.2], HIDDEN),         # ice cream / object held low right
+    "shield": ([0.075, -0.035, -0.5, 1.45, 0.0, -0.3], [0.075, -0.035, -0.5, 1.45, 0.0, -0.3]),  # hands up against light
+    "warm": ([0.06, -0.11, -0.4, 1.25, 0.0, 0.3], [0.06, -0.11, -0.4, 1.25, 0.0, 0.3]),        # palms forward, cold
+    "reach": ([0.06, -0.1, -0.46, 0.75, 0.0, 0.05], HIDDEN),              # reaching out, palm up
+    "torch": ([0.075, -0.14, -0.42, 0.7, 0.0, 0.08], HIDDEN),            # phone flashlight pointed forward
 }
 
 
@@ -33,9 +48,12 @@ def esc(s):
 class Cinema:
     def __init__(self, vdir, mod):
         self.dir, self.m = vdir, mod
-        self.T = Timing(os.path.join(vdir, "build", "timing.json"))
-        self.keys, self.widgets, self.sfx_list, self.no_caption = [], [], [], set()
-        self.story_end = r3(self.T.voice_end + 0.6)
+        tp = os.path.join(vdir, "build", "timing.json")
+        self.voice = getattr(mod, "VOICEOVER", True) and os.path.exists(tp)
+        self.T = Timing(tp) if self.voice else None
+        self.keys, self.widgets, self.sfx_list, self.no_caption, self.ambient_list = [], [], [], set(), []
+        self.caps = list(getattr(mod, "CAPTIONS", []))   # no-voice mode: [(t0, t1, text)]
+        self.story_end = r3(self.T.voice_end + 0.6) if self.voice else r3(getattr(mod, "DURATION", 60))
         self.end_card = 4.0
         self.duration = r3(self.story_end + self.end_card)
         self.title_end = 3.0
@@ -61,6 +79,27 @@ class Cinema:
 
     def sfx(self, name, t, vol=0.5):
         self.sfx_list.append((name, max(0.0, t), vol))
+
+    def ambient(self, name, t0, t1, vol=0.5, fade=0.8, offset=0.0):
+        """ambience / music bed from kit/ambient/<name>.mp3 between t0 and t1 with edge fades"""
+        self.ambient_list.append((name, r3(t0), r3(t1), vol, fade, offset))
+
+    def caption(self, t0, t1, text):
+        self.caps.append((r3(t0), r3(t1), text))
+
+    def hands(self, t, pose, dur=0.45, **extra):
+        r, l = POSES[pose]
+        return self.key(t, dur, handR=r, handL=l, **extra)
+
+    def shot(self, t, pos, look, to_pos=None, to_look=None, length=3.0, fov=None, **extra):
+        """hard cut to a camera at t, then drift to (to_pos, to_look) over length seconds"""
+        kw = dict(camPos=pos, camLook=look, **extra)
+        if fov is not None:
+            kw["fov"] = fov
+        self.key(t, 0, **kw)
+        if to_pos or to_look:
+            self.key(t + 0.001, length, camPos=to_pos or pos, camLook=to_look or look)
+        return self
 
     def title_until(self, t, icon_svg=""):
         self.title_end, self.icon = r3(t), icon_svg
@@ -183,12 +222,16 @@ window.__timelines["widget"] = tl;
 
     def captions_html(self):
         groups, js = [], []
-        lines = [l for l in self.T.order if l["id"] not in self.no_caption]
-        for k, ln in enumerate(lines):
-            s0 = r3(max(0.1, ln["start"] - 0.06))
-            nxt = lines[k + 1]["start"] - 0.06 if k + 1 < len(lines) else ln["end"] + 0.9
-            s1 = r3(min(nxt, ln["end"] + 0.9))
-            text = ln["words"] and " ".join(w["w"] for w in ln["words"])
+        if self.voice:
+            lines = [l for l in self.T.order if l["id"] not in self.no_caption]
+            items = []
+            for k, ln in enumerate(lines):
+                nxt = lines[k + 1]["start"] - 0.06 if k + 1 < len(lines) else ln["end"] + 0.9
+                items.append((max(0.1, ln["start"] - 0.06), min(nxt, ln["end"] + 0.9), " ".join(w["w"] for w in ln["words"])))
+        else:
+            items = sorted(self.caps)
+        for k, (s0, s1, text) in enumerate(items):
+            s0, s1 = r3(s0), r3(s1)
             gid = f"cap-{k}"
             groups.append(f'<div id="{gid}" class="clip cap" data-start="{s0}" data-duration="{r3(s1 - s0)}" data-track-index="0">'
                           f'<div class="cap-in">{esc(text)}</div></div>')
@@ -267,7 +310,8 @@ window.__timelines["endcard"] = tl;
         for f in os.listdir(os.path.join(KIT, "fonts")):
             if f.startswith("spectral"):
                 shutil.copy(os.path.join(KIT, "fonts", f), os.path.join(d, "assets", "fonts", f))
-        shutil.copy(os.path.join(KIT, "lib", "three.min.js"), os.path.join(d, "assets", "lib", "three.min.js"))
+        for f in os.listdir(os.path.join(KIT, "lib")):
+            shutil.copy(os.path.join(KIT, "lib", f), os.path.join(d, "assets", "lib", f))
         avatar = os.path.join(os.path.dirname(os.path.dirname(os.path.dirname(KIT))), "..", "branding", "avatar.png")
         avatar = os.path.normpath(avatar)
         if os.path.exists(avatar):
@@ -286,8 +330,18 @@ window.__timelines["endcard"] = tl;
             hosts.append(f'<div id="{name}" data-composition-id="{name}" data-composition-src="compositions/{name}.html" '
                          f'data-start="{r3(start)}" data-duration="{r3(dur)}" data-track-index="{z}" data-track-kind="{kind}" '
                          f'data-width="1080" data-height="1920" style="z-index:{z}"></div>')
-        audio = [f'<audio id="voice" class="clip" src="assets/voice.wav" data-start="0" data-duration="{self.T.voice_end}" '
-                 f'data-track-index="10" data-volume="1"></audio>']
+        audio = []
+        if self.voice:
+            audio.append(f'<audio id="voice" class="clip" src="assets/voice.wav" data-start="0" data-duration="{self.T.voice_end}" '
+                         f'data-track-index="10" data-volume="1"></audio>')
+        os.makedirs(os.path.join(d, "assets", "ambient"), exist_ok=True)
+        for k, (n, t0, t1, vol, fade, off) in enumerate(self.ambient_list):
+            shutil.copy(os.path.join(KIT, "ambient", n + ".mp3"), os.path.join(d, "assets", "ambient", n + ".mp3"))
+            audio.append(f'<audio id="amb-{k}" class="clip" src="assets/ambient/{n}.mp3" data-start="{t0}" data-duration="{r3(t1 - t0)}" '
+                         f'data-media-start="{off}" data-track-index="{20 + k}" data-volume="{vol}" data-fade-in="{fade}" '
+                         f'data-fade-out="{fade}"></audio>')
+        if self.ambient_list:
+            shutil.copy(os.path.join(KIT, "ambient", "CREDITS.md"), os.path.join(d, "assets", "ambient", "CREDITS.md"))
         lanes = []
         for k, (n, t, vol) in enumerate(sorted(self.sfx_list, key=lambda x: x[1])):
             dur = min(sfx_len(n), max(0.2, self.duration - t))
@@ -327,7 +381,8 @@ window.__timelines["main"] = gsap.timeline({{ paused: true }});
             json.dump({"$schema": "https://hyperframes.heygen.com/schema/hyperframes.json",
                        "paths": {"blocks": "compositions", "components": "compositions/components", "assets": "assets"}},
                       open(os.path.join(d, "hyperframes.json"), "w"), indent=2)
-        print(f"wrote {d}: {self.duration}s, {len(self.keys)} world keys, {len(self.widgets)} widget segments, {len(self.sfx_list)} sfx")
+        print(f"wrote {d}: {self.duration}s, {len(self.keys)} world keys, {len(self.widgets)} widget segments, "
+              f"{len(self.sfx_list)} sfx, {len(self.ambient_list)} ambience tracks, voice={self.voice}")
 
 
 def build(vdir):

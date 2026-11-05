@@ -9,24 +9,29 @@ The user is a TikTok creator, handle **@manwhat.3** (TikTok name "WHAT IF?") (us
 voice, on-screen text). Answer them in German. Everything is code: the kit in `kit/` writes a HyperFrames
 project (HTML + SVG + GSAP), HyperFrames renders it to MP4.
 
-## DEFAULT LOOK: cinematic 3D (`kit/cinema_kit.py` + `kit/world.js`)
-The creator said explicitly: make videos **exactly in the graphic style of their reference**
-(https://vm.tiktok.com/ZGdXre8Sx/ "What if electrons disappeared for 5 seconds?"). Use this look unless they
-ask for the cartoon one:
-- A low-poly **three.js 3D world** (city park, blocky people on a picnic blanket, low-poly trees, skyline of
-  window-textured towers, gradient dusk sky, fog), slow camera moves; the world changes with the story
-  (night, stars, frost, snow, frozen pond, bunker, volcano, view of Earth from space).
-- Title at the start: serif (Spectral) ~70 px, centred, keyword coloured, a glowing icon above it.
-- **Left widget**: small tracked sans label ("SUN DISAPPEARS IN" / "SUN RETURNS IN"), big serif number that
-  ticks live ("0:06.636", "88d 02:44:29"), tiny mono sub-line ("DAY 1 OF 90"). This is the time grid.
-- Captions: one whole sentence at a time, italic serif ~46 px, centred at y≈1290, soft shadow.
-- Hard cuts between beats; end card: dark #121212, serif title with coloured keyword, mono sub-text,
-  share arrow + underlined mono CTA, avatar + handle.
-- The reference has music only; this channel uses the AI voice (they asked for it) + SFX.
-Build: `video.py` with `LINES` and `build(v)` using `v.key(t, dur, **world_props)`, `v.widget(...)`,
-`v.title_until(t, icon_svg)`, `v.sfx(...)`, `v.no_caption`; generate with
-`python3 .claude/skills/whatif-video/kit/cinema_kit.py videos/<slug>`. World properties: see `DEFAULTS` in
-`cinema_kit.py`; example: `videos/sun-gone-3d/video.py`. Render takes ~9 min (WebGL in software).
+## DEFAULT LOOK: cinematic 3D, first-person, NO voice (`kit/cinema_kit.py` + `kit/world.js`)
+The creator's references are all by the same channel (e.g. https://vm.tiktok.com/ZGdXre8Sx/,
+https://vm.tiktok.com/ZGdXrpdgq/, https://vm.tiktok.com/ZGdXrqSS9/, https://vm.tiktok.com/ZGdXrpHD1/).
+They asked explicitly: **no narrating voice**, only ambience / quiet music, **first-person view**, **many shots
+and camera angles**, and **lots happening on screen** so it never feels monotonous. Rules:
+- **POV**: camera at eye height (1.65 m) with the viewer's own blocky hands in frame (`v.hands(t, pose)`:
+  hold, hold_low, shield, warm, reach, torch, hidden) holding things (phone, ice cream, phone torch).
+- **A new shot every 2-4 s** (`v.shot(t, pos, look, to_pos, to_look, length)` = hard cut + slow drift).
+  Mix: POV, looking up, low ground shot, street-level, wide/drone, Earth from space (real NASA texture),
+  an interior (bunker) and a period set (1816 village + volcano). Add shake on impacts, bob when walking.
+- **Something happens in every shot**: people walking / looking up / pointing / fleeing, phones lighting up,
+  birds scattering, cars with headlights, lamps switching on, windows going dark in steps, snow + wind,
+  breath vapour, frost on the lens, a white flash, ash clouds.
+- Text only: title (serif, coloured keyword, glowing icon) for ~3 s, then one short italic sentence every
+  3-4 s (`CAPTIONS` / `v.caption`), and the left **widget** carrying the time grid (live ticking number).
+- **Sound**: `v.ambient(name, t0, t1, vol, fade)` from `kit/ambient/` (birds-evening, crowd, wind, space,
+  fire, music-dark) + SFX on cuts and impacts. CC BY files need a credit line in the TikTok description
+  (see `kit/ambient/CREDITS.md`). Freesound blocks automated downloads: use Wikimedia Commons via Openverse.
+- Set `VOICEOVER = False`, `DURATION`, `CAPTIONS` in `video.py`; no voice.py run needed.
+- Build: `python3 .claude/skills/whatif-video/kit/cinema_kit.py videos/<slug>`; example:
+  `videos/sun-pov/video.py`. World properties: `DEFAULTS` in `cinema_kit.py`. Render ≈ 10-15 min.
+- Test hand poses fast without HyperFrames: copy `kit/tools/make.py` + `shot.js` into `<video>/build/handtest/`,
+  run `python3 build/handtest/make.py hold,shield` then `node build/handtest/shot.js hold shield` from the video dir.
 
 ## Alternative look: flat 2D cartoon (`kit/whatif_kit.py`, only if asked)
 - Flat vector cartoon, thick dark outline `#2b263f`, soft vertical gradient background whose colour carries

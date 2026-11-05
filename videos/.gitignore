@@ -9,3 +9,4 @@
 */build/check.json
 */.hyperframes/
 node_modules/
+*/build/handtest/
