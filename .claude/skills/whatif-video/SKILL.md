@@ -58,6 +58,7 @@ Work in `videos/<slug>/` of this repo. Kit = `.claude/skills/whatif-video/kit/`.
    `ffmpeg -i build/render_raw.mp4 -c:v copy -c:a aac -ar 44100 -ac 2 -b:a 192k -af "loudnorm=I=-14:TP=-1.5:LRA=11" -movflags +faststart build/<slug>.mp4`
    Verify sound (`ffmpeg -i build/<slug>.mp4 -vn -af volumedetect -f null -`, mean around -16 dB) and send
    the MP4 with `SendUserFile`. Tell the user the in-app preview may play muted: download it to hear it.
+8. **Notify**: send a `PushNotification` to the user's phone when the video is delivered (they asked for this).
 
 ## Setup in a fresh session
 ```bash
