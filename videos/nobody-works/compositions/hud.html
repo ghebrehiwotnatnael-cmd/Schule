@@ -1,0 +1,51 @@
+<template>
+<style>
+@font-face{font-family:"WI Display";src:url("assets/fonts/fredoka-700.woff2") format("woff2");font-weight:700}
+@font-face{font-family:"WI Caption";src:url("assets/fonts/nunito-900.woff2") format("woff2");font-weight:900}
+#root{position:absolute;inset:0;pointer-events:none;}
+#hud-root-in{position:absolute;inset:0;}
+#hud-logo{position:absolute;left:60px;top:186px;font:700 36px "WI Display";color:#ffd23f;
+  -webkit-text-stroke:7px #2b263f;paint-order:stroke fill;}
+.hud-title{position:absolute;left:58px;top:228px;font:700 112px/1 "WI Display";letter-spacing:1px;
+  -webkit-text-stroke:9px rgba(43,38,63,.62);paint-order:stroke fill;text-shadow:0 7px 0 rgba(0,0,0,.25);
+  transform-origin:0 50%;white-space:nowrap;}
+#hud-meter{position:absolute;left:60px;top:356px;width:960px;height:80px;}
+#hud-label{position:absolute;left:2px;top:-2px;font:900 28px "WI Caption";color:#1d1a29;
+  -webkit-text-stroke:5px #fff;paint-order:stroke fill;}
+#hud-track{position:absolute;left:0;top:34px;width:560px;height:28px;border-radius:14px;overflow:hidden;
+  background:linear-gradient(90deg,#4ade80 0%,#facc15 40%,#fb923c 70%,#ef4444 100%);box-shadow:0 0 0 4px rgba(43,38,63,.18);}
+#hud-cover{position:absolute;left:0;top:0;width:560px;height:28px;background:#8f8b9c;}
+.hud-status{position:absolute;left:584px;top:22px;font:900 44px "WI Caption";
+  -webkit-text-stroke:9px #2b263f;paint-order:stroke fill;white-space:nowrap;}
+</style>
+<div id="root" data-composition-id="hud" data-width="1080" data-height="1920">
+ <div id="hud-root-in">
+  <div id="hud-logo">WHAT IF?</div>
+  <div id="hud-t1" class="hud-title" style="color:#ffffff">MONDAY 9 AM</div><div id="hud-t2" class="hud-title" style="color:#ffffff">DAY 1</div><div id="hud-t3" class="hud-title" style="color:#ffffff">DAY 3</div><div id="hud-t4" class="hud-title" style="color:#ffffff">WEEK 1</div><div id="hud-t5" class="hud-title" style="color:#ffffff">WEEK 2</div><div id="hud-t6" class="hud-title" style="color:#ffd23f">PLOT TWIST</div><div id="hud-t7" class="hud-title" style="color:#ffffff">YOUR TURN</div>
+  <div id="hud-meter"><div id="hud-label">CHAOS LEVEL</div><div id="hud-track"><div id="hud-cover"></div></div>
+   <div id="hud-s0" class="hud-status" style="color:#4ade80">CALM</div><div id="hud-s1" class="hud-status" style="color:#a3e635">MESSY</div><div id="hud-s2" class="hud-status" style="color:#facc15">PANIC</div><div id="hud-s3" class="hud-status" style="color:#fb923c">CHAOS</div><div id="hud-s4" class="hud-status" style="color:#ef4444">COLLAPSE</div><div id="hud-s5" class="hud-status" style="color:#4ade80">BALANCED</div></div>
+ </div>
+</div>
+<script>
+(function(){
+const tl = gsap.timeline({paused:true,defaults:{lazy:false}});
+tl.set("#hud-t1",{opacity:0,immediateRender:true},0);tl.fromTo("#hud-t1",{opacity:0,scale:.55},{opacity:1,scale:1,duration:.4,ease:"back.out(2.5)",immediateRender:false},4.087);tl.set("#hud-t1",{opacity:0},9.751);
+tl.set("#hud-t2",{opacity:0,immediateRender:true},0);tl.fromTo("#hud-t2",{opacity:0,scale:.55},{opacity:1,scale:1,duration:.4,ease:"back.out(2.5)",immediateRender:false},9.801);tl.set("#hud-t2",{opacity:0},16.866);
+tl.set("#hud-t3",{opacity:0,immediateRender:true},0);tl.fromTo("#hud-t3",{opacity:0,scale:.55},{opacity:1,scale:1,duration:.4,ease:"back.out(2.5)",immediateRender:false},16.916);tl.set("#hud-t3",{opacity:0},22.564);
+tl.set("#hud-t4",{opacity:0,immediateRender:true},0);tl.fromTo("#hud-t4",{opacity:0,scale:.55},{opacity:1,scale:1,duration:.4,ease:"back.out(2.5)",immediateRender:false},22.614);tl.set("#hud-t4",{opacity:0},32.458);
+tl.set("#hud-t5",{opacity:0,immediateRender:true},0);tl.fromTo("#hud-t5",{opacity:0,scale:.55},{opacity:1,scale:1,duration:.4,ease:"back.out(2.5)",immediateRender:false},32.508);tl.set("#hud-t5",{opacity:0},38.579);
+tl.set("#hud-t6",{opacity:0,immediateRender:true},0);tl.fromTo("#hud-t6",{opacity:0,scale:.55},{opacity:1,scale:1,duration:.4,ease:"back.out(2.5)",immediateRender:false},38.629);tl.set("#hud-t6",{opacity:0},55.574);
+tl.set("#hud-t7",{opacity:0,immediateRender:true},0);tl.fromTo("#hud-t7",{opacity:0,scale:.55},{opacity:1,scale:1,duration:.4,ease:"back.out(2.5)",immediateRender:false},55.624);tl.set("#hud-t7",{opacity:0},58.724);
+tl.set("#hud-meter",{opacity:0,immediateRender:true},0);tl.to("#hud-meter",{opacity:1,duration:.3},4.087);
+tl.set("#hud-cover",{scaleX:1,transformOrigin:"100% 50%",immediateRender:true},0);
+tl.set("#hud-s0",{opacity:0,immediateRender:true},0);tl.set("#hud-s0",{opacity:1},4.187);tl.set("#hud-s0",{opacity:0},9.901);tl.to("#hud-cover",{scaleX:0.94,duration:.9,ease:"power2.inOut"},4.187);
+tl.set("#hud-s1",{opacity:0,immediateRender:true},0);tl.set("#hud-s1",{opacity:1},9.901);tl.set("#hud-s1",{opacity:0},17.016);tl.to("#hud-cover",{scaleX:0.75,duration:.9,ease:"power2.inOut"},9.901);
+tl.set("#hud-s2",{opacity:0,immediateRender:true},0);tl.set("#hud-s2",{opacity:1},17.016);tl.set("#hud-s2",{opacity:0},22.714);tl.to("#hud-cover",{scaleX:0.55,duration:.9,ease:"power2.inOut"},17.016);
+tl.set("#hud-s3",{opacity:0,immediateRender:true},0);tl.set("#hud-s3",{opacity:1},22.714);tl.set("#hud-s3",{opacity:0},32.608);tl.to("#hud-cover",{scaleX:0.32,duration:.9,ease:"power2.inOut"},22.714);
+tl.set("#hud-s4",{opacity:0,immediateRender:true},0);tl.set("#hud-s4",{opacity:1},32.608);tl.set("#hud-s4",{opacity:0},53.889);tl.to("#hud-cover",{scaleX:0.05,duration:.9,ease:"power2.inOut"},32.608);
+tl.set("#hud-s5",{opacity:0,immediateRender:true},0);tl.set("#hud-s5",{opacity:1},53.889);tl.set("#hud-s5",{opacity:0},58.724);tl.to("#hud-cover",{scaleX:0.88,duration:.9,ease:"power2.inOut"},53.889);
+tl.set("#hud-root-in",{opacity:0},58.724);
+window.__timelines["hud"] = tl;
+})();
+</script>
+</template>

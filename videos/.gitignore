@@ -1,0 +1,11 @@
+# render outputs and scratch (keep video.py, compositions, assets, timing + transcript caches)
+*.mp4
+*/build/snap*/
+*/build/dbg/
+*/build/lines/tr_*/
+*/build/lines/*.trim.wav
+*/build/*.jpg
+*/build/*.log
+*/build/check.json
+*/.hyperframes/
+node_modules/
