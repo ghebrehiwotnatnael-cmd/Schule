@@ -1,0 +1,884 @@
+[
+  {
+    "text": "What",
+    "start": 0.26,
+    "end": 0.32,
+    "id": "w0"
+  },
+  {
+    "text": "if",
+    "start": 0.32,
+    "end": 0.48,
+    "id": "w1"
+  },
+  {
+    "text": "tomorrow,",
+    "start": 0.48,
+    "end": 1.14,
+    "id": "w2"
+  },
+  {
+    "text": "nobody",
+    "start": 1.39,
+    "end": 1.74,
+    "id": "w3"
+  },
+  {
+    "text": "went",
+    "start": 1.74,
+    "end": 2.04,
+    "id": "w4"
+  },
+  {
+    "text": "to",
+    "start": 2.04,
+    "end": 2.18,
+    "id": "w5"
+  },
+  {
+    "text": "work?",
+    "start": 2.18,
+    "end": 2.71,
+    "id": "w6"
+  },
+  {
+    "text": "Not",
+    "start": 2.71,
+    "end": 2.92,
+    "id": "w7"
+  },
+  {
+    "text": "one",
+    "start": 2.92,
+    "end": 3.13,
+    "id": "w8"
+  },
+  {
+    "text": "single",
+    "start": 3.13,
+    "end": 3.55,
+    "id": "w9"
+  },
+  {
+    "text": "person.",
+    "start": 3.55,
+    "end": 4,
+    "id": "w10"
+  },
+  {
+    "text": "Monday,",
+    "start": 4.27,
+    "end": 4.7,
+    "id": "w11"
+  },
+  {
+    "text": "9",
+    "start": 4.7,
+    "end": 4.96,
+    "id": "w12"
+  },
+  {
+    "text": "a.m.",
+    "start": 4.96,
+    "end": 5.68,
+    "id": "w13"
+  },
+  {
+    "text": "Offices",
+    "start": 5.68,
+    "end": 6.29,
+    "id": "w14"
+  },
+  {
+    "text": "are",
+    "start": 6.29,
+    "end": 6.34,
+    "id": "w15"
+  },
+  {
+    "text": "empty.",
+    "start": 6.56,
+    "end": 7.13,
+    "id": "w16"
+  },
+  {
+    "text": "Roads",
+    "start": 7.13,
+    "end": 7.39,
+    "id": "w17"
+  },
+  {
+    "text": "are",
+    "start": 7.39,
+    "end": 7.54,
+    "id": "w18"
+  },
+  {
+    "text": "silent.",
+    "start": 7.54,
+    "end": 7.86,
+    "id": "w19"
+  },
+  {
+    "text": "It",
+    "start": 7.86,
+    "end": 8.24,
+    "id": "w20"
+  },
+  {
+    "text": "feels",
+    "start": 8.24,
+    "end": 8.63,
+    "id": "w21"
+  },
+  {
+    "text": "like",
+    "start": 8.63,
+    "end": 8.98,
+    "id": "w22"
+  },
+  {
+    "text": "a",
+    "start": 9,
+    "end": 9.08,
+    "id": "w23"
+  },
+  {
+    "text": "holiday.",
+    "start": 9.08,
+    "end": 10,
+    "id": "w24"
+  },
+  {
+    "text": "Day",
+    "start": 10,
+    "end": 10.27,
+    "id": "w25"
+  },
+  {
+    "text": "one,",
+    "start": 10.27,
+    "end": 10.61,
+    "id": "w26"
+  },
+  {
+    "text": "no",
+    "start": 10.61,
+    "end": 10.76,
+    "id": "w27"
+  },
+  {
+    "text": "trains,",
+    "start": 10.76,
+    "end": 11.38,
+    "id": "w28"
+  },
+  {
+    "text": "no",
+    "start": 11.39,
+    "end": 11.53,
+    "id": "w29"
+  },
+  {
+    "text": "buses,",
+    "start": 11.53,
+    "end": 12.07,
+    "id": "w30"
+  },
+  {
+    "text": "no",
+    "start": 12.07,
+    "end": 12.22,
+    "id": "w31"
+  },
+  {
+    "text": "planes.",
+    "start": 12.22,
+    "end": 13,
+    "id": "w32"
+  },
+  {
+    "text": "Without",
+    "start": 13,
+    "end": 13.53,
+    "id": "w33"
+  },
+  {
+    "text": "air",
+    "start": 13.53,
+    "end": 13.74,
+    "id": "w34"
+  },
+  {
+    "text": "traffic",
+    "start": 13.76,
+    "end": 14.29,
+    "id": "w35"
+  },
+  {
+    "text": "control,",
+    "start": 14.29,
+    "end": 14.98,
+    "id": "w36"
+  },
+  {
+    "text": "every",
+    "start": 15,
+    "end": 16,
+    "id": "w37"
+  },
+  {
+    "text": "flight",
+    "start": 16,
+    "end": 16.31,
+    "id": "w38"
+  },
+  {
+    "text": "is",
+    "start": 16.31,
+    "end": 16.38,
+    "id": "w39"
+  },
+  {
+    "text": "grounded.",
+    "start": 16.46,
+    "end": 16.87,
+    "id": "w40"
+  },
+  {
+    "text": "Day",
+    "start": 16.87,
+    "end": 17.27,
+    "id": "w41"
+  },
+  {
+    "text": "three,",
+    "start": 17.27,
+    "end": 17.63,
+    "id": "w42"
+  },
+  {
+    "text": "the",
+    "start": 17.63,
+    "end": 17.82,
+    "id": "w43"
+  },
+  {
+    "text": "shelves",
+    "start": 17.82,
+    "end": 18.05,
+    "id": "w44"
+  },
+  {
+    "text": "are",
+    "start": 18.39,
+    "end": 18.46,
+    "id": "w45"
+  },
+  {
+    "text": "empty.",
+    "start": 18.46,
+    "end": 18.98,
+    "id": "w46"
+  },
+  {
+    "text": "Most",
+    "start": 19.02,
+    "end": 19.34,
+    "id": "w47"
+  },
+  {
+    "text": "supermarkets",
+    "start": 19.34,
+    "end": 20.36,
+    "id": "w48"
+  },
+  {
+    "text": "only",
+    "start": 20.36,
+    "end": 20.7,
+    "id": "w49"
+  },
+  {
+    "text": "hold",
+    "start": 20.7,
+    "end": 20.84,
+    "id": "w50"
+  },
+  {
+    "text": "about",
+    "start": 21.23,
+    "end": 21.46,
+    "id": "w51"
+  },
+  {
+    "text": "three",
+    "start": 21.46,
+    "end": 21.88,
+    "id": "w52"
+  },
+  {
+    "text": "days",
+    "start": 21.88,
+    "end": 22.2,
+    "id": "w53"
+  },
+  {
+    "text": "of",
+    "start": 22.33,
+    "end": 22.39,
+    "id": "w54"
+  },
+  {
+    "text": "food.",
+    "start": 22.39,
+    "end": 23,
+    "id": "w55"
+  },
+  {
+    "text": "Week",
+    "start": 23.26,
+    "end": 23.31,
+    "id": "w56"
+  },
+  {
+    "text": "one,",
+    "start": 23.31,
+    "end": 23.69,
+    "id": "w57"
+  },
+  {
+    "text": "trash",
+    "start": 23.69,
+    "end": 24.02,
+    "id": "w58"
+  },
+  {
+    "text": "is",
+    "start": 24.06,
+    "end": 24.13,
+    "id": "w59"
+  },
+  {
+    "text": "everywhere.",
+    "start": 24.39,
+    "end": 25.22,
+    "id": "w60"
+  },
+  {
+    "text": "In",
+    "start": 25.22,
+    "end": 25.34,
+    "id": "w61"
+  },
+  {
+    "text": "1968,",
+    "start": 25.55,
+    "end": 26.41,
+    "id": "w62"
+  },
+  {
+    "text": "New",
+    "start": 26.47,
+    "end": 26.68,
+    "id": "w63"
+  },
+  {
+    "text": "York's",
+    "start": 26.68,
+    "end": 27.14,
+    "id": "w64"
+  },
+  {
+    "text": "garbage",
+    "start": 27.24,
+    "end": 27.67,
+    "id": "w65"
+  },
+  {
+    "text": "workers",
+    "start": 27.68,
+    "end": 28.2,
+    "id": "w66"
+  },
+  {
+    "text": "stopped",
+    "start": 28.33,
+    "end": 28.76,
+    "id": "w67"
+  },
+  {
+    "text": "for",
+    "start": 28.76,
+    "end": 28.99,
+    "id": "w68"
+  },
+  {
+    "text": "just",
+    "start": 28.99,
+    "end": 29.3,
+    "id": "w69"
+  },
+  {
+    "text": "nine",
+    "start": 29.3,
+    "end": 29.61,
+    "id": "w70"
+  },
+  {
+    "text": "days,",
+    "start": 29.61,
+    "end": 30.06,
+    "id": "w71"
+  },
+  {
+    "text": "and",
+    "start": 30.06,
+    "end": 30.16,
+    "id": "w72"
+  },
+  {
+    "text": "100,000",
+    "start": 30.16,
+    "end": 30.84,
+    "id": "w73"
+  },
+  {
+    "text": "tons",
+    "start": 30.84,
+    "end": 30.98,
+    "id": "w74"
+  },
+  {
+    "text": "of",
+    "start": 31,
+    "end": 31.23,
+    "id": "w75"
+  },
+  {
+    "text": "trash",
+    "start": 31.23,
+    "end": 31.81,
+    "id": "w76"
+  },
+  {
+    "text": "piled",
+    "start": 31.81,
+    "end": 32.38,
+    "id": "w77"
+  },
+  {
+    "text": "up.",
+    "start": 32.38,
+    "end": 33,
+    "id": "w78"
+  },
+  {
+    "text": "Week",
+    "start": 33.26,
+    "end": 33.28,
+    "id": "w79"
+  },
+  {
+    "text": "two,",
+    "start": 33.28,
+    "end": 33.63,
+    "id": "w80"
+  },
+  {
+    "text": "the",
+    "start": 33.63,
+    "end": 33.84,
+    "id": "w81"
+  },
+  {
+    "text": "power",
+    "start": 33.84,
+    "end": 34.05,
+    "id": "w82"
+  },
+  {
+    "text": "grid",
+    "start": 34.39,
+    "end": 34.47,
+    "id": "w83"
+  },
+  {
+    "text": "needs",
+    "start": 34.47,
+    "end": 34.82,
+    "id": "w84"
+  },
+  {
+    "text": "people",
+    "start": 34.82,
+    "end": 35.24,
+    "id": "w85"
+  },
+  {
+    "text": "watching",
+    "start": 35.24,
+    "end": 35.8,
+    "id": "w86"
+  },
+  {
+    "text": "at",
+    "start": 35.82,
+    "end": 35.95,
+    "id": "w87"
+  },
+  {
+    "text": "every",
+    "start": 35.95,
+    "end": 36.29,
+    "id": "w88"
+  },
+  {
+    "text": "second.",
+    "start": 36.29,
+    "end": 36.85,
+    "id": "w89"
+  },
+  {
+    "text": "Without",
+    "start": 37.23,
+    "end": 37.46,
+    "id": "w90"
+  },
+  {
+    "text": "them,",
+    "start": 37.46,
+    "end": 37.85,
+    "id": "w91"
+  },
+  {
+    "text": "the",
+    "start": 37.85,
+    "end": 38.05,
+    "id": "w92"
+  },
+  {
+    "text": "lights",
+    "start": 38.05,
+    "end": 38.44,
+    "id": "w93"
+  },
+  {
+    "text": "go",
+    "start": 38.44,
+    "end": 38.51,
+    "id": "w94"
+  },
+  {
+    "text": "out.",
+    "start": 38.71,
+    "end": 39,
+    "id": "w95"
+  },
+  {
+    "text": "Plot",
+    "start": 39,
+    "end": 39.27,
+    "id": "w96"
+  },
+  {
+    "text": "twist,",
+    "start": 39.27,
+    "end": 39.68,
+    "id": "w97"
+  },
+  {
+    "text": "this",
+    "start": 39.68,
+    "end": 39.93,
+    "id": "w98"
+  },
+  {
+    "text": "kind",
+    "start": 39.93,
+    "end": 40.05,
+    "id": "w99"
+  },
+  {
+    "text": "of",
+    "start": 40.05,
+    "end": 40.39,
+    "id": "w100"
+  },
+  {
+    "text": "happened.",
+    "start": 40.39,
+    "end": 40.98,
+    "id": "w101"
+  },
+  {
+    "text": "In",
+    "start": 41.02,
+    "end": 41.18,
+    "id": "w102"
+  },
+  {
+    "text": "1975,",
+    "start": 41.18,
+    "end": 42.41,
+    "id": "w103"
+  },
+  {
+    "text": "90%",
+    "start": 42.47,
+    "end": 43.07,
+    "id": "w104"
+  },
+  {
+    "text": "of",
+    "start": 43.23,
+    "end": 43.25,
+    "id": "w105"
+  },
+  {
+    "text": "women",
+    "start": 43.25,
+    "end": 43.69,
+    "id": "w106"
+  },
+  {
+    "text": "in",
+    "start": 43.7,
+    "end": 43.88,
+    "id": "w107"
+  },
+  {
+    "text": "Iceland",
+    "start": 43.88,
+    "end": 44.49,
+    "id": "w108"
+  },
+  {
+    "text": "took",
+    "start": 44.71,
+    "end": 44.87,
+    "id": "w109"
+  },
+  {
+    "text": "the",
+    "start": 44.87,
+    "end": 45.14,
+    "id": "w110"
+  },
+  {
+    "text": "day",
+    "start": 45.14,
+    "end": 45.38,
+    "id": "w111"
+  },
+  {
+    "text": "off.",
+    "start": 45.46,
+    "end": 45.87,
+    "id": "w112"
+  },
+  {
+    "text": "Banks,",
+    "start": 46.25,
+    "end": 46.35,
+    "id": "w113"
+  },
+  {
+    "text": "schools,",
+    "start": 46.35,
+    "end": 46.8,
+    "id": "w114"
+  },
+  {
+    "text": "and",
+    "start": 46.8,
+    "end": 46.95,
+    "id": "w115"
+  },
+  {
+    "text": "factories",
+    "start": 46.95,
+    "end": 47.41,
+    "id": "w116"
+  },
+  {
+    "text": "shut",
+    "start": 47.41,
+    "end": 47.61,
+    "id": "w117"
+  },
+  {
+    "text": "down.",
+    "start": 47.61,
+    "end": 47.98,
+    "id": "w118"
+  },
+  {
+    "text": "Dads",
+    "start": 48.02,
+    "end": 48.28,
+    "id": "w119"
+  },
+  {
+    "text": "brought",
+    "start": 48.28,
+    "end": 48.77,
+    "id": "w120"
+  },
+  {
+    "text": "their",
+    "start": 48.77,
+    "end": 49.12,
+    "id": "w121"
+  },
+  {
+    "text": "kids",
+    "start": 49.12,
+    "end": 49.4,
+    "id": "w122"
+  },
+  {
+    "text": "to",
+    "start": 49.4,
+    "end": 49.54,
+    "id": "w123"
+  },
+  {
+    "text": "work,",
+    "start": 49.54,
+    "end": 49.86,
+    "id": "w124"
+  },
+  {
+    "text": "and",
+    "start": 49.86,
+    "end": 50.24,
+    "id": "w125"
+  },
+  {
+    "text": "the",
+    "start": 50.24,
+    "end": 50.4,
+    "id": "w126"
+  },
+  {
+    "text": "shops",
+    "start": 50.4,
+    "end": 50.73,
+    "id": "w127"
+  },
+  {
+    "text": "ran",
+    "start": 50.73,
+    "end": 50.93,
+    "id": "w128"
+  },
+  {
+    "text": "out",
+    "start": 50.93,
+    "end": 51.13,
+    "id": "w129"
+  },
+  {
+    "text": "of",
+    "start": 51.13,
+    "end": 51.21,
+    "id": "w130"
+  },
+  {
+    "text": "sausages.",
+    "start": 51.33,
+    "end": 52,
+    "id": "w131"
+  },
+  {
+    "text": "Later,",
+    "start": 52.26,
+    "end": 52.38,
+    "id": "w132"
+  },
+  {
+    "text": "Iceland",
+    "start": 52.38,
+    "end": 52.76,
+    "id": "w133"
+  },
+  {
+    "text": "elected",
+    "start": 52.76,
+    "end": 53.05,
+    "id": "w134"
+  },
+  {
+    "text": "the",
+    "start": 53.1,
+    "end": 53.14,
+    "id": "w135"
+  },
+  {
+    "text": "world's",
+    "start": 53.39,
+    "end": 53.68,
+    "id": "w136"
+  },
+  {
+    "text": "first",
+    "start": 53.68,
+    "end": 53.95,
+    "id": "w137"
+  },
+  {
+    "text": "female",
+    "start": 53.95,
+    "end": 54.28,
+    "id": "w138"
+  },
+  {
+    "text": "president.",
+    "start": 54.28,
+    "end": 55,
+    "id": "w139"
+  },
+  {
+    "text": "So",
+    "start": 55,
+    "end": 55.2,
+    "id": "w140"
+  },
+  {
+    "text": "whose",
+    "start": 55.2,
+    "end": 55.69,
+    "id": "w141"
+  },
+  {
+    "text": "job",
+    "start": 55.69,
+    "end": 55.81,
+    "id": "w142"
+  },
+  {
+    "text": "would",
+    "start": 56.23,
+    "end": 56.47,
+    "id": "w143"
+  },
+  {
+    "text": "you",
+    "start": 56.49,
+    "end": 56.78,
+    "id": "w144"
+  },
+  {
+    "text": "miss",
+    "start": 56.78,
+    "end": 57.18,
+    "id": "w145"
+  },
+  {
+    "text": "first?",
+    "start": 57.18,
+    "end": 58,
+    "id": "w146"
+  }
+]

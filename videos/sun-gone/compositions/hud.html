@@ -1,0 +1,68 @@
+<template>
+<style>
+@font-face{font-family:"WI Display";src:url("assets/fonts/fredoka-700.woff2") format("woff2");font-weight:700}
+@font-face{font-family:"WI Caption";src:url("assets/fonts/nunito-900.woff2") format("woff2");font-weight:900}
+#root{position:absolute;inset:0;pointer-events:none;}
+#hud-root-in{position:absolute;inset:0;}
+#hud-logo{position:absolute;left:60px;top:186px;font:700 36px "WI Display";color:#ffd23f;
+  -webkit-text-stroke:7px #2b263f;paint-order:stroke fill;}
+.hud-title{position:absolute;left:58px;top:228px;font:700 112px/1 "WI Display";letter-spacing:1px;
+  -webkit-text-stroke:9px rgba(43,38,63,.62);paint-order:stroke fill;text-shadow:0 7px 0 rgba(0,0,0,.25);
+  transform-origin:0 50%;white-space:nowrap;}
+#hud-meter{position:absolute;left:60px;top:356px;width:960px;height:80px;}
+#hud-label{position:absolute;left:2px;top:-2px;font:900 28px "WI Caption";color:#1d1a29;
+  -webkit-text-stroke:5px #fff;paint-order:stroke fill;}
+#hud-track{position:absolute;left:0;top:34px;width:560px;height:28px;border-radius:14px;overflow:hidden;
+  background:linear-gradient(90deg,#4ade80 0%,#facc15 40%,#fb923c 70%,#ef4444 100%);box-shadow:0 0 0 4px rgba(43,38,63,.18);}
+#hud-cover{position:absolute;left:0;top:0;width:560px;height:28px;background:#8f8b9c;}
+#hud-timer{position:absolute;right:56px;top:176px;width:440px;height:120px;text-align:right;}
+#hud-tlabel{font:900 28px "WI Caption";color:#fff;letter-spacing:2px;-webkit-text-stroke:6px #2b263f;paint-order:stroke fill;}
+.hud-tval{position:absolute;right:0;top:36px;font:700 64px/1 "WI Display";white-space:nowrap;
+  -webkit-text-stroke:10px #2b263f;paint-order:stroke fill;filter:drop-shadow(0 5px 0 rgba(0,0,0,.3));}
+.hud-status{position:absolute;left:584px;top:22px;font:900 44px "WI Caption";
+  -webkit-text-stroke:9px #2b263f;paint-order:stroke fill;white-space:nowrap;}
+</style>
+<div id="root" data-composition-id="hud" data-width="1080" data-height="1920">
+ <div id="hud-root-in">
+  <div id="hud-logo">WHAT IF?</div>
+  <div id="hud-t1" class="hud-title" style="color:#ffffff">8 MINUTES</div><div id="hud-t2" class="hud-title" style="color:#ffffff">DAY 1</div><div id="hud-t3" class="hud-title" style="color:#ffffff">DAY 3</div><div id="hud-t4" class="hud-title" style="color:#ffffff">MONTH 1</div><div id="hud-t5" class="hud-title" style="color:#ffffff">MONTH 2</div><div id="hud-t6" class="hud-title" style="color:#ffffff">MONTH 3</div><div id="hud-t7" class="hud-title" style="color:#ffffff">BACK</div><div id="hud-t8" class="hud-title" style="color:#ffd23f">PLOT TWIST</div><div id="hud-t9" class="hud-title" style="color:#ffffff">YOUR TURN</div>
+  <div id="hud-meter"><div id="hud-label">FREEZE LEVEL</div><div id="hud-track"><div id="hud-cover"></div></div>
+   <div id="hud-s0" class="hud-status" style="color:#4ade80">NORMAL</div><div id="hud-s1" class="hud-status" style="color:#bfdbfe">CHILLY</div><div id="hud-s2" class="hud-status" style="color:#7cc4ff">FREEZING</div><div id="hud-s3" class="hud-status" style="color:#7cc4ff">ARCTIC</div><div id="hud-s4" class="hud-status" style="color:#7cc4ff">DEEP FREEZE</div><div id="hud-s5" class="hud-status" style="color:#7cc4ff">EXTREME</div><div id="hud-s6" class="hud-status" style="color:#facc15">THAWING</div></div>
+  <div id="hud-timer"><div id="hud-tlabel">SUN RETURNS IN</div><div id="hud-v0" class="hud-tval" style="color:#ffffff">90 DAYS</div><div id="hud-v1" class="hud-tval" style="color:#ffffff">89 DAYS</div><div id="hud-v2" class="hud-tval" style="color:#ffffff">87 DAYS</div><div id="hud-v3" class="hud-tval" style="color:#ffffff">60 DAYS</div><div id="hud-v4" class="hud-tval" style="color:#ffffff">30 DAYS</div><div id="hud-v5" class="hud-tval" style="color:#ffffff">1 DAY</div><div id="hud-v6" class="hud-tval" style="color:#4ade80">BACK!</div></div>
+ </div>
+</div>
+<script>
+(function(){
+const tl = gsap.timeline({paused:true,defaults:{lazy:false}});
+tl.set("#hud-t1",{opacity:0,immediateRender:true},0);tl.fromTo("#hud-t1",{opacity:0,scale:.55},{opacity:1,scale:1,duration:.4,ease:"back.out(2.5)",immediateRender:false},5.886);tl.set("#hud-t1",{opacity:0},10.355);
+tl.set("#hud-t2",{opacity:0,immediateRender:true},0);tl.fromTo("#hud-t2",{opacity:0,scale:.55},{opacity:1,scale:1,duration:.4,ease:"back.out(2.5)",immediateRender:false},10.405);tl.set("#hud-t2",{opacity:0},17.587);
+tl.set("#hud-t3",{opacity:0,immediateRender:true},0);tl.fromTo("#hud-t3",{opacity:0,scale:.55},{opacity:1,scale:1,duration:.4,ease:"back.out(2.5)",immediateRender:false},17.637);tl.set("#hud-t3",{opacity:0},23.338);
+tl.set("#hud-t4",{opacity:0,immediateRender:true},0);tl.fromTo("#hud-t4",{opacity:0,scale:.55},{opacity:1,scale:1,duration:.4,ease:"back.out(2.5)",immediateRender:false},23.388);tl.set("#hud-t4",{opacity:0},29.303);
+tl.set("#hud-t5",{opacity:0,immediateRender:true},0);tl.fromTo("#hud-t5",{opacity:0,scale:.55},{opacity:1,scale:1,duration:.4,ease:"back.out(2.5)",immediateRender:false},29.353);tl.set("#hud-t5",{opacity:0},35.941);
+tl.set("#hud-t6",{opacity:0,immediateRender:true},0);tl.fromTo("#hud-t6",{opacity:0,scale:.55},{opacity:1,scale:1,duration:.4,ease:"back.out(2.5)",immediateRender:false},35.991);tl.set("#hud-t6",{opacity:0},40.612);
+tl.set("#hud-t7",{opacity:0,immediateRender:true},0);tl.fromTo("#hud-t7",{opacity:0,scale:.55},{opacity:1,scale:1,duration:.4,ease:"back.out(2.5)",immediateRender:false},40.662);tl.set("#hud-t7",{opacity:0},45.036);
+tl.set("#hud-t8",{opacity:0,immediateRender:true},0);tl.fromTo("#hud-t8",{opacity:0,scale:.55},{opacity:1,scale:1,duration:.4,ease:"back.out(2.5)",immediateRender:false},45.086);tl.set("#hud-t8",{opacity:0},53.386);
+tl.set("#hud-t9",{opacity:0,immediateRender:true},0);tl.fromTo("#hud-t9",{opacity:0,scale:.55},{opacity:1,scale:1,duration:.4,ease:"back.out(2.5)",immediateRender:false},53.436);tl.set("#hud-t9",{opacity:0},56.761);
+tl.set("#hud-meter",{opacity:0,immediateRender:true},0);tl.to("#hud-meter",{opacity:1,duration:.3},5.886);
+tl.set("#hud-cover",{scaleX:1,transformOrigin:"100% 50%",immediateRender:true},0);
+tl.set("#hud-s0",{opacity:0,immediateRender:true},0);tl.set("#hud-s0",{opacity:1},5.986);tl.set("#hud-s0",{opacity:0},10.505);tl.to("#hud-cover",{scaleX:0.97,duration:.9,ease:"power2.inOut"},5.986);
+tl.set("#hud-s1",{opacity:0,immediateRender:true},0);tl.set("#hud-s1",{opacity:1},10.505);tl.set("#hud-s1",{opacity:0},17.737);tl.to("#hud-cover",{scaleX:0.85,duration:.9,ease:"power2.inOut"},10.505);
+tl.set("#hud-s2",{opacity:0,immediateRender:true},0);tl.set("#hud-s2",{opacity:1},17.737);tl.set("#hud-s2",{opacity:0},23.488);tl.to("#hud-cover",{scaleX:0.65,duration:.9,ease:"power2.inOut"},17.737);
+tl.set("#hud-s3",{opacity:0,immediateRender:true},0);tl.set("#hud-s3",{opacity:1},23.488);tl.set("#hud-s3",{opacity:0},29.453);tl.to("#hud-cover",{scaleX:0.45,duration:.9,ease:"power2.inOut"},23.488);
+tl.set("#hud-s4",{opacity:0,immediateRender:true},0);tl.set("#hud-s4",{opacity:1},29.453);tl.set("#hud-s4",{opacity:0},36.091);tl.to("#hud-cover",{scaleX:0.28,duration:.9,ease:"power2.inOut"},29.453);
+tl.set("#hud-s5",{opacity:0,immediateRender:true},0);tl.set("#hud-s5",{opacity:1},36.091);tl.set("#hud-s5",{opacity:0},41.733);tl.to("#hud-cover",{scaleX:0.14,duration:.9,ease:"power2.inOut"},36.091);
+tl.set("#hud-s6",{opacity:0,immediateRender:true},0);tl.set("#hud-s6",{opacity:1},41.733);tl.set("#hud-s6",{opacity:0},56.761);tl.to("#hud-cover",{scaleX:0.2,duration:.9,ease:"power2.inOut"},41.733);
+tl.set("#hud-timer",{opacity:0,immediateRender:true},0);tl.to("#hud-timer",{opacity:1,duration:.3},2.963);
+tl.set("#hud-v0",{opacity:0,immediateRender:true},0);tl.fromTo("#hud-v0",{opacity:0,y:-14},{opacity:1,y:0,duration:.25,ease:"power2.out",immediateRender:false},2.963);tl.set("#hud-v0",{opacity:0},10.535);
+tl.set("#hud-v1",{opacity:0,immediateRender:true},0);tl.fromTo("#hud-v1",{opacity:0,y:-14},{opacity:1,y:0,duration:.25,ease:"power2.out",immediateRender:false},10.535);tl.set("#hud-v1",{opacity:0},17.767);
+tl.set("#hud-v2",{opacity:0,immediateRender:true},0);tl.fromTo("#hud-v2",{opacity:0,y:-14},{opacity:1,y:0,duration:.25,ease:"power2.out",immediateRender:false},17.767);tl.set("#hud-v2",{opacity:0},23.518);
+tl.set("#hud-v3",{opacity:0,immediateRender:true},0);tl.fromTo("#hud-v3",{opacity:0,y:-14},{opacity:1,y:0,duration:.25,ease:"power2.out",immediateRender:false},23.518);tl.set("#hud-v3",{opacity:0},29.483);
+tl.set("#hud-v4",{opacity:0,immediateRender:true},0);tl.fromTo("#hud-v4",{opacity:0,y:-14},{opacity:1,y:0,duration:.25,ease:"power2.out",immediateRender:false},29.483);tl.set("#hud-v4",{opacity:0},36.121);
+tl.set("#hud-v5",{opacity:0,immediateRender:true},0);tl.fromTo("#hud-v5",{opacity:0,y:-14},{opacity:1,y:0,duration:.25,ease:"power2.out",immediateRender:false},36.121);tl.set("#hud-v5",{opacity:0},41.733);
+tl.set("#hud-v6",{opacity:0,immediateRender:true},0);tl.fromTo("#hud-v6",{opacity:0,y:-14},{opacity:1,y:0,duration:.25,ease:"power2.out",immediateRender:false},41.733);tl.set("#hud-v6",{opacity:0},45.036);
+tl.to("#hud-timer",{opacity:0,duration:.2},45.036);
+tl.set("#hud-root-in",{opacity:0},56.761);
+window.__timelines["hud"] = tl;
+})();
+</script>
+</template>

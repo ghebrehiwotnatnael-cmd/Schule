@@ -1,0 +1,45 @@
+<template>
+<style>
+@font-face{font-family:"WI Serif";src:url("assets/fonts/spectral-400-normal.woff2") format("woff2");font-weight:400}
+@font-face{font-family:"WI Serif";src:url("assets/fonts/spectral-500-normal.woff2") format("woff2");font-weight:500}
+@font-face{font-family:"WI Serif";src:url("assets/fonts/spectral-400-italic.woff2") format("woff2");font-weight:400;font-style:italic}
+#root{position:absolute;inset:0;pointer-events:none;}
+#wg{position:absolute;left:64px;top:888px;width:760px;color:#fff;text-shadow:0 1px 10px rgba(0,0,0,.55),0 1px 2px rgba(0,0,0,.6);}
+#wg-label{font:600 27px "Inter";letter-spacing:2.6px;}
+#wg-value{margin-top:2px;font:400 66px/1 "WI Serif";letter-spacing:1px;font-variant-numeric:tabular-nums;}
+#wg-sub{margin-top:18px;font:500 18px "IBM Plex Mono";letter-spacing:3px;opacity:.82;}
+</style>
+<div id="root" data-composition-id="widget" data-width="1080" data-height="1920">
+  <div id="wg"><div id="wg-label"></div><div id="wg-value"></div><div id="wg-sub"></div></div>
+</div>
+<script>
+(function(){
+const S = [{"t0": 0.0, "t1": 7.0, "label": "SUN DISAPPEARS IN", "sub": "HYDE PARK \u00b7 LONDON", "mode": "sec", "v0": 7.0, "v1": 0, "value": ""}, {"t0": 7.0, "t1": 16.5, "label": "SUN RETURNS IN", "sub": "LAST LIGHT STILL ARRIVING", "mode": "days", "v0": 90, "v1": 89.9935, "value": ""}, {"t0": 16.5, "t1": 23.5, "label": "SUN RETURNS IN", "sub": "DAY 1 OF 90", "mode": "days", "v0": 89.0, "v1": 88.7, "value": ""}, {"t0": 23.5, "t1": 27.5, "label": "SUN RETURNS IN", "sub": "DAY 3 OF 90", "mode": "days", "v0": 87.0, "v1": 86.8, "value": ""}, {"t0": 27.5, "t1": 34.5, "label": "SUN RETURNS IN", "sub": "MONTH 1 \u00b7 DAY 30", "mode": "days", "v0": 60.0, "v1": 58.5, "value": ""}, {"t0": 34.5, "t1": 38.0, "label": "SUN RETURNS IN", "sub": "MONTH 1 \u00b7 DAY 45", "mode": "days", "v0": 45.0, "v1": 44.5, "value": ""}, {"t0": 38.0, "t1": 42.5, "label": "SUN RETURNS IN", "sub": "MONTH 2 \u00b7 DAY 60", "mode": "days", "v0": 30.0, "v1": 28.0, "value": ""}, {"t0": 42.5, "t1": 47.0, "label": "SUN RETURNS IN", "sub": "MONTH 3 \u00b7 DAY 85", "mode": "days", "v0": 5.0, "v1": 4.0, "value": ""}, {"t0": 47.0, "t1": 51.0, "label": "SUN RETURNS IN", "sub": "DAY 90", "mode": "sec", "v0": 4.0, "v1": 0, "value": ""}, {"t0": 51.0, "t1": 57.5, "label": "SUN", "sub": "AFTER 90 DAYS IN THE DARK", "mode": "text", "v0": 0, "v1": 0, "value": "BACK"}, {"t0": 57.5, "t1": 64.6, "label": "THE YEAR WITHOUT A SUMMER", "sub": "MOUNT TAMBORA ERUPTED IN 1815", "mode": "text", "v0": 0, "v1": 0, "value": "1816"}];
+const el = (id)=>document.getElementById(id);
+const p2 = (n)=>String(Math.floor(n)).padStart(2,"0");
+function fmt(seg, t){
+  const k = seg.t1>seg.t0 ? Math.min(1,Math.max(0,(t-seg.t0)/(seg.t1-seg.t0))) : 1;
+  const v = seg.v0 + (seg.v1-seg.v0)*k;
+  if(seg.mode==="sec"){ const s=Math.max(0,v); const m=Math.floor(s/60); return m+":"+p2(s%60)+"."+String(Math.floor((s%1)*1000)).padStart(3,"0"); }
+  if(seg.mode==="days"){ const d=Math.max(0,v); const dd=Math.floor(d); const h=(d-dd)*24; const mi=(h%1)*60; const se=(mi%1)*60;
+    return dd+"d "+p2(h)+":"+p2(mi)+":"+p2(se); }
+  return seg.value;
+}
+function render(t){
+  let seg=null; for(const s of S){ if(s.t0<=t && t<s.t1) seg=s; }
+  const w=el("wg");
+  if(!seg){ w.style.opacity=0; return; }
+  const fadeIn=Math.min(1,(t-seg.t0)/0.25), fadeOut=Math.min(1,(seg.t1-t)/0.25);
+  const prev=S.find(s=>Math.abs(s.t1-seg.t0)<1e-3 && s.label===seg.label);
+  const next=S.find(s=>Math.abs(s.t0-seg.t1)<1e-3 && s.label===seg.label);
+  w.style.opacity = Math.min(prev?1:fadeIn, next?1:fadeOut);
+  el("wg-label").textContent=seg.label; el("wg-sub").textContent=seg.sub; el("wg-value").textContent=fmt(seg,t);
+}
+const tl = gsap.timeline({paused:true,defaults:{lazy:false}});
+const st={t:0};
+tl.to(st,{t:64.6,duration:64.6,ease:"none",onUpdate:()=>render(st.t)},0);
+render(0);
+window.__timelines["widget"] = tl;
+})();
+</script>
+</template>

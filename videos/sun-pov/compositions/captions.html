@@ -1,0 +1,53 @@
+<template>
+<style>
+@font-face{font-family:"WI Serif";src:url("assets/fonts/spectral-400-normal.woff2") format("woff2");font-weight:400}
+@font-face{font-family:"WI Serif";src:url("assets/fonts/spectral-500-normal.woff2") format("woff2");font-weight:500}
+@font-face{font-family:"WI Serif";src:url("assets/fonts/spectral-400-italic.woff2") format("woff2");font-weight:400;font-style:italic}
+#root{position:absolute;inset:0;pointer-events:none;}
+.cap{position:absolute;left:0;top:1236px;width:1080px;height:200px;text-align:center;}
+.cap-in{display:inline-block;max-width:930px;font:italic 400 46px/1.25 "WI Serif";color:#fff;
+  text-shadow:0 2px 14px rgba(0,0,0,.7),0 1px 3px rgba(0,0,0,.8);}
+</style>
+<div id="root" data-composition-id="captions" data-width="1080" data-height="1920">
+<div id="cap-0" class="clip cap" data-start="3.6" data-duration="3.1" data-track-index="0"><div class="cap-in">You&#x27;re in Hyde Park, London. A warm summer evening.</div></div>
+<div id="cap-1" class="clip cap" data-start="7.2" data-duration="2.4" data-track-index="0"><div class="cap-in">The Sun is gone.</div></div>
+<div id="cap-2" class="clip cap" data-start="9.8" data-duration="3.1" data-track-index="0"><div class="cap-in">For 8 minutes, nothing changes.</div></div>
+<div id="cap-3" class="clip cap" data-start="13.8" data-duration="2.6" data-track-index="0"><div class="cap-in">Then the light runs out.</div></div>
+<div id="cap-4" class="clip cap" data-start="16.7" data-duration="3.1" data-track-index="0"><div class="cap-in">Day 1. Even the Moon goes dark.</div></div>
+<div id="cap-5" class="clip cap" data-start="20.2" data-duration="3.1" data-track-index="0"><div class="cap-in">Everyone heads inside.</div></div>
+<div id="cap-6" class="clip cap" data-start="23.7" data-duration="3.6" data-track-index="0"><div class="cap-in">Day 3. Below freezing, everywhere.</div></div>
+<div id="cap-7" class="clip cap" data-start="27.7" data-duration="3.2" data-track-index="0"><div class="cap-in">Month 1. The lakes freeze solid.</div></div>
+<div id="cap-8" class="clip cap" data-start="31.2" data-duration="3.1" data-track-index="0"><div class="cap-in">Nothing grows anymore.</div></div>
+<div id="cap-9" class="clip cap" data-start="34.7" data-duration="3.2" data-track-index="0"><div class="cap-in">The power grid starts to fail.</div></div>
+<div id="cap-10" class="clip cap" data-start="38.2" data-duration="4.1" data-track-index="0"><div class="cap-in">Month 2. From space, Earth goes dark.</div></div>
+<div id="cap-11" class="clip cap" data-start="42.7" data-duration="4.1" data-track-index="0"><div class="cap-in">Month 3. Life moves underground.</div></div>
+<div id="cap-12" class="clip cap" data-start="47.2" data-duration="3.6" data-track-index="0"><div class="cap-in">Day 90.</div></div>
+<div id="cap-13" class="clip cap" data-start="51.4" data-duration="2.8" data-track-index="0"><div class="cap-in">Then... it&#x27;s back.</div></div>
+<div id="cap-14" class="clip cap" data-start="54.5" data-duration="2.9" data-track-index="0"><div class="cap-in">8 minutes later, light hits a frozen world.</div></div>
+<div id="cap-15" class="clip cap" data-start="57.7" data-duration="3.2" data-track-index="0"><div class="cap-in">This happened before. In 1816, a volcano dimmed the Sun.</div></div>
+<div id="cap-16" class="clip cap" data-start="61.2" data-duration="3.2" data-track-index="0"><div class="cap-in">It snowed in June. The Year Without a Summer.</div></div>
+</div>
+<script>
+(function(){
+const tl = gsap.timeline({paused:true,defaults:{lazy:false}});
+tl.fromTo("#cap-0 .cap-in",{opacity:0,y:8},{opacity:1,y:0,duration:.28,ease:"power2.out"},3.6);tl.to("#cap-0 .cap-in",{opacity:0,duration:.18},6.51);
+tl.fromTo("#cap-1 .cap-in",{opacity:0,y:8},{opacity:1,y:0,duration:.28,ease:"power2.out"},7.2);tl.to("#cap-1 .cap-in",{opacity:0,duration:.18},9.41);
+tl.fromTo("#cap-2 .cap-in",{opacity:0,y:8},{opacity:1,y:0,duration:.28,ease:"power2.out"},9.8);tl.to("#cap-2 .cap-in",{opacity:0,duration:.18},12.71);
+tl.fromTo("#cap-3 .cap-in",{opacity:0,y:8},{opacity:1,y:0,duration:.28,ease:"power2.out"},13.8);tl.to("#cap-3 .cap-in",{opacity:0,duration:.18},16.21);
+tl.fromTo("#cap-4 .cap-in",{opacity:0,y:8},{opacity:1,y:0,duration:.28,ease:"power2.out"},16.7);tl.to("#cap-4 .cap-in",{opacity:0,duration:.18},19.61);
+tl.fromTo("#cap-5 .cap-in",{opacity:0,y:8},{opacity:1,y:0,duration:.28,ease:"power2.out"},20.2);tl.to("#cap-5 .cap-in",{opacity:0,duration:.18},23.11);
+tl.fromTo("#cap-6 .cap-in",{opacity:0,y:8},{opacity:1,y:0,duration:.28,ease:"power2.out"},23.7);tl.to("#cap-6 .cap-in",{opacity:0,duration:.18},27.11);
+tl.fromTo("#cap-7 .cap-in",{opacity:0,y:8},{opacity:1,y:0,duration:.28,ease:"power2.out"},27.7);tl.to("#cap-7 .cap-in",{opacity:0,duration:.18},30.71);
+tl.fromTo("#cap-8 .cap-in",{opacity:0,y:8},{opacity:1,y:0,duration:.28,ease:"power2.out"},31.2);tl.to("#cap-8 .cap-in",{opacity:0,duration:.18},34.11);
+tl.fromTo("#cap-9 .cap-in",{opacity:0,y:8},{opacity:1,y:0,duration:.28,ease:"power2.out"},34.7);tl.to("#cap-9 .cap-in",{opacity:0,duration:.18},37.71);
+tl.fromTo("#cap-10 .cap-in",{opacity:0,y:8},{opacity:1,y:0,duration:.28,ease:"power2.out"},38.2);tl.to("#cap-10 .cap-in",{opacity:0,duration:.18},42.11);
+tl.fromTo("#cap-11 .cap-in",{opacity:0,y:8},{opacity:1,y:0,duration:.28,ease:"power2.out"},42.7);tl.to("#cap-11 .cap-in",{opacity:0,duration:.18},46.61);
+tl.fromTo("#cap-12 .cap-in",{opacity:0,y:8},{opacity:1,y:0,duration:.28,ease:"power2.out"},47.2);tl.to("#cap-12 .cap-in",{opacity:0,duration:.18},50.61);
+tl.fromTo("#cap-13 .cap-in",{opacity:0,y:8},{opacity:1,y:0,duration:.28,ease:"power2.out"},51.4);tl.to("#cap-13 .cap-in",{opacity:0,duration:.18},54.01);
+tl.fromTo("#cap-14 .cap-in",{opacity:0,y:8},{opacity:1,y:0,duration:.28,ease:"power2.out"},54.5);tl.to("#cap-14 .cap-in",{opacity:0,duration:.18},57.21);
+tl.fromTo("#cap-15 .cap-in",{opacity:0,y:8},{opacity:1,y:0,duration:.28,ease:"power2.out"},57.7);tl.to("#cap-15 .cap-in",{opacity:0,duration:.18},60.71);
+tl.fromTo("#cap-16 .cap-in",{opacity:0,y:8},{opacity:1,y:0,duration:.28,ease:"power2.out"},61.2);tl.to("#cap-16 .cap-in",{opacity:0,duration:.18},64.21);
+window.__timelines["captions"] = tl;
+})();
+</script>
+</template>
