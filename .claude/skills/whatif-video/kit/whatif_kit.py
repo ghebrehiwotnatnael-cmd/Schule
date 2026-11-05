@@ -194,6 +194,34 @@ ICONS = {
                 f'<rect x="-80" y="-110" width="190" height="130" fill="#2563eb" {O}/>'
                 f'<path d="M-80 -45 L110 -45 M-25 -110 L-25 20" stroke="#fff" stroke-width="30"/>'
                 f'<path d="M-80 -45 L110 -45 M-25 -110 L-25 20" stroke="#dc2626" stroke-width="14"/>'),
+    "sun": ("".join(f'<path d="M{math.cos(a) * 92:.1f} {math.sin(a) * 92:.1f} L{math.cos(a) * 135:.1f} {math.sin(a) * 135:.1f}" '
+                    f'stroke="#f59e0b" stroke-width="18" stroke-linecap="round"/>' for a in [i * math.pi / 6 for i in range(12)])
+            + f'<circle r="80" fill="#fcd34d" {O}/><circle cx="-28" cy="-8" r="9" fill="{INK}"/><circle cx="28" cy="-8" r="9" fill="{INK}"/>'
+              f'<path d="M-26 26 C-10 42 10 42 26 26" fill="none" {O}/>'),
+    "moon": (f'<path d="M30 -105 A110 110 0 1 0 105 40 A90 90 0 1 1 30 -105 Z" fill="#e5e7eb" {O}/>'
+             f'<circle cx="-30" cy="10" r="14" fill="#cbd5e1"/><circle cx="0" cy="60" r="10" fill="#cbd5e1"/>'),
+    "plant": (f'<path d="M0 110 L0 -10" {O} stroke-width="12"/>'
+              f'<path d="M0 20 C-80 20 -100 -60 -100 -80 C-40 -80 0 -40 0 20 Z" fill="#4ade80" {O}/>'
+              f'<path d="M0 -10 C70 -10 100 -80 100 -100 C40 -100 0 -60 0 -10 Z" fill="#22c55e" {O}/>'
+              f'<path d="M-70 110 L70 110" {O} stroke-width="12"/>'),
+    "fire": (f'<path d="M0 -120 C40 -60 100 -30 90 40 C80 100 40 120 0 120 C-40 120 -85 100 -90 40 C-95 -10 -50 -40 -40 -90 '
+             f'C-20 -50 0 -40 0 -120 Z" fill="#fb923c" {O}/>'
+             f'<path d="M0 -20 C25 10 50 30 45 70 C40 100 20 110 0 110 C-20 110 -45 100 -45 70 C-45 40 -15 20 0 -20 Z" fill="#fde047"/>'),
+    "volcano": (f'<path d="M-130 110 L-40 -40 L40 -40 L130 110 Z" fill="#a16207" {O}/>'
+                f'<path d="M-40 -40 L-20 -10 L0 -30 L20 -5 L40 -40 Z" fill="#ef4444" {O} stroke-width="5"/>'
+                f'<circle cx="-30" cy="-90" r="34" fill="#6b7280" {O}/><circle cx="20" cy="-110" r="42" fill="#6b7280" {O}/>'
+                f'<circle cx="70" cy="-80" r="30" fill="#6b7280" {O}/>'),
+    "snowflake": ("".join(f'<g transform="rotate({a})"><path d="M0 0 L0 -110 M0 -70 L-26 -92 M0 -70 L26 -92 M0 -35 L-22 -52 M0 -35 L22 -52" '
+                          f'stroke="#60a5fa" stroke-width="12" stroke-linecap="round" fill="none"/></g>' for a in range(0, 360, 60))),
+    "earth": (f'<circle r="105" fill="#60a5fa" {O}/>'
+              f'<path d="M-70 -50 C-40 -80 0 -60 -10 -30 C-20 0 -60 10 -80 -10 Z M20 10 C60 0 80 30 60 70 C40 90 10 60 20 10 Z '
+              f'M30 -90 C60 -85 70 -60 50 -50 C30 -45 20 -70 30 -90 Z" fill="#4ade80" {O} stroke-width="5"/>'),
+    "vent": (f'<path d="M-60 120 L-35 -40 L35 -40 L60 120 Z" fill="#57534e" {O}/>'
+             f'<circle cx="-10" cy="-75" r="26" fill="#9ca3af" opacity=".8"/><circle cx="18" cy="-110" r="20" fill="#9ca3af" opacity=".6"/>'
+             f'<path d="M-35 -40 L35 -40" stroke="#f97316" stroke-width="10"/>'),
+    "panel": (f'<path d="M-120 40 L-80 -80 L120 -80 L80 40 Z" fill="#1e3a8a" {O}/>'
+              f'<path d="M-100 -20 L100 -20 M-13 -80 L-33 40 M53 -80 L33 40" stroke="#93c5fd" stroke-width="5"/>'
+              f'<path d="M0 40 L0 110 M-50 110 L50 110" {O} stroke-width="12"/>'),
 }
 
 
@@ -576,6 +604,24 @@ class Scene:
                        f'tl.set("{s}",{{x:0}},{r3(self.lt(t) + .04 * (n + 1))});')
         return self
 
+    def snowfall(self, n=60, t0=None, t1=None, seed=9, layer="front", color="#ffffff", size=(5, 13)):
+        """Falling snow: n flakes, each a finite tween (deterministic, seeded)."""
+        rnd = random.Random(seed)
+        t0 = self.start if t0 is None else t0
+        t1 = self.end if t1 is None else t1
+        flakes = []
+        for k in range(n):
+            x, r = rnd.randint(0, W), rnd.uniform(*size)
+            flakes.append(f'<circle class="{self.id}-flake" id="{self.id}-fl{k}" cx="{x}" cy="-30" r="{r:.1f}" '
+                          f'fill="{color}" opacity="{rnd.uniform(.55, .95):.2f}"/>')
+            dur = rnd.uniform(3.5, 7.0)
+            off = rnd.uniform(0, dur)
+            reps = max(0, int((t1 - t0 + off) / dur))
+            self.js.append(f'tl.fromTo("#{self.id}-fl{k}",{{y:0,x:0}},{{y:{H + 80},x:{rnd.randint(-120, 120)},duration:{dur:.2f},'
+                           f'ease:"none",repeat:{reps},immediateRender:true}},{r3(max(0, self.lt(t0) - off))});')
+        self.add(f'<g id="{self.id}-snow">' + "".join(flakes) + '</g>', layer)
+        return self
+
     def html(self):
         sid = self.id
         js = []
@@ -625,7 +671,7 @@ class Video:
     def __init__(self, vdir, mod):
         self.dir, self.m = vdir, mod
         self.T = Timing(os.path.join(vdir, "build", "timing.json"))
-        self.scenes, self.sfx_list, self.meter_keys = [], [], []
+        self.scenes, self.sfx_list, self.meter_keys, self.timer_keys = [], [], [], []
         # scene windows from line scene ids
         order = []
         for l in self.T.order:
@@ -661,6 +707,10 @@ class Video:
     def meter_at(self, t, level, status, color):
         self.meter_keys.append((t, level, status, color))
 
+    def timer_at(self, t, value, color="#ffffff"):  # value None hides the widget
+        """Top-right countdown widget (label = module TIMER, e.g. 'SUN RETURNS IN'): value shown from t."""
+        self.timer_keys.append((t, value, color))
+
     def sfx(self, name, t, vol=0.5):
         self.sfx_list.append((name, max(0.0, t), vol))
 
@@ -688,6 +738,22 @@ class Video:
             js.append(f'tl.set("#{sid}",{{opacity:0}},0);tl.set("#{sid}",{{opacity:1}},{r3(t)});'
                       f'tl.set("#{sid}",{{opacity:0}},{r3(nxt)});'
                       f'tl.to("#hud-cover",{{scaleX:{r3(1 - max(0.02, lv))},duration:.9,ease:"power2.inOut"}},{r3(t)});')
+        timers = []
+        tk = sorted(self.timer_keys)
+        if tk:
+            js.append(f'tl.set("#hud-timer",{{opacity:0}},0);tl.to("#hud-timer",{{opacity:1,duration:.3}},{r3(tk[0][0])});')
+        for k, (t, val, col) in enumerate(tk):
+            tid = f"hud-v{k}"
+            if val is None:  # hide the whole widget from t (e.g. under a long title)
+                js.append(f'tl.to("#hud-timer",{{opacity:0,duration:.2}},{r3(t)});')
+                continue
+            if k and tk[k - 1][1] is None:
+                js.append(f'tl.to("#hud-timer",{{opacity:1,duration:.2}},{r3(t)});')
+            nxt = tk[k + 1][0] if k + 1 < len(tk) else self.story_end
+            timers.append(f'<div id="{tid}" class="hud-tval" style="color:{col}">{esc(val)}</div>')
+            js.append(f'tl.set("#{tid}",{{opacity:0}},0);tl.fromTo("#{tid}",{{opacity:0,y:-14}},{{opacity:1,y:0,duration:.25,'
+                      f'ease:"power2.out",immediateRender:false}},{r3(t)});tl.set("#{tid}",{{opacity:0}},{r3(nxt)});')
+        self._timers_html = "".join(timers)
         js.append(f'tl.set("#hud-root-in",{{opacity:0}},{r3(self.story_end)});')
         return f'''<template>
 <style>
@@ -705,6 +771,10 @@ class Video:
 #hud-track{{position:absolute;left:0;top:34px;width:560px;height:28px;border-radius:14px;overflow:hidden;
   background:linear-gradient(90deg,{GREEN} 0%,{AMBER} 40%,{ORANGE} 70%,{RED} 100%);box-shadow:0 0 0 4px rgba(43,38,63,.18);}}
 #hud-cover{{position:absolute;left:0;top:0;width:560px;height:28px;background:#8f8b9c;}}
+#hud-timer{{position:absolute;right:56px;top:176px;width:440px;height:120px;text-align:right;}}
+#hud-tlabel{{font:900 28px "WI Caption";color:#fff;letter-spacing:2px;-webkit-text-stroke:6px {INK};paint-order:stroke fill;}}
+.hud-tval{{position:absolute;right:0;top:36px;font:700 64px/1 "WI Display";white-space:nowrap;
+  -webkit-text-stroke:10px {INK};paint-order:stroke fill;filter:drop-shadow(0 5px 0 rgba(0,0,0,.3));}}
 .hud-status{{position:absolute;left:584px;top:22px;font:900 44px "WI Caption";
   -webkit-text-stroke:9px {INK};paint-order:stroke fill;white-space:nowrap;}}
 </style>
@@ -714,6 +784,7 @@ class Video:
   {"".join(titles)}
   <div id="hud-meter"><div id="hud-label">{esc(m.METER)}</div><div id="hud-track"><div id="hud-cover"></div></div>
    {"".join(statuses)}</div>
+  <div id="hud-timer"><div id="hud-tlabel">{esc(getattr(m, "TIMER", ""))}</div>{getattr(self, "_timers_html", "")}</div>
  </div>
 </div>
 <script>
@@ -785,6 +856,9 @@ window.__timelines["captions"] = tl;
     def endcard_html(self):
         m = self.m
         title = esc(m.TITLE)
+        key = getattr(m, "TITLE_KEY", None)
+        if key:
+            title = title.replace(esc(key), f'<span style="color:{getattr(m, "KEY_COLOR", "#7cb7ff")}">{esc(key)}</span>', 1)
         cta = "<br>".join(esc(x) for x in m.CTA.split("\n"))
         return f'''<template>
 <style>

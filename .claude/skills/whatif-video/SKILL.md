@@ -5,7 +5,7 @@ description: Make a "What if…?" TikTok/Reels/Shorts video (1080x1920, ~60 s, A
 
 # What-if video (HyperFrames, 2D cartoon)
 
-The user is a TikTok creator, handle **@shortclips7256** (use it as `HANDLE` on every end card). They talk to you in German; **every video is in English** (script, captions,
+The user is a TikTok creator, handle **@manwhat.3** (TikTok name "WHAT IF?") (use it as `HANDLE` on every end card). They talk to you in German; **every video is in English** (script, captions,
 voice, on-screen text). Answer them in German. Everything is code: the kit in `kit/` writes a HyperFrames
 project (HTML + SVG + GSAP), HyperFrames renders it to MP4.
 
@@ -39,7 +39,7 @@ field (`"1968"` → `"nineteen sixty-eight"`).
 ## Workflow
 Work in `videos/<slug>/` of this repo. Kit = `.claude/skills/whatif-video/kit/`.
 
-1. **Script**: write `videos/<slug>/video.py` with `TITLE, SUB, CTA, HANDLE="@shortclips7256", METER, VOICE, SPEED` and
+1. **Script**: write `videos/<slug>/video.py` with `TITLE, SUB, CTA, HANDLE="@manwhat.3", METER, VOICE, SPEED` and
    `LINES = [(id, scene, on_screen_text, [keywords], spoken_text_or_omit), …]`. Show the user the script
    (English) with a one-line German summary; if they asked to just go, go.
 2. **Voice + timing**: `python3 .claude/skills/whatif-video/kit/voice.py videos/<slug>`
