@@ -81,7 +81,7 @@ class Cinema:
         self.sfx_list.append((name, max(0.0, t), vol))
 
     def ambient(self, name, t0, t1, vol=0.5, fade=0.8, offset=0.0):
-        """ambience / music bed from kit/ambient/<name>.mp3 between t0 and t1 with edge fades"""
+        """ambience from kit/ambient/<name>.mp3, or a project file "music/<name>" (assets/music/<name>.mp3)"""
         self.ambient_list.append((name, r3(t0), r3(t1), vol, fade, offset))
 
     def caption(self, t0, t1, text):
@@ -336,8 +336,12 @@ window.__timelines["endcard"] = tl;
                          f'data-track-index="10" data-volume="1"></audio>')
         os.makedirs(os.path.join(d, "assets", "ambient"), exist_ok=True)
         for k, (n, t0, t1, vol, fade, off) in enumerate(self.ambient_list):
-            shutil.copy(os.path.join(KIT, "ambient", n + ".mp3"), os.path.join(d, "assets", "ambient", n + ".mp3"))
-            audio.append(f'<audio id="amb-{k}" class="clip" src="assets/ambient/{n}.mp3" data-start="{t0}" data-duration="{r3(t1 - t0)}" '
+            if "/" in n:   # project file, e.g. "music/dark" -> assets/music/dark.mp3
+                src = f"assets/{n}.mp3"
+            else:
+                shutil.copy(os.path.join(KIT, "ambient", n + ".mp3"), os.path.join(d, "assets", "ambient", n + ".mp3"))
+                src = f"assets/ambient/{n}.mp3"
+            audio.append(f'<audio id="amb-{k}" class="clip" src="{src}" data-start="{t0}" data-duration="{r3(t1 - t0)}" '
                          f'data-media-start="{off}" data-track-index="{20 + k}" data-volume="{vol}" data-fade-in="{fade}" '
                          f'data-fade-out="{fade}"></audio>')
         if self.ambient_list:

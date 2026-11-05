@@ -27,6 +27,13 @@ and camera angles**, and **lots happening on screen** so it never feels monotono
 - **Sound**: `v.ambient(name, t0, t1, vol, fade)` from `kit/ambient/` (birds-evening, crowd, wind, space,
   fire, music-dark) + SFX on cuts and impacts. CC BY files need a credit line in the TikTok description
   (see `kit/ambient/CREDITS.md`). Freesound blocks automated downloads: use Wikimedia Commons via Openverse.
+- **Music (HeyGen catalog, the creator is signed in)**: one cue per mood (calm start → tension build → release →
+  mystery/outro). `node .claude/skills/whatif-video/kit/tools/music.mjs search "dark tense cinematic slow build"`,
+  then `... music.mjs get videos/<slug>/assets/music dark=<idPrefix>@"<same mood text>"`. Measure loudness per
+  5 s (ffmpeg → numpy RMS) and set `offset` so the build lands on the story's turn; place with
+  `v.ambient("music/dark", t0, t1, vol, fade, offset=...)`. Music ~0.4-0.6, ambience ~0.3-0.5 (no voice).
+  If `auth status` says signed out or expired: `npx hyperframes auth login --device` in the background, send
+  the user the URL + code (push notification), wait. Installing the separate heygen CLI was blocked: not needed.
 - Set `VOICEOVER = False`, `DURATION`, `CAPTIONS` in `video.py`; no voice.py run needed.
 - Build: `python3 .claude/skills/whatif-video/kit/cinema_kit.py videos/<slug>`; example:
   `videos/sun-pov/video.py`. World properties: `DEFAULTS` in `cinema_kit.py`. Render ≈ 10-15 min.

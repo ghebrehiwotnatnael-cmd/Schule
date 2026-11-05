@@ -150,7 +150,11 @@ def build(v):
     # ---- sound: ambience + music bed, no voice
     v.ambient("birds-evening", 0, 13.8, 0.5, 0.6)
     v.ambient("crowd", 0, 16.5, 0.32, 0.8)
-    v.ambient("music-dark", 9.0, 64.6 + 3.5, 0.24, 2.5)
+    # music (HeyGen catalog), one cue per mood
+    v.ambient("music/summer", 0, 14.2, 0.55, 1.0)
+    v.ambient("music/dark", 13.4, 51.4, 0.42, 1.2, offset=15)
+    v.ambient("music/sunrise", 50.8, 58.3, 0.6, 0.6, offset=13)
+    v.ambient("music/mystery", 57.4, 68.6, 0.6, 1.2, offset=15)
     v.ambient("wind", 23.4, 38.0, 0.5, 0.6)
     v.ambient("space", 38.0, 42.5, 0.45, 0.4)
     v.ambient("fire", 42.5, 47.0, 0.6, 0.3)
