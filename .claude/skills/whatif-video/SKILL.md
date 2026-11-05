@@ -5,7 +5,7 @@ description: Make a "What if…?" TikTok/Reels/Shorts video (1080x1920, ~60 s, A
 
 # What-if video (HyperFrames, 2D cartoon)
 
-The user is a TikTok creator. They talk to you in German; **every video is in English** (script, captions,
+The user is a TikTok creator, handle **@shortclips7256** (use it as `HANDLE` on every end card). They talk to you in German; **every video is in English** (script, captions,
 voice, on-screen text). Answer them in German. Everything is code: the kit in `kit/` writes a HyperFrames
 project (HTML + SVG + GSAP), HyperFrames renders it to MP4.
 
@@ -39,7 +39,7 @@ field (`"1968"` → `"nineteen sixty-eight"`).
 ## Workflow
 Work in `videos/<slug>/` of this repo. Kit = `.claude/skills/whatif-video/kit/`.
 
-1. **Script**: write `videos/<slug>/video.py` with `TITLE, SUB, CTA, HANDLE, METER, VOICE, SPEED` and
+1. **Script**: write `videos/<slug>/video.py` with `TITLE, SUB, CTA, HANDLE="@shortclips7256", METER, VOICE, SPEED` and
    `LINES = [(id, scene, on_screen_text, [keywords], spoken_text_or_omit), …]`. Show the user the script
    (English) with a one-line German summary; if they asked to just go, go.
 2. **Voice + timing**: `python3 .claude/skills/whatif-video/kit/voice.py videos/<slug>`
@@ -53,9 +53,11 @@ Work in `videos/<slug>/` of this repo. Kit = `.claude/skills/whatif-video/kit/`.
 6. **Look**: `npx hyperframes snapshot --at t1,t2,… --no-end -o build/snap`, tile the frames with ffmpeg
    and look at them. Check: props appear on their word, nothing overlaps the face, captions readable,
    characters fully off-screen when they should be.
-7. **Render**: `npx hyperframes render -o build/<slug>.mp4 -w 4 -q delivery` (≈1x-2x realtime).
-   Then `npx hyperframes audio build/<slug>.mp4 --json` (sound present, loudness) and send the MP4
-   to the user with `SendUserFile`.
+7. **Render** (~20 min for 60 s): `npx hyperframes render -o build/render_raw.mp4 -w 4 -q delivery`, then
+   **always** make the delivery file with phone-safe audio (AAC 44.1 kHz stereo, -14 LUFS, faststart):
+   `ffmpeg -i build/render_raw.mp4 -c:v copy -c:a aac -ar 44100 -ac 2 -b:a 192k -af "loudnorm=I=-14:TP=-1.5:LRA=11" -movflags +faststart build/<slug>.mp4`
+   Verify sound (`ffmpeg -i build/<slug>.mp4 -vn -af volumedetect -f null -`, mean around -16 dB) and send
+   the MP4 with `SendUserFile`. Tell the user the in-app preview may play muted: download it to hear it.
 
 ## Setup in a fresh session
 ```bash
