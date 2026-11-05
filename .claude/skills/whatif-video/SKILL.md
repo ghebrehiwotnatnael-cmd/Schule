@@ -33,6 +33,20 @@ and camera angles**, and **lots happening on screen** so it never feels monotono
 - Test hand poses fast without HyperFrames: copy `kit/tools/make.py` + `shot.js` into `<video>/build/handtest/`,
   run `python3 build/handtest/make.py hold,shield` then `node build/handtest/shot.js hold shield` from the video dir.
 
+## Creator feedback - apply to EVERY video (latest first)
+- After "sun-pov" (liked it overall): **don't rush through the timeline.** Each stage needs room to breathe:
+  2-4 shots per stage instead of one, so the viewer feels the time passing.
+- **Always add more and different perspectives**: same moment from several angles (POV, close-up on a detail,
+  wide/drone, from inside a building, through a window, from a car, a screen/news/phone view, from space).
+- **Show the side stories, not only the headline**, for every stage ask "what else is happening right now?":
+  - the **power grid / infrastructure** (power plant, substations, flickering lights, blackout spreading street by
+    street, traffic lights out, phone network down, water/heating);
+  - **what people do** (panic buying, queues, crowds watching the sky, people at home with candles, families
+    huddling, news on TV/phones, empty streets, emergency services, people helping each other);
+  - **nature and animals** (birds, pets, plants, sea), **city details** (shops, signs, cars, trains).
+- Plan the shot list first as a table: stage → 3-5 sub-moments (headline, power, people, nature, detail) →
+  camera for each. A 60-90 s video should have ~25-35 shots; keep each stage on screen long enough to read.
+
 ## Alternative look: flat 2D cartoon (`kit/whatif_kit.py`, only if asked)
 - Flat vector cartoon, thick dark outline `#2b263f`, soft vertical gradient background whose colour carries
   the mood (sky blue = normal, warm yellow/orange = day, lilac, sickly green = gross, navy = night/danger,
