@@ -1,0 +1,57 @@
+<template>
+<style>
+@font-face{font-family:"WI Serif";src:url("assets/fonts/spectral-400-normal.woff2") format("woff2");font-weight:400}
+@font-face{font-family:"WI Serif";src:url("assets/fonts/spectral-500-normal.woff2") format("woff2");font-weight:500}
+@font-face{font-family:"WI Serif";src:url("assets/fonts/spectral-400-italic.woff2") format("woff2");font-weight:400;font-style:italic}
+#root{position:absolute;inset:0;pointer-events:none;}
+.cap{position:absolute;left:0;top:1236px;width:1080px;height:200px;text-align:center;}
+.cap-in{display:inline-block;max-width:930px;font:italic 400 46px/1.25 "WI Serif";color:#fff;
+  text-shadow:0 2px 14px rgba(0,0,0,.7),0 1px 3px rgba(0,0,0,.8);}
+</style>
+<div id="root" data-composition-id="captions" data-width="1080" data-height="1920">
+<div id="cap-0" class="clip cap" data-start="3.4" data-duration="2.8" data-track-index="0"><div class="cap-in">The Champ de Mars, Paris. A warm summer evening.</div></div>
+<div id="cap-1" class="clip cap" data-start="8.8" data-duration="2.6" data-track-index="0"><div class="cap-in">Every insect. Gone.</div></div>
+<div id="cap-2" class="clip cap" data-start="11.7" data-duration="2.7" data-track-index="0"><div class="cap-in">At first, it feels nice. No more bites.</div></div>
+<div id="cap-3" class="clip cap" data-start="14.7" data-duration="2.7" data-track-index="0"><div class="cap-in">Most songbirds feed their chicks insects.</div></div>
+<div id="cap-4" class="clip cap" data-start="17.7" data-duration="2.7" data-track-index="0"><div class="cap-in">The news can&#x27;t explain it.</div></div>
+<div id="cap-5" class="clip cap" data-start="20.7" data-duration="2.7" data-track-index="0"><div class="cap-in">Week 1. Flowers bloom... for no one.</div></div>
+<div id="cap-6" class="clip cap" data-start="26.7" data-duration="2.7" data-track-index="0"><div class="cap-in">Freshwater fish lose their food.</div></div>
+<div id="cap-7" class="clip cap" data-start="29.7" data-duration="2.7" data-track-index="0"><div class="cap-in">Month 1. Fruit gets expensive.</div></div>
+<div id="cap-8" class="clip cap" data-start="32.7" data-duration="2.7" data-track-index="0"><div class="cap-in">Almonds need bees. Chocolate needs tiny flies.</div></div>
+<div id="cap-9" class="clip cap" data-start="38.7" data-duration="2.7" data-track-index="0"><div class="cap-in">Wheat, rice and corn survive. The wind pollinates them.</div></div>
+<div id="cap-10" class="clip cap" data-start="41.7" data-duration="2.7" data-track-index="0"><div class="cap-in">Month 6. Nothing breaks down anymore.</div></div>
+<div id="cap-11" class="clip cap" data-start="47.7" data-duration="2.7" data-track-index="0"><div class="cap-in">Fewer flowers. Fewer birds.</div></div>
+<div id="cap-12" class="clip cap" data-start="50.7" data-duration="2.7" data-track-index="0"><div class="cap-in">Dinner gets boring.</div></div>
+<div id="cap-13" class="clip cap" data-start="53.7" data-duration="2.7" data-track-index="0"><div class="cap-in">Year 1. A quieter, greyer planet.</div></div>
+<div id="cap-14" class="clip cap" data-start="56.7" data-duration="2.7" data-track-index="0"><div class="cap-in">Some kids have never seen a butterfly.</div></div>
+<div id="cap-15" class="clip cap" data-start="59.7" data-duration="2.7" data-track-index="0"><div class="cap-in">Plot twist: this is already happening.</div></div>
+<div id="cap-16" class="clip cap" data-start="62.7" data-duration="5.7" data-track-index="0"><div class="cap-in">In parts of China, farmers pollinate pear trees by hand.</div></div>
+<div id="cap-17" class="clip cap" data-start="68.7" data-duration="3.7" data-track-index="0"><div class="cap-in">In German nature reserves, flying insects dropped by over 75% in 27 years.</div></div>
+<div id="cap-18" class="clip cap" data-start="72.7" data-duration="3.6" data-track-index="0"><div class="cap-in">Every bite of fruit starts with one of them.</div></div>
+</div>
+<script>
+(function(){
+const tl = gsap.timeline({paused:true,defaults:{lazy:false}});
+tl.fromTo("#cap-0 .cap-in",{opacity:0,y:8},{opacity:1,y:0,duration:.28,ease:"power2.out"},3.4);tl.to("#cap-0 .cap-in",{opacity:0,duration:.18},6.01);
+tl.fromTo("#cap-1 .cap-in",{opacity:0,y:8},{opacity:1,y:0,duration:.28,ease:"power2.out"},8.8);tl.to("#cap-1 .cap-in",{opacity:0,duration:.18},11.21);
+tl.fromTo("#cap-2 .cap-in",{opacity:0,y:8},{opacity:1,y:0,duration:.28,ease:"power2.out"},11.7);tl.to("#cap-2 .cap-in",{opacity:0,duration:.18},14.21);
+tl.fromTo("#cap-3 .cap-in",{opacity:0,y:8},{opacity:1,y:0,duration:.28,ease:"power2.out"},14.7);tl.to("#cap-3 .cap-in",{opacity:0,duration:.18},17.21);
+tl.fromTo("#cap-4 .cap-in",{opacity:0,y:8},{opacity:1,y:0,duration:.28,ease:"power2.out"},17.7);tl.to("#cap-4 .cap-in",{opacity:0,duration:.18},20.21);
+tl.fromTo("#cap-5 .cap-in",{opacity:0,y:8},{opacity:1,y:0,duration:.28,ease:"power2.out"},20.7);tl.to("#cap-5 .cap-in",{opacity:0,duration:.18},23.21);
+tl.fromTo("#cap-6 .cap-in",{opacity:0,y:8},{opacity:1,y:0,duration:.28,ease:"power2.out"},26.7);tl.to("#cap-6 .cap-in",{opacity:0,duration:.18},29.21);
+tl.fromTo("#cap-7 .cap-in",{opacity:0,y:8},{opacity:1,y:0,duration:.28,ease:"power2.out"},29.7);tl.to("#cap-7 .cap-in",{opacity:0,duration:.18},32.21);
+tl.fromTo("#cap-8 .cap-in",{opacity:0,y:8},{opacity:1,y:0,duration:.28,ease:"power2.out"},32.7);tl.to("#cap-8 .cap-in",{opacity:0,duration:.18},35.21);
+tl.fromTo("#cap-9 .cap-in",{opacity:0,y:8},{opacity:1,y:0,duration:.28,ease:"power2.out"},38.7);tl.to("#cap-9 .cap-in",{opacity:0,duration:.18},41.21);
+tl.fromTo("#cap-10 .cap-in",{opacity:0,y:8},{opacity:1,y:0,duration:.28,ease:"power2.out"},41.7);tl.to("#cap-10 .cap-in",{opacity:0,duration:.18},44.21);
+tl.fromTo("#cap-11 .cap-in",{opacity:0,y:8},{opacity:1,y:0,duration:.28,ease:"power2.out"},47.7);tl.to("#cap-11 .cap-in",{opacity:0,duration:.18},50.21);
+tl.fromTo("#cap-12 .cap-in",{opacity:0,y:8},{opacity:1,y:0,duration:.28,ease:"power2.out"},50.7);tl.to("#cap-12 .cap-in",{opacity:0,duration:.18},53.21);
+tl.fromTo("#cap-13 .cap-in",{opacity:0,y:8},{opacity:1,y:0,duration:.28,ease:"power2.out"},53.7);tl.to("#cap-13 .cap-in",{opacity:0,duration:.18},56.21);
+tl.fromTo("#cap-14 .cap-in",{opacity:0,y:8},{opacity:1,y:0,duration:.28,ease:"power2.out"},56.7);tl.to("#cap-14 .cap-in",{opacity:0,duration:.18},59.21);
+tl.fromTo("#cap-15 .cap-in",{opacity:0,y:8},{opacity:1,y:0,duration:.28,ease:"power2.out"},59.7);tl.to("#cap-15 .cap-in",{opacity:0,duration:.18},62.21);
+tl.fromTo("#cap-16 .cap-in",{opacity:0,y:8},{opacity:1,y:0,duration:.28,ease:"power2.out"},62.7);tl.to("#cap-16 .cap-in",{opacity:0,duration:.18},68.21);
+tl.fromTo("#cap-17 .cap-in",{opacity:0,y:8},{opacity:1,y:0,duration:.28,ease:"power2.out"},68.7);tl.to("#cap-17 .cap-in",{opacity:0,duration:.18},72.21);
+tl.fromTo("#cap-18 .cap-in",{opacity:0,y:8},{opacity:1,y:0,duration:.28,ease:"power2.out"},72.7);tl.to("#cap-18 .cap-in",{opacity:0,duration:.18},76.11);
+window.__timelines["captions"] = tl;
+})();
+</script>
+</template>

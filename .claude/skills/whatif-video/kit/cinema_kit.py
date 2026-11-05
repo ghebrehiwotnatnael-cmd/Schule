@@ -28,6 +28,7 @@ DEFAULTS = {
     "volcano": 0.0, "ash": 0.0,
     "handR": HIDDEN, "handL": HIDDEN, "item": "none", "torch": 0.0, "shiver": 0.0, "breath": 0.0, "frostLens": 0.0, "flash": 0.0,
     "spaceCam": [0, 0, 34], "spaceFov": 40, "earthSun": 1.0, "earthLights": 1.0, "earthIce": 0.0,
+    "dof": 0.0, "focus": 5.0, "mblur": 0.0, "shadowSize": 25.0,
 }
 # first-person hand poses (camera space: x right, y up, z forward is negative; then rx, ry, rz)
 POSES = {
@@ -107,7 +108,13 @@ class Cinema:
     # ------------------------------------------------ compile tracks
     def tracks(self):
         out = {}
-        for prop, init in DEFAULTS.items():
+        extra = dict(getattr(self.m, "WORLD_DEFAULTS", {}))
+        props = dict(DEFAULTS)
+        for _, _, kp in self.keys:
+            for k in kp:
+                props.setdefault(k, extra.get(k, 0.0))
+        props.update({k: v for k, v in extra.items()})
+        for prop, init in props.items():
             cur, segs = init, []
             for t, dur, props in sorted(self.keys, key=lambda k: k[0]):
                 if prop in props:
@@ -119,7 +126,8 @@ class Cinema:
 
     # ------------------------------------------------ compositions
     def world_html(self):
-        js = open(os.path.join(KIT, "world.js")).read()
+        sets = getattr(self.m, "SET_FILES", ["sets_common.js", "sets_city.js", "sets_nature.js"])
+        js = "\n".join(open(os.path.join(KIT, f)).read() for f in sets) + "\n" + open(os.path.join(KIT, "world.js")).read()
         D = self.story_end
         return f'''<template>
 <style>#root{{position:absolute;inset:0;background:#000;}} #world-canvas{{position:absolute;left:0;top:0;width:1080px;height:1920px;}}</style>
@@ -196,6 +204,8 @@ function fmt(seg, t){{
   const k = seg.t1>seg.t0 ? Math.min(1,Math.max(0,(t-seg.t0)/(seg.t1-seg.t0))) : 1;
   const v = seg.v0 + (seg.v1-seg.v0)*k;
   if(seg.mode==="sec"){{ const s=Math.max(0,v); const m=Math.floor(s/60); return m+":"+p2(s%60)+"."+String(Math.floor((s%1)*1000)).padStart(3,"0"); }}
+  if(seg.mode==="count"){{ return Math.round(Math.max(0,v)).toLocaleString("en-US"); }}
+  if(seg.mode==="pct"){{ const r=Math.round(v); return (r>0?"+":"")+r+"%"; }}
   if(seg.mode==="days"){{ const d=Math.max(0,v); const dd=Math.floor(d); const h=(d-dd)*24; const mi=(h%1)*60; const se=(mi%1)*60;
     return dd+"d "+p2(h)+":"+p2(mi)+":"+p2(se); }}
   return seg.value;
