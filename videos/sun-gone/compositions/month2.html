@@ -1,0 +1,36 @@
+<template>
+<style>
+@font-face{font-family:"WI Display";src:url("assets/fonts/fredoka-700.woff2") format("woff2");font-weight:700}
+@font-face{font-family:"WI Caption";src:url("assets/fonts/nunito-900.woff2") format("woff2");font-weight:900}
+#root{position:absolute;inset:0;overflow:hidden;background:#030b1a;}
+#month2-bg{position:absolute;inset:0;background:linear-gradient(180deg,#0f3566 0%,#030b1a 100%);}
+#month2-stripes{position:absolute;top:0;left:-400px;width:1880px;height:1920px;
+  background:repeating-linear-gradient(90deg,rgba(255,255,255,0) 0 80px,rgba(255,255,255,.075) 80px 150px,rgba(255,255,255,0) 150px 230px);}
+#month2-glow{position:absolute;inset:0;background:radial-gradient(circle at 50% 47%,rgba(255,255,255,0.06) 0,rgba(255,255,255,0) 55%);}
+#month2-svg{position:absolute;left:0;top:0;width:1080px;height:1920px;overflow:visible;}
+</style>
+<div id="root" data-composition-id="month2" data-width="1080" data-height="1920">
+  <div id="month2-bg"></div><div id="month2-glow"></div>
+  <svg id="month2-svg" viewBox="0 0 1080 1920" data-layout-allow-overflow data-layout-allow-overlap>
+    <defs><radialGradient id="glow"><stop offset=".6" stop-color="#fff" stop-opacity=".55"/><stop offset="1" stop-color="#fff" stop-opacity="0"/></radialGradient></defs>
+    <rect x="-50" y="430" width="1180" height="190" fill="#e6f4ff" stroke="#2b263f" stroke-width="6"/><path d="M80 470 L200 560 L260 500 M520 450 L600 540 L700 480 M840 470 L900 590" stroke="#9cc3e6" stroke-width="7" fill="none"/>
+    <g id="month2-world"><g transform="translate(540 990)"><g id="month2-vent"><circle r="260" fill="url(#glow)" opacity=".35"/><g transform="scale(1.3)"><path d="M-60 120 L-35 -40 L35 -40 L60 120 Z" fill="#57534e" stroke="#2b263f" stroke-width="7" stroke-linejoin="round" stroke-linecap="round"/><circle cx="-10" cy="-75" r="26" fill="#9ca3af" opacity=".8"/><circle cx="18" cy="-110" r="20" fill="#9ca3af" opacity=".6"/><path d="M-35 -40 L35 -40" stroke="#f97316" stroke-width="10"/></g></g></g><g id="month2-worms"><path d="M380 1150 C370 1100 392 1070 380 1030" stroke="#ef4444" stroke-width="12" stroke-linecap="round" fill="none"/><circle cx="380" cy="1028" r="11" fill="#fca5a5"/><path d="M420 1150 C410 1100 432 1070 420 1030" stroke="#ef4444" stroke-width="12" stroke-linecap="round" fill="none"/><circle cx="420" cy="1028" r="11" fill="#fca5a5"/><path d="M660 1150 C650 1100 672 1070 660 1030" stroke="#ef4444" stroke-width="12" stroke-linecap="round" fill="none"/><circle cx="660" cy="1028" r="11" fill="#fca5a5"/><path d="M700 1150 C690 1100 712 1070 700 1030" stroke="#ef4444" stroke-width="12" stroke-linecap="round" fill="none"/><circle cx="700" cy="1028" r="11" fill="#fca5a5"/><path d="M730 1150 C720 1100 742 1070 730 1030" stroke="#ef4444" stroke-width="12" stroke-linecap="round" fill="none"/><circle cx="730" cy="1028" r="11" fill="#fca5a5"/></g><rect x="-50" y="1140" width="1180" height="900" fill="#2a2320"/><g transform="translate(487 870)"><g id="month2-bub0"><circle r="9" fill="#cbd5e1" opacity=".7"/></g></g><g transform="translate(490 870)"><g id="month2-bub1"><circle r="13" fill="#cbd5e1" opacity=".7"/></g></g><g transform="translate(501 870)"><g id="month2-bub2"><circle r="12" fill="#cbd5e1" opacity=".7"/></g></g><g transform="translate(512 870)"><g id="month2-bub3"><circle r="11" fill="#cbd5e1" opacity=".7"/></g></g><g transform="translate(557 870)"><g id="month2-bub4"><circle r="8" fill="#cbd5e1" opacity=".7"/></g></g><g transform="translate(554 870)"><g id="month2-bub5"><circle r="10" fill="#cbd5e1" opacity=".7"/></g></g></g>
+    <g transform="translate(270 690)"><g id="month2-ice"><rect x="-148" y="-36" width="295" height="72" rx="36.0" fill="#e0f2fe" stroke="#3d3a4d" stroke-width="5"/><text x="0" y="14.399999999999999" font-family="WI Display" font-weight="900" font-size="40" fill="#36324a" text-anchor="middle"  style="" >ICE ON TOP</text></g></g><g transform="translate(700 760)"><g id="month2-liq"><rect x="-239" y="-85" width="477" height="170" rx="20" fill="rgba(255,255,255,.88)" stroke="#0ea5e9" stroke-width="9"/><text x="0" y="14" font-family="WI Display" font-weight="900" font-size="70" fill="#0ea5e9" text-anchor="middle"  style="" >LIQUID</text><text x="0" y="58" font-family="WI Display" font-weight="900" font-size="30" fill="#0ea5e9" text-anchor="middle"  style="" >FOR THOUSANDS OF YEARS</text></g></g>
+  </svg>
+</div>
+<script>
+(function(){
+const tl = gsap.timeline({paused:true,defaults:{lazy:false}});
+tl.fromTo("#month2-world",{scale:1},{scale:1.035,duration:6.638,ease:"none",svgOrigin:"540 1050"},0);
+tl.fromTo("#month2-bub0",{y:0,opacity:.8},{y:-260,opacity:0,duration:2.2,ease:"none",repeat:3,immediateRender:true},0.00);
+tl.fromTo("#month2-bub1",{y:0,opacity:.8},{y:-260,opacity:0,duration:2.2,ease:"none",repeat:3,immediateRender:true},0.37);
+tl.fromTo("#month2-bub2",{y:0,opacity:.8},{y:-260,opacity:0,duration:2.2,ease:"none",repeat:3,immediateRender:true},0.74);
+tl.fromTo("#month2-bub3",{y:0,opacity:.8},{y:-260,opacity:0,duration:2.2,ease:"none",repeat:3,immediateRender:true},1.11);
+tl.fromTo("#month2-bub4",{y:0,opacity:.8},{y:-260,opacity:0,duration:2.2,ease:"none",repeat:3,immediateRender:true},1.48);
+tl.fromTo("#month2-bub5",{y:0,opacity:.8},{y:-260,opacity:0,duration:2.2,ease:"none",repeat:3,immediateRender:true},1.85);
+tl.set("#month2-ice",{opacity:0,scale:0.01,transformOrigin:"50% 50%",immediateRender:true},0);tl.to("#month2-ice",{opacity:1,scale:1,duration:0.45,ease:"back.out(2.2)"},2.709);
+tl.set("#month2-liq",{opacity:0,scale:2.4,transformOrigin:"50% 50%",immediateRender:true},0);tl.to("#month2-liq",{opacity:1,scale:1,duration:.22,ease:"power3.in"},4.337);tl.to("#month2-liq",{scale:1.06,duration:.08,yoyo:true,repeat:1},4.557);
+window.__timelines["month2"] = tl;
+})();
+</script>
+</template>

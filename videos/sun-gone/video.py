@@ -81,7 +81,7 @@ def build(v):
     s.add(hills("#86d07a", "#5fb85a"), "back")
     s.add(place(s.ident("sun"), 800, 590, sun()), "back")
     g = s.char("guy", mouth="smile", look=(0.7, -0.7))
-    s.wiggle("sun", 0.1, 1.2, amp=3, period=0.3)
+    s.wiggle("sun", 0.1, max(0.3, W("h1", "disappeared") - 0.3), amp=3, period=0.3)
     s.to("sun", W("h1", "disappeared"), scale=0.01, opacity=0, duration=0.35, ease="back.in(2)", transformOrigin="50% 50%")
     v.sfx("whoosh", W("h1", "disappeared") - 0.05, 0.5)
     g.at(W("h1", "disappeared") + 0.15, mouth="o", look=(0.7, -0.7))
@@ -127,7 +127,7 @@ def build(v):
     s.wiggle("guy-pos", L("d3a"), E("d3c") - L("d3a"), amp=1.2, period=0.08)
     s.add(place(s.ident("cold"), 540, 560, stamp("BELOW 0°C", "MOST OF THE PLANET", color="#2563eb")), "front")
     s.stamp_in("cold", W("d3b", "freezing"))
-    s.hide("cold", L("d3c") - 0.05, 0.15)
+    s.hide("cold", W("d3c", "plants") - 0.05, 0.15)
     s.add(place(s.ident("plant"), 810, 600, bubble(115, icon("plant"))), "front")
     s.add(place(s.ident("plantx"), 810, 600, xmark(80)), "front")
     s.pop("plant", W("d3c", "plants")).pop("plantx", W("d3c", "stop"), dur=0.25, sfx="click-soft", vol=0.6)
@@ -142,10 +142,10 @@ def build(v):
     s.snowfall(70, seed=6)
     s.add(place(s.ident("lakes"), 540, 570, stamp("FROZEN", "LAKES AND RIVERS", color="#2563eb")), "front")
     s.stamp_in("lakes", W("mo1b", "freeze"))
-    s.hide("lakes", L("mo1c") - 0.05, 0.15)
+    s.hide("lakes", W("mo1c", "food") - 0.05, 0.15)
     s.add(place(s.ident("crop"), 810, 600, bubble(110, icon("plant"))), "front")
     s.add(place(s.ident("cropx"), 810, 600, xmark(80)), "front")
-    s.pop("crop", W("mo1c", "crops")).pop("cropx", W("mo1c", "gone"), dur=0.25, sfx="click-soft", vol=0.6)
+    s.pop("crop", W("mo1c", "crops") + 0.05).pop("cropx", W("mo1c", "gone"), dur=0.25, sfx="click-soft", vol=0.6)
     s.add(place(s.ident("chain"), 330, 560, banner("FOOD CHAIN", 40)), "front")
     s.pop("chain", W("mo1c", "food"))
     s.shake("chain", W("mo1c", "collapse"), n=10, amp=8)
@@ -158,20 +158,20 @@ def build(v):
     s.add('<rect x="-50" y="430" width="1180" height="190" fill="#e6f4ff" stroke="#2b263f" stroke-width="6"/>'
           '<path d="M80 470 L200 560 L260 500 M520 450 L600 540 L700 480 M840 470 L900 590" stroke="#9cc3e6" stroke-width="7" fill="none"/>',
           "back")
-    s.add(place(s.ident("vent"), 540, 1180, f'<circle r="260" fill="url(#glow)" opacity=".35"/><g transform="scale(1.3)">{icon("vent")}</g>'),
+    s.add(place(s.ident("vent"), 540, 990, f'<circle r="260" fill="url(#glow)" opacity=".35"/><g transform="scale(1.3)">{icon("vent")}</g>'),
           "world")
     rnd = random.Random(2)
-    worms = "".join(f'<path d="M{x} 1340 C{x - 10} 1290 {x + 12} 1260 {x} 1220" stroke="#ef4444" stroke-width="12" '
-                    f'stroke-linecap="round" fill="none"/><circle cx="{x}" cy="1218" r="11" fill="#fca5a5"/>'
+    worms = "".join(f'<path d="M{x} 1150 C{x - 10} 1100 {x + 12} 1070 {x} 1030" stroke="#ef4444" stroke-width="12" '
+                    f'stroke-linecap="round" fill="none"/><circle cx="{x}" cy="1028" r="11" fill="#fca5a5"/>'
                     for x in (380, 420, 660, 700, 730))
-    s.add(f'<g id="month2-worms">{worms}</g><rect x="-50" y="1330" width="1180" height="700" fill="#2a2320"/>', "world")
+    s.add(f'<g id="month2-worms">{worms}</g><rect x="-50" y="1140" width="1180" height="900" fill="#2a2320"/>', "world")
     for k in range(6):
-        s.add(place(s.ident(f"bub{k}"), 520 + rnd.randint(-40, 40), 1060, f'<circle r="{rnd.randint(8, 16)}" fill="#cbd5e1" opacity=".7"/>'))
-        s.js.append(f'tl.fromTo("#month2-bub{k}",{{y:0,opacity:.8}},{{y:-420,opacity:0,duration:2.2,ease:"none",'
+        s.add(place(s.ident(f"bub{k}"), 520 + rnd.randint(-40, 40), 870, f'<circle r="{rnd.randint(8, 16)}" fill="#cbd5e1" opacity=".7"/>'))
+        s.js.append(f'tl.fromTo("#month2-bub{k}",{{y:0,opacity:.8}},{{y:-260,opacity:0,duration:2.2,ease:"none",'
                     f'repeat:{int((s.end - s.start) / 2.2)},immediateRender:true}},{k * 0.37:.2f});')
-    s.add(place(s.ident("ice"), 540, 690, pill("ICE ON TOP", "#e0f2fe", size=40)), "front")
+    s.add(place(s.ident("ice"), 270, 690, pill("ICE ON TOP", "#e0f2fe", size=40)), "front")
     s.pop("ice", W("mo2b", "ice"))
-    s.add(place(s.ident("liq"), 540, 860, stamp("LIQUID", "FOR THOUSANDS OF YEARS", color="#0ea5e9")), "front")
+    s.add(place(s.ident("liq"), 700, 760, stamp("LIQUID", "FOR THOUSANDS OF YEARS", color="#0ea5e9")), "front")
     s.stamp_in("liq", W("mo2c", "liquid"))
     v.timer_at(L("mo2a"), "30 DAYS")
 
@@ -219,7 +219,7 @@ def build(v):
     s.add(place(s.ident("june"), 540, 580, stamp("SNOW IN JUNE", "", color="#2563eb", size=64), rot=-6), "front")
     s.stamp_in("june", W("t4", "June"))
     g.at(W("t4", "snowed"), mouth="wavy", pale=0.3, blush=0.6)
-    s.hide("june", L("t5") - 0.05, 0.12)
+    s.hide("june", W("t5", "Year") - 0.05, 0.12)
     s.add(place(s.ident("yws"), 540, 560, banner("YEAR WITHOUT A SUMMER", 42)), "front")
     s.pop("yws", W("t5", "Year"))
 
