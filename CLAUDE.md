@@ -8,3 +8,4 @@
 - **Never start a new video on your own.** Only build/render a new video when the user explicitly says so.
 - **New ideas / improvement suggestions: list them first and wait for the user's confirmation** before using
   them in a video. Approved items are recorded in `.claude/skills/whatif-video/SKILL.md` ("Approved upgrades").
+- Deliver ONE final video per request (no draft previews, no 2-3 variants).

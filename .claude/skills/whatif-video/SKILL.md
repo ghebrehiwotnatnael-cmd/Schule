@@ -49,11 +49,11 @@ and camera angles**, and **lots happening on screen** so it never feels monotono
   close-ups, more sets (supermarket, apartment with window, power plant, subway, hospital, beach), more character
   animation (running, hugging, looking at phones, shivering).
 - Channel: frame 0 is the thumbnail, so show something spectacular from the first frame; offer 2-3 hook variants
-  of the first 3 s; make the end loop back into the start; deliver a ready TikTok description (hashtags,
+  ... (superseded: pick ONE hook yourself, no variants); make the end loop back into the start; deliver a ready TikTok description (hashtags,
   CC-BY/music credits, a comment question) with every video; think in series ("What if ... disappeared",
   "... for 5 seconds").
-- Workflow: send the shot list (table) before building; render a fast draft preview (`-q draft`) for approval
-  before the final render.
+- Workflow: send the shot list (table) before building. **No drafts and no variants**: the creator wants ONE
+  final video every time (render at 30 fps, `-q delivery`); pick the best hook yourself.
 
 ## Creator feedback - apply to EVERY video (latest first)
 - After "insects-gone" draft: **raise the visual quality next time.** Plan: real CC0 3D models instead of box
