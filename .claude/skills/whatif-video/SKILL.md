@@ -56,6 +56,11 @@ and camera angles**, and **lots happening on screen** so it never feels monotono
   before the final render.
 
 ## Creator feedback - apply to EVERY video (latest first)
+- After "insects-gone" draft: **raise the visual quality next time.** Plan: real CC0 3D models instead of box
+  primitives (Poly Haven models/HDRIs/PBR textures via api.polyhaven.com; Quaternius rigged, animated characters,
+  animals, plants, vehicles; Khronos glTF samples), GLTFLoader + HDRI image-based lighting + PBR materials,
+  better grass/crops (instanced cards), softer shadows, colour grading, higher-detail hero props for close-ups.
+  Propose the concrete upgrade list to the creator first (rule: ideas need confirmation).
 - After "sun-pov" (liked it overall): **don't rush through the timeline.** Each stage needs room to breathe:
   2-4 shots per stage instead of one, so the viewer feels the time passing.
 - **Always add more and different perspectives**: same moment from several angles (POV, close-up on a detail,
