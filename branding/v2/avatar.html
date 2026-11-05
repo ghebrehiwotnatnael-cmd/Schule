@@ -1,0 +1,26 @@
+<!doctype html><html><head><style>
+@font-face{font-family:S;src:url(spectral-400-normal.woff2)}@font-face{font-family:S;font-style:italic;src:url(spectral-400-italic.woff2)}
+html,body{margin:0;width:1080px;height:1080px;background:#000;overflow:hidden}
+canvas{position:absolute;left:0;top:0}
+#t{position:absolute;left:0;width:1080px;top:300px;text-align:center;color:#fff;font:400 190px/1 S;letter-spacing:2px;
+ text-shadow:0 0 40px rgba(120,170,255,.45),0 4px 18px rgba(0,0,0,.8)}
+#t i{color:#ffcf6e}
+</style></head><body><canvas id="c" width="1080" height="1080"></canvas><div id="t">What <i>if?</i></div>
+<script src="three.min.js"></script><script>
+const r=new THREE.WebGLRenderer({canvas:document.getElementById('c'),antialias:true,preserveDrawingBuffer:true});
+r.setSize(1080,1080,false);const s=new THREE.Scene();const cam=new THREE.PerspectiveCamera(30,1,0.1,5000);
+cam.position.set(0,2,34);cam.lookAt(0,2.2,0);
+const L=new THREE.TextureLoader();let n=0;const done=()=>{if(++n===3){draw();window.READY=1}};
+const day=L.load('earth_atmos_2048.jpg',done),night=L.load('earth_lights_2048.png',done),cl=L.load('earth_clouds_1024.png',done);
+const sunDir=new THREE.Vector3(0.55,0.75,-0.6).normalize();
+const m=new THREE.ShaderMaterial({uniforms:{day:{value:day},night:{value:night},sunDir:{value:sunDir}},
+vertexShader:'varying vec2 vUv;varying vec3 vN;varying vec3 vV;void main(){vUv=uv;vN=normalize(mat3(modelMatrix)*normal);vec4 w=modelMatrix*vec4(position,1.);vV=normalize(cameraPosition-w.xyz);gl_Position=projectionMatrix*viewMatrix*w;}',
+fragmentShader:'uniform sampler2D day;uniform sampler2D night;uniform vec3 sunDir;varying vec2 vUv;varying vec3 vN;varying vec3 vV;void main(){vec3 d=texture2D(day,vUv).rgb;vec3 nl=texture2D(night,vUv).rgb;float l=dot(normalize(vN),sunDir);float k=smoothstep(-0.15,0.25,l);vec3 c=d*k*1.15+nl*(1.-k)*1.8;float rim=pow(1.-max(dot(normalize(vN),vV),0.),3.);c+=vec3(.3,.55,1.)*rim*(0.25+0.9*smoothstep(-0.3,0.6,l));c+=vec3(1.,.65,.3)*pow(max(0.,1.-abs(l)*6.),2.)*0.35*rim;gl_FragColor=vec4(c,1.);}'});
+const e=new THREE.Mesh(new THREE.SphereGeometry(10,128,64),m);e.position.y=-8.2;e.rotation.y=-1.3;e.rotation.x=0.35;s.add(e);
+const c=new THREE.Mesh(new THREE.SphereGeometry(10.08,96,48),new THREE.MeshLambertMaterial({map:cl,transparent:true,opacity:.45,depthWrite:false}));c.position.y=-8.2;c.rotation.y=-1.3;c.rotation.x=0.35;s.add(c);
+const dl=new THREE.DirectionalLight(0xffffff,1.1);dl.position.copy(sunDir).multiplyScalar(50);s.add(dl);
+const g=new THREE.BufferGeometry(),p=[];let a=7;const R=()=>{a=(a*16807)%2147483647;return a/2147483647};
+for(let i=0;i<2200;i++){const t=R()*6.28,ph=Math.acos(2*R()-1);p.push(900*Math.sin(ph)*Math.cos(t),900*Math.cos(ph),900*Math.sin(ph)*Math.sin(t))}
+g.setAttribute('position',new THREE.Float32BufferAttribute(p,3));s.add(new THREE.Points(g,new THREE.PointsMaterial({color:0xffffff,size:1.6,sizeAttenuation:false})));
+function draw(){r.render(s,cam)}
+</script></body></html>
