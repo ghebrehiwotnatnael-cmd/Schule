@@ -9,7 +9,26 @@ The user is a TikTok creator, handle **@manwhat.3** (TikTok name "WHAT IF?") (us
 voice, on-screen text). Answer them in German. Everything is code: the kit in `kit/` writes a HyperFrames
 project (HTML + SVG + GSAP), HyperFrames renders it to MP4.
 
-## The look (matches the creator's references, don't drift from it)
+## DEFAULT LOOK: cinematic 3D (`kit/cinema_kit.py` + `kit/world.js`)
+The creator said explicitly: make videos **exactly in the graphic style of their reference**
+(https://vm.tiktok.com/ZGdXre8Sx/ "What if electrons disappeared for 5 seconds?"). Use this look unless they
+ask for the cartoon one:
+- A low-poly **three.js 3D world** (city park, blocky people on a picnic blanket, low-poly trees, skyline of
+  window-textured towers, gradient dusk sky, fog), slow camera moves; the world changes with the story
+  (night, stars, frost, snow, frozen pond, bunker, volcano, view of Earth from space).
+- Title at the start: serif (Spectral) ~70 px, centred, keyword coloured, a glowing icon above it.
+- **Left widget**: small tracked sans label ("SUN DISAPPEARS IN" / "SUN RETURNS IN"), big serif number that
+  ticks live ("0:06.636", "88d 02:44:29"), tiny mono sub-line ("DAY 1 OF 90"). This is the time grid.
+- Captions: one whole sentence at a time, italic serif ~46 px, centred at y≈1290, soft shadow.
+- Hard cuts between beats; end card: dark #121212, serif title with coloured keyword, mono sub-text,
+  share arrow + underlined mono CTA, avatar + handle.
+- The reference has music only; this channel uses the AI voice (they asked for it) + SFX.
+Build: `video.py` with `LINES` and `build(v)` using `v.key(t, dur, **world_props)`, `v.widget(...)`,
+`v.title_until(t, icon_svg)`, `v.sfx(...)`, `v.no_caption`; generate with
+`python3 .claude/skills/whatif-video/kit/cinema_kit.py videos/<slug>`. World properties: see `DEFAULTS` in
+`cinema_kit.py`; example: `videos/sun-gone-3d/video.py`. Render takes ~9 min (WebGL in software).
+
+## Alternative look: flat 2D cartoon (`kit/whatif_kit.py`, only if asked)
 - Flat vector cartoon, thick dark outline `#2b263f`, soft vertical gradient background whose colour carries
   the mood (sky blue = normal, warm yellow/orange = day, lilac, sickly green = gross, navy = night/danger,
   light blue = plot twist), faint moving light stripes, white glow behind the character.
