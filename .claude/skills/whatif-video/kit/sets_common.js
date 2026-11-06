@@ -103,5 +103,13 @@ window.WI_COMMON = function (WI) {
     const ce = new THREE.Mesh(new THREE.SphereGeometry(0.016, 12, 8), C.mat(0xf5c542)); ce.scale.y = 0.6; ce.position.y = 0.425; g.add(ce);
     scene.add(g); return g;
   };
+  // aurora curtains in the sky (additive, gently waving); update(k, t)
+  C.aurora = function (scene, center, radius) { const tex = canvasTex(256, 256, (g, w, h) => { g.clearRect(0, 0, w, h); for (let i = 0; i < 60; i++) { const x = R() * w;
+      const gr = g.createLinearGradient(0, 0, 0, h); gr.addColorStop(0, "rgba(255,70,140,0)"); gr.addColorStop(0.35, "rgba(255,90,170,0.25)"); gr.addColorStop(0.6, "rgba(70,255,150,0.5)"); gr.addColorStop(1, "rgba(30,180,110,0)");
+      g.fillStyle = gr; g.fillRect(x, 0, rr(2, 10), h); } });
+    const curtains = []; for (let i = 0; i < 7; i++) { const m = new THREE.Mesh(new THREE.PlaneGeometry(radius * 0.9, radius * 0.45, 30, 1), new THREE.MeshBasicMaterial({ map: tex, transparent: true, opacity: 0, side: THREE.DoubleSide, depthWrite: false, blending: THREE.AdditiveBlending, fog: false }));
+      const a = -0.9 + i * 0.3; m.position.set(center.x + Math.sin(a) * radius, center.y + rr(-20, 30), center.z - Math.cos(a) * radius); m.lookAt(center.x, m.position.y, center.z); m.userData.base = m.geometry.attributes.position.array.slice(); m.userData.ph = R() * 6; scene.add(m); curtains.push(m); }
+    return function (k, t) { curtains.forEach((m) => { m.visible = k > 0.01; m.material.opacity = k * (0.75 + 0.25 * Math.sin(t * 0.7 + m.userData.ph)); if (!m.visible) return;
+      const p = m.geometry.attributes.position.array, b = m.userData.base; for (let j = 0; j < p.length; j += 3) p[j + 2] = b[j + 2] + Math.sin(b[j] * 0.02 + t * 0.6 + m.userData.ph) * radius * 0.04; m.geometry.attributes.position.needsUpdate = true; }); }; };
   return C;
 };

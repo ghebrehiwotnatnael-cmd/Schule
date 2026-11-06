@@ -29,6 +29,7 @@ DEFAULTS = {
     "handR": HIDDEN, "handL": HIDDEN, "item": "none", "torch": 0.0, "shiver": 0.0, "breath": 0.0, "frostLens": 0.0, "flash": 0.0,
     "spaceCam": [0, 0, 34], "spaceFov": 40, "earthSun": 1.0, "earthLights": 1.0, "earthIce": 0.0,
     "dof": 0.0, "focus": 5.0, "mblur": 0.0, "shadowSize": 25.0,
+    "exposure": 1.0, "contrast": 1.0, "saturation": 1.0, "warmth": 0.0, "vignette": 0.0, "grain": 0.0, "tonemap": 0.0,
 }
 # first-person hand poses (camera space: x right, y up, z forward is negative; then rx, ry, rz)
 POSES = {
@@ -321,7 +322,25 @@ window.__timelines["endcard"] = tl;
             if f.startswith("spectral"):
                 shutil.copy(os.path.join(KIT, "fonts", f), os.path.join(d, "assets", "fonts", f))
         for f in os.listdir(os.path.join(KIT, "lib")):
-            shutil.copy(os.path.join(KIT, "lib", f), os.path.join(d, "assets", "lib", f))
+            src = os.path.join(KIT, "lib", f)
+            if os.path.isdir(src):
+                shutil.copytree(src, os.path.join(d, "assets", "lib", f), dirs_exist_ok=True)
+            else:
+                shutil.copy(src, os.path.join(d, "assets", "lib", f))
+        # models: copy only the files this video uses (MODELS in video.py, plus files next to glTF: .bin + textures)
+        for rel in getattr(self.m, "MODELS", []):
+            srcf = os.path.join(KIT, "models", rel)
+            if not os.path.exists(srcf):
+                print("WARNING missing model", rel, "- run kit/tools/fetch_models.py"); continue
+            dstf = os.path.join(d, "assets", "models", rel); os.makedirs(os.path.dirname(dstf), exist_ok=True); shutil.copy(srcf, dstf)
+            tex_dir = os.path.join(os.path.dirname(os.path.dirname(srcf)), "Textures")
+            if rel.lower().endswith(".fbx") and os.path.isdir(tex_dir):
+                shutil.copytree(tex_dir, os.path.join(os.path.dirname(os.path.dirname(dstf)), "Textures"), dirs_exist_ok=True)
+            if rel.lower().endswith(".gltf"):
+                folder = os.path.dirname(srcf)
+                for extra in os.listdir(folder):
+                    if extra.lower().endswith((".bin", ".png", ".jpg")):
+                        shutil.copy(os.path.join(folder, extra), os.path.join(os.path.dirname(dstf), extra))
         avatar = os.path.join(os.path.dirname(os.path.dirname(os.path.dirname(KIT))), "..", "branding", "avatar.png")
         avatar = os.path.normpath(avatar)
         if os.path.exists(avatar):
@@ -371,7 +390,12 @@ window.__timelines["endcard"] = tl;
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=1080, height=1920" />
 <script src="https://cdn.jsdelivr.net/npm/gsap@3.15.0/dist/gsap.min.js"></script>
-<script src="assets/lib/three.min.js"></script>
+<script src="assets/lib/three147.min.js"></script>
+<script src="assets/lib/fflate.min.js"></script>
+<script src="assets/lib/FBXLoader.js"></script>
+<script src="assets/lib/GLTFLoader.js"></script>
+<script src="assets/lib/RGBELoader.js"></script>
+<script src="assets/lib/SkeletonUtils.js"></script>
 <style>
 *{{margin:0;padding:0;box-sizing:border-box;}}
 html,body{{margin:0;width:1080px;height:1920px;overflow:hidden;background:#000;}}

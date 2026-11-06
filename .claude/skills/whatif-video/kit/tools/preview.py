@@ -22,19 +22,32 @@ out = os.path.join(vdir, "build", "preview")
 os.makedirs(out, exist_ok=True)
 sets = getattr(mod, "SET_FILES", ["sets_common.js", "sets_city.js", "sets_nature.js"])
 js = "\n".join(open(os.path.join(KIT, f)).read() for f in sets) + "\n" + open(os.path.join(KIT, "world.js")).read()
-js = js.replace('"assets/lib/', f'"file://{KIT}/lib/')
-page = os.path.join(out, "preview.html")
+import socket, time
+def _up():
+    try: socket.create_connection(("127.0.0.1", 8765), 1).close(); return True
+    except OSError: return False
+if not _up():
+    subprocess.Popen([sys.executable, "-m", "http.server", "8765", "--directory", KIT], stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+    for _ in range(30):
+        if _up(): break
+        time.sleep(0.2)
+H = "http://localhost:8765"
+js = js.replace('"assets/lib/', f'"{H}/lib/')
+os.makedirs(os.path.join(KIT, "_preview"), exist_ok=True)
+page = os.path.join(KIT, "_preview", os.path.basename(vdir) + ".html")
+libs = "".join(f'<script src="{H}/lib/{f}"></script>' for f in ["three147.min.js", "fflate.min.js", "FBXLoader.js", "GLTFLoader.js", "RGBELoader.js", "SkeletonUtils.js"])
 open(page, "w").write(f'''<html><body style="margin:0;background:#000"><canvas id="world-canvas" width="1080" height="1920"></canvas>
-<script src="file://{KIT}/lib/three.min.js"></script><script>window.WI_TRACKS={json.dumps(v.tracks())};</script>
+{libs}<script>window.WI_MODEL_BASE="{H}/models/";window.WI_HDRI_BASE="{H}/lib/hdri/";window.WI_TRACKS={json.dumps(v.tracks())};</script>
 <script>{js}</script></body></html>''')
+page_url = f"{H}/_preview/" + os.path.basename(vdir) + ".html"
 runner = os.path.join(out, "shot.js")
 open(runner, "w").write('''const { chromium } = require('playwright');
 (async()=>{const b=await chromium.launch({args:['--use-gl=swiftshader','--enable-unsafe-swiftshader','--allow-file-access-from-files']});
 const p=await b.newPage({viewport:{width:1080,height:1920}}); p.on('pageerror',e=>console.log('ERR',e.message));
-await p.goto('file://'+process.argv[2]); await p.waitForFunction('window.WI_DRAW'); await p.evaluate(()=>window.__hf.buildReady.world);
-for (const t of process.argv.slice(3)) { await p.evaluate((t)=>window.WI_DRAW(+t), t); await p.screenshot({path: process.argv[2].replace('preview.html','t_'+t+'.png')}); }
+await p.goto(process.argv[2]); await p.waitForFunction('window.WI_DRAW'); await p.evaluate(()=>window.__hf.buildReady.world);
+for (const t of process.argv.slice(3)) { await p.evaluate((t)=>window.WI_DRAW(+t), t); await p.screenshot({path: process.argv[3+0] && (process.env.OUT + '/t_' + t + '.png')}); }
 await b.close();})();''')
-r = subprocess.run(["node", runner, page] + [str(t) for t in times], capture_output=True, text=True, cwd=vdir)
+r = subprocess.run(["node", runner, page_url] + [str(t) for t in times], capture_output=True, text=True, cwd=vdir, env=dict(os.environ, OUT=out))
 print(r.stdout[-2000:], r.stderr[-2000:])
 files = [os.path.join(out, f"t_{t}.png") for t in times]
 cols = min(6, len(files))

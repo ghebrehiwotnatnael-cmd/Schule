@@ -27,7 +27,20 @@
           float cw = max(coc(uv), c * 0.5); acc += texture2D(tColor, uv).rgb * cw; wsum += cw; }
         gl_FragColor = vec4(acc / wsum, opacity); }` });
   const postQuad = new THREE.Mesh(new THREE.PlaneGeometry(2, 2), dofMat); const postScene = new THREE.Scene(); postScene.add(postQuad);
-  const copyMat = new THREE.MeshBasicMaterial({ map: rtAcc.texture, depthTest: false, depthWrite: false });
+  const copyMat = new THREE.ShaderMaterial({ depthTest: false, depthWrite: false,
+    uniforms: { tDiffuse: { value: rtAcc.texture }, exposure: { value: 1 }, contrast: { value: 1 }, saturation: { value: 1 }, warmth: { value: 0 },
+      vignette: { value: 0 }, grain: { value: 0 }, tonemap: { value: 0 }, seed: { value: 0 } },
+    vertexShader: "varying vec2 vUv; void main(){ vUv = uv; gl_Position = vec4(position.xy, 0.0, 1.0); }",
+    fragmentShader: `uniform sampler2D tDiffuse; uniform float exposure, contrast, saturation, warmth, vignette, grain, tonemap, seed; varying vec2 vUv;
+      vec3 aces(vec3 x){ return clamp((x*(2.51*x+0.03))/(x*(2.43*x+0.59)+0.14), 0.0, 1.0); }
+      float hash(vec2 p){ return fract(sin(dot(p, vec2(12.9898, 78.233)) + seed) * 43758.5453); }
+      void main(){ vec3 c = texture2D(tDiffuse, vUv).rgb * exposure;
+        c = mix(c, aces(c * 1.15), tonemap);
+        float l = dot(c, vec3(0.299, 0.587, 0.114)); c = mix(vec3(l), c, saturation);
+        c = (c - 0.5) * contrast + 0.5; c += vec3(0.04, 0.01, -0.03) * warmth;
+        float d = distance(vUv, vec2(0.5)); c *= 1.0 - vignette * smoothstep(0.35, 0.85, d);
+        c += (hash(vUv * 1000.0) - 0.5) * grain;
+        gl_FragColor = vec4(clamp(c, 0.0, 1.0), 1.0); }` });
   const copyScene = new THREE.Scene(); copyScene.add(new THREE.Mesh(new THREE.PlaneGeometry(2, 2), copyMat));
   function shadowAll(scene) { scene.traverse((o) => { if (o.isMesh && !o.userData.noShadow && !(o.material && o.material.isShaderMaterial) && !(o.material && o.material.transparent)) { o.castShadow = true; o.receiveShadow = true; } }); }
   function fitShadow(light, target, size = 40) {  // keep the shadow frustum around what the camera looks at
@@ -300,6 +313,8 @@
         gl_FragColor = vec4(c, 1.0); }` }));
   space.add(earth);
   const clouds = new THREE.Mesh(new THREE.SphereGeometry(10.08, 64, 32), new THREE.MeshLambertMaterial({ map: earthCloud, transparent: true, opacity: 0.5, depthWrite: false }));
+  const moonSp = new THREE.Mesh(new THREE.SphereGeometry(2.7, 64, 32), new THREE.MeshLambertMaterial({ map: loadTex("assets/lib/moon_1024.jpg") })); moonSp.position.set(-28, 6, -30); space.add(moonSp);
+  const laser = new THREE.Mesh(new THREE.CylinderGeometry(0.03, 0.03, 1, 8), new THREE.MeshBasicMaterial({ color: 0x4dff7a, transparent: true, opacity: 0, blending: THREE.AdditiveBlending })); space.add(laser);
   space.add(clouds); const spaceLight = new THREE.DirectionalLight(0xffffff, 1); spaceLight.position.set(-30, 6, 12); space.add(spaceLight);
   space.add(new THREE.Points(starGeo, new THREE.PointsMaterial({ color: 0xffffff, size: 1.8, sizeAttenuation: false })));
 
@@ -318,7 +333,24 @@
   // held items (in the right hand)
   const phone = new THREE.Group(); handR.add(phone); phone.position.set(0, 0.03, -0.07);
   phone.add(new THREE.Mesh(new THREE.BoxGeometry(0.075, 0.012, 0.15), new THREE.MeshLambertMaterial({ color: 0x111111 })));
-  const screen = new THREE.Mesh(new THREE.PlaneGeometry(0.066, 0.135), new THREE.MeshBasicMaterial({ color: 0xbfd8ff })); screen.rotation.x = -Math.PI / 2; screen.position.y = 0.007; phone.add(screen);
+  const phoneCan = document.createElement("canvas"); phoneCan.width = 264; phoneCan.height = 540; const phoneTex = new THREE.CanvasTexture(phoneCan);
+  const screen = new THREE.Mesh(new THREE.PlaneGeometry(0.066, 0.135), new THREE.MeshBasicMaterial({ map: phoneTex })); screen.rotation.x = -Math.PI / 2; screen.position.y = 0.007; phone.add(screen);
+  function drawPhone(mode, t) { const g = phoneCan.getContext("2d"), w = 264, h = 540; g.fillStyle = "#0b0b10"; g.fillRect(0, 0, w, h);
+    const bar = (txt, c) => { g.fillStyle = c || "#fff"; g.font = "bold 18px Arial"; g.fillText(txt, 16, 26); };
+    if (mode === "feed") { bar("9:41      ▮▮▮  LTE"); const off = (t * 120) % 180; for (let i = -1; i < 4; i++) { const y = 50 + i * 180 - off;
+        g.fillStyle = ["#f97316", "#38bdf8", "#a78bfa", "#34d399"][(i + 8) % 4]; g.fillRect(12, y, w - 24, 130); g.fillStyle = "#9ca3af"; g.fillRect(12, y + 138, 160, 10); g.fillRect(12, y + 154, 110, 8); } }
+    else if (mode === "nosignal" || mode === "offline") { bar(mode === "offline" ? "9:41      ✕  No connection" : "9:41      No Service", "#f87171"); g.fillStyle = "#e5e7eb"; g.font = "bold 30px Arial";
+      g.fillText(mode === "offline" ? "No internet" : "No signal", 40, 260); g.font = "18px Arial"; g.fillStyle = "#9ca3af"; g.fillText(mode === "offline" ? "Check your connection." : "Emergency calls only", 40, 296); }
+    else if (mode === "battery") { bar("9:41      No Service", "#f87171"); g.strokeStyle = "#e5e7eb"; g.lineWidth = 5; g.strokeRect(62, 220, 120, 60); g.fillStyle = "#ef4444"; g.fillRect(68, 226, 6, 48); g.fillRect(182, 238, 8, 24);
+      g.fillStyle = "#ef4444"; g.font = "bold 36px Arial"; g.fillText("2%", 98, 340); }
+    else if (mode === "declined") { g.fillStyle = "#111827"; g.fillRect(0, 0, w, h); g.fillStyle = "#ef4444"; g.font = "bold 28px Arial"; g.fillText("CARD", 70, 230); g.fillText("DECLINED", 50, 270);
+      g.fillStyle = "#9ca3af"; g.font = "18px Arial"; g.fillText("Terminal offline", 60, 310); }
+    else if (mode === "notifs") { bar("9:41      ▮▮▮  5G"); for (let i = 0; i < 6; i++) { const y = 60 + i * 76 + ((t * 300) % 76); g.fillStyle = "#1f2937"; g.fillRect(12, y, w - 24, 64);
+        g.fillStyle = "#e5e7eb"; g.font = "bold 16px Arial"; g.fillText(["Messages", "News", "Bank", "Mum", "Weather", "Work"][i], 24, y + 26); g.fillStyle = "#9ca3af"; g.font = "14px Arial"; g.fillText("(" + (999 - i * 37) + ") new", 24, y + 48); } }
+    else if (mode === "map") { g.fillStyle = "#e8e2d0"; g.fillRect(0, 0, w, h); g.strokeStyle = "#fff"; g.lineWidth = 14; for (let i = 0; i < 5; i++) { g.beginPath(); g.moveTo(0, 80 + i * 110); g.lineTo(w, 40 + i * 120); g.stroke(); }
+      g.fillStyle = "#9ca3af"; g.font = "bold 20px Arial"; g.fillText("Map unavailable", 50, 270); }
+    phoneTex.needsUpdate = true; }
+  let lastPhone = "";
   const torch = new THREE.SpotLight(0xffffff, 0, 60, 0.42, 0.6, 1.2); torch.position.set(0, 0, -0.1); handR.add(torch); handR.add(torch.target); torch.target.position.set(0, -0.2, -5);
   const cone2 = new THREE.Group(); handR.add(cone2); cone2.position.set(0, 0.04, -0.06);
   const waffle = new THREE.Mesh(new THREE.ConeGeometry(0.035, 0.12, 10), new THREE.MeshLambertMaterial({ color: 0xc98a3c })); waffle.rotation.x = Math.PI; waffle.position.y = 0.02; cone2.add(waffle);
@@ -333,7 +365,89 @@
 
   // ---- pluggable sets (kit/sets_*.js push builders into window.WI_SET_BUILDERS)
   shadowAll(park); shadowAll(bunker);
-  const WI = { THREE, R, rr, C, smooth, clamp01, val, num, col, canvasTex, glowTex, puffTex, box, makePerson, animatePerson,
+  // ---- real 3D models (FBX / glTF), normalised, cloned, animated deterministically from t
+  const modelCache = {};
+  const MODEL_BASE = window.WI_MODEL_BASE || "assets/models/";
+  function toStandard(obj, rough = 0.85) {
+    obj.traverse((o) => { if (!o.isMesh) return; const mats = Array.isArray(o.material) ? o.material : [o.material];
+      const conv = mats.map((m) => { if (!m || m.isMeshStandardMaterial) return m;
+        const n = new THREE.MeshStandardMaterial({ color: m.color ? m.color.clone().convertLinearToSRGB() : 0xffffff, map: m.map || null, roughness: rough, metalness: 0.0,
+          transparent: m.transparent, opacity: m.opacity, side: m.side, vertexColors: m.vertexColors });
+        if (n.map) n.map.encoding = THREE.LinearEncoding; return n; });
+      o.material = Array.isArray(o.material) ? conv : conv[0]; o.castShadow = true; o.receiveShadow = true; });
+  }
+  function loadModel(file) {
+    if (!modelCache[file]) {
+      modelCache[file] = new Promise((res) => {
+        const ld = file.toLowerCase().endsWith(".fbx") ? new THREE.FBXLoader() : new THREE.GLTFLoader();
+        ld.load(MODEL_BASE + file, (o) => { const root = o.scene || o; root.userData.clips = o.animations || []; toStandard(root); res(root); }, undefined,
+          (e) => { console.warn("model failed", file, e && e.message); res(null); });
+      });
+      loads.push(modelCache[file]);
+    }
+    return modelCache[file];
+  }
+  /* model(file, {height|length|size, rotX, rotY, flip, clip, speed, offset, shadow}) -> Group placed in the world now,
+     filled when the file has loaded. height = target height in m (people), length = longest horizontal side (vehicles). */
+  function model(file, o = {}) {
+    const holder = new THREE.Group(); holder.userData.o = o;
+    loadModel(file).then((src) => { if (!src) return;
+      const inst = (src.userData.clips.length && THREE.SkeletonUtils) ? THREE.SkeletonUtils.clone(src) : src.clone(true);
+      if (o.rotX) inst.rotation.x = o.rotX;
+      const piv = new THREE.Group(); piv.add(inst); piv.updateMatrixWorld(true);
+      let b = new THREE.Box3().setFromObject(piv), sz = b.getSize(new THREE.Vector3());
+      if (o.autoUp && sz.y > sz.z * 1.6 && sz.y > sz.x) { inst.rotation.x = -Math.PI / 2; piv.updateMatrixWorld(true); b = new THREE.Box3().setFromObject(piv); sz = b.getSize(new THREE.Vector3()); }
+      if (o.alongZ && sz.x > sz.z) { inst.rotation.y += Math.PI / 2; inst.updateMatrix(); piv.updateMatrixWorld(true); b = new THREE.Box3().setFromObject(piv); sz = b.getSize(new THREE.Vector3()); }
+      let k = 1; if (o.height) k = o.height / sz.y; else if (o.length) k = o.length / Math.max(sz.x, sz.z); else if (o.size) k = o.size / Math.max(sz.x, sz.y, sz.z);
+      if (o.maxFoot) k = Math.min(k, o.maxFoot / Math.max(sz.x, sz.z));
+      piv.scale.setScalar(k); const c = b.getCenter(new THREE.Vector3());
+      inst.position.x -= c.x; inst.position.z -= c.z; inst.position.y -= b.min.y;
+      if (o.rotY) piv.rotation.y = o.rotY;
+      holder.add(piv);
+      if (o.onLoad) { piv.updateMatrixWorld(true); o.onLoad(holder, new THREE.Box3().setFromObject(piv).getSize(new THREE.Vector3())); }
+      if (src.userData.clips.length) { const mixer = new THREE.AnimationMixer(inst); holder.userData.mixer = mixer; holder.userData.clips = src.userData.clips; holder.userData.actions = {};
+        play(holder, o.clip || src.userData.clips[0].name, 0); }
+    });
+    return holder;
+  }
+  function findClip(h, name) { const cl = h.userData.clips || []; return cl.find((c) => c.name === name) || cl.find((c) => c.name.toLowerCase().includes(name.toLowerCase())); }
+  /* play(holder, clipName, t, speed=1, offset=0): pose the rig at time t (pure function of t) */
+  function playAt(h, name, frac) { const clip = findClip(h, name); if (!clip) return; play(h, name, 0, 0, clip.duration * Math.min(0.999, frac)); }
+  function play(h, name, t, speed = 1, offset = 0) {
+    const mx = h.userData.mixer; if (!mx) return; const clip = findClip(h, name); if (!clip) return;
+    let a = h.userData.actions[clip.name]; if (!a) { a = mx.clipAction(clip); h.userData.actions[clip.name] = a; }
+    Object.values(h.userData.actions).forEach((x) => { if (x !== a) { x.stop(); } });
+    a.play(); a.setEffectiveWeight(1); a.time = ((t * speed + offset) % clip.duration + clip.duration) % clip.duration; mx.update(0);
+  }
+  // ---- HDRI image-based lighting
+  const pmrem = new THREE.PMREMGenerator(renderer); const hdriCache = {};
+  function hdri(scene, name, intensity = 1) {
+    if (!THREE.RGBELoader) return;
+    if (!hdriCache[name]) { hdriCache[name] = new Promise((res) => new THREE.RGBELoader().load((window.WI_HDRI_BASE || "assets/lib/hdri/") + name + ".hdr",
+      (tx) => { const env = pmrem.fromEquirectangular(tx).texture; tx.dispose(); res(env); }, undefined, () => res(null))); loads.push(hdriCache[name]); }
+    if (scene) hdriCache[name].then((env) => { if (env) scene.environment = env; });
+    return hdriCache[name];
+  }
+  function envIntensity(scene, k) { if (!scene.userData.stdMats) { const l = []; scene.traverse((o) => { if (o.isMesh) (Array.isArray(o.material) ? o.material : [o.material]).forEach((m) => { if (m && m.isMeshStandardMaterial) l.push(m); }); }); scene.userData.stdMats = l; scene.userData.stdCount = l.length; }
+    scene.userData.stdMats.forEach((m) => { m.envMapIntensity = k; }); }
+  function refreshMats(scene) { scene.userData.stdMats = null; }
+  // ---- dense grass: instanced blade clusters with wind in the vertex shader
+  const windU = { value: 0 };
+  function grass(scene, area, n, color = 0x4f8a2e, height = 0.35) {
+    const g = new THREE.BufferGeometry(); const P = [], N = [];
+    for (let k = 0; k < 3; k++) { const a = (k / 3) * Math.PI, w = 0.025, h = height; const dx = Math.cos(a) * w, dz = Math.sin(a) * w;
+      P.push(-dx, 0, -dz, dx, 0, dz, 0, h, 0); N.push(0, 1, 0, 0, 1, 0, 0, 1, 0); }
+    g.setAttribute("position", new THREE.Float32BufferAttribute(P, 3)); g.setAttribute("normal", new THREE.Float32BufferAttribute(N, 3));
+    const m = new THREE.MeshStandardMaterial({ color, roughness: 0.9, side: THREE.DoubleSide });
+    m.onBeforeCompile = (sh) => { sh.uniforms.uWind = windU;
+      sh.vertexShader = "uniform float uWind;\n" + sh.vertexShader.replace("#include <begin_vertex>",
+        "#include <begin_vertex>\n float hgt = position.y; vec4 wp = instanceMatrix * vec4(0.0,0.0,0.0,1.0); transformed.x += sin(uWind * 1.7 + wp.x * 0.6 + wp.z * 0.4) * 0.06 * hgt * 3.0; transformed.z += cos(uWind * 1.3 + wp.z * 0.5) * 0.03 * hgt * 3.0;"); };
+    const mesh = new THREE.InstancedMesh(g, m, n); const M = new THREE.Matrix4(), Q = new THREE.Quaternion(), V = new THREE.Vector3(), S = new THREE.Vector3(); const base = new THREE.Color(color), c = new THREE.Color();
+    for (let i = 0; i < n; i++) { const s = rr(0.6, 1.4); Q.setFromAxisAngle(V.set(0, 1, 0), R() * 6.28); M.compose(V.set(rr(area[0], area[1]), 0, rr(area[2], area[3])), Q, S.set(s, s * rr(0.7, 1.3), s));
+      mesh.setMatrixAt(i, M); mesh.setColorAt(i, c.copy(base).offsetHSL(rr(-0.03, 0.03), rr(-0.1, 0.1), rr(-0.08, 0.06))); }
+    mesh.receiveShadow = true; mesh.userData.noShadow = true; scene.add(mesh); return mesh;
+  }
+  const WI = { THREE, R, rr, C, smooth, clamp01, val, num, col, canvasTex, glowTex, puffTex, box, makePerson, animatePerson, model, play, playAt, hdri, grass, windU, toStandard, loads, envIntensity, refreshMats,
     skinCols, shirtCols, fitShadow, loadTex, cam, W, H };
   const SETS = {};
   (window.WI_SET_BUILDERS || []).forEach((b) => { const st = b(WI); SETS[st.name] = st; shadowAll(st.scene); });
@@ -354,6 +468,7 @@
     if (shiver) { handR.position.x += sh(40, 0.006 * shiver); handL.position.x += sh(43, 0.006 * shiver); }
     const item = val("item", t) || "none";
     phone.visible = item === "phone"; cone2.visible = item === "cone";
+    if (phone.visible) { const pm = val("phoneUI", t) || "feed"; if (pm !== lastPhone || pm === "feed" || pm === "notifs") { drawPhone(pm, t); lastPhone = pm; } }
     torch.intensity = num("torch", t) * 3.0;
     frostLens.material.opacity = num("frostLens", t);
     flash.material.opacity = num("flash", t);
@@ -367,6 +482,9 @@
       earth.rotation.y = 2.2 + t * 0.04; clouds.rotation.y = earth.rotation.y + t * 0.01;
       earthU.sun.value = num("earthSun", t, 1); earthU.lights.value = num("earthLights", t, 1); earthU.ice.value = num("earthIce", t);
       clouds.material.opacity = 0.5 * num("earthSun", t, 1) + 0.08; spaceLight.intensity = num("earthSun", t, 1);
+      const mv = num("spaceMoon", t); moonSp.visible = mv > 0.01; moonSp.scale.setScalar(Math.max(0.01, mv)); const mpos = val("spaceMoonPos", t) || [-28, 6, -30]; moonSp.position.set(mpos[0], mpos[1], mpos[2]); moonSp.rotation.y = t * 0.02;
+      const lz = num("laser", t); laser.visible = lz > 0.01; if (laser.visible) { const a = new THREE.Vector3(mpos[0], mpos[1], mpos[2]).normalize().multiplyScalar(10.05), b2 = moonSp.position;
+        const mid = a.clone().add(b2).multiplyScalar(0.5); laser.position.copy(mid); laser.scale.set(1, a.distanceTo(b2), 1); laser.lookAt(b2); laser.rotateX(Math.PI / 2); laser.material.opacity = lz * (0.6 + 0.4 * Math.sin(t * 20)); }
       space.add(cam); return space;
     }
     const p = val("camPos", t) || [0, 1.65, 6], l = val("camLook", t) || [0, 6, -60];
@@ -446,7 +564,7 @@
     park.add(cam); return park;
   }
   function draw(t) {
-    const mb = num("mblur", t), n = mb > 0 ? 4 : 1, shutter = (1 / 30) * mb;
+    const mb = num("mblur", t), n = mb > 0 ? 4 : 1, shutter = (1 / 30) * mb; windU.value = t * (1 + num("wind", t) * 3);
     dofMat.uniforms.amount.value = num("dof", t); dofMat.uniforms.focus.value = num("focus", t, 5);
     for (let i = 0; i < n; i++) {
       const sc = update(t - (shutter * i) / n);
@@ -454,6 +572,8 @@
       dofMat.uniforms.opacity.value = 1 / (i + 1);
       renderer.setRenderTarget(rtAcc); renderer.autoClear = i === 0; renderer.render(postScene, postCam); renderer.autoClear = true;
     }
+    const cu = copyMat.uniforms; cu.exposure.value = num("exposure", t, 1); cu.contrast.value = num("contrast", t, 1); cu.saturation.value = num("saturation", t, 1);
+    cu.warmth.value = num("warmth", t); cu.vignette.value = num("vignette", t); cu.grain.value = num("grain", t); cu.tonemap.value = num("tonemap", t); cu.seed.value = (Math.floor(t * 30) % 97) * 0.37;
     renderer.setRenderTarget(null); renderer.render(copyScene, postCam);
   }
   window.WI_DRAW = draw;

@@ -55,6 +55,10 @@ and camera angles**, and **lots happening on screen** so it never feels monotono
 - Workflow: send the shot list (table) before building. **No drafts and no variants**: the creator wants ONE
   final video every time (render at 30 fps, `-q delivery`); pick the best hook yourself.
 
+- (approved 2026-11-06) Quality upgrade: real CC0 3D models (animated people, animals, cars, plants), HDRI lighting
+  + PBR materials, denser grass/crops, filmic colour grade, detailed hero props. The creator also said: build the
+  final videos directly (no shot-list approval needed when they say "direkt fertig bauen").
+
 ## Creator feedback - apply to EVERY video (latest first)
 - After "insects-gone" draft: **raise the visual quality next time.** Plan: real CC0 3D models instead of box
   primitives (Poly Haven models/HDRIs/PBR textures via api.polyhaven.com; Quaternius rigged, animated characters,
