@@ -116,6 +116,10 @@ class Cinema:
                 props.setdefault(k, extra.get(k, 0.0))
         props.update({k: v for k, v in extra.items()})
         for prop, init in props.items():
+            if not isinstance(init, list):   # vector props (positions) with no default: start from their first value
+                first = next((kp[prop] for _, _, kp in sorted(self.keys, key=lambda k: k[0]) if prop in kp), None)
+                if isinstance(first, list):
+                    init = first
             cur, segs = init, []
             for t, dur, props in sorted(self.keys, key=lambda k: k[0]):
                 if prop in props:

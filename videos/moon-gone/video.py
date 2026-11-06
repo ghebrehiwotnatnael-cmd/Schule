@@ -68,16 +68,16 @@ def build(v):
     v.shot(0, [0, 1.7, 22], [-10, 20, -200], to_pos=[0, 1.7, 19], length=3.2, bob=0.4, fov=50)
     v.hands(0, "hidden", 0, item="none")
     # S2 zoom on the Moon
-    v.shot(3.2, [0, 1.7, 19], [-40, 120, -900], to_look=[-39, 121, -900], length=2.8, bob=0.0, fov=9)
+    v.shot(3.2, [0, 1.7, 19], [-40, 120, -900], to_look=[-39, 121, -900], length=2.8, bob=0.0, fov=12, moonHalo=0.12)
     # S3 6.0 it vanishes; the silver path on the water goes out
-    v.shot(6.0, [6, 1.6, 24], [-30, 40, -400], to_pos=[6, 1.6, 22], length=2.6, fov=50, shake=0.15)
+    v.shot(6.0, [6, 1.6, 24], [-30, 40, -400], to_pos=[6, 1.6, 22], length=2.6, fov=50, shake=0.15, moonHalo=1.0)
     v.key(6.3, 0.5, moon=0.0, moonLight=0.0)
     v.key(6.9, 0.6, shake=0.0)
     v.sfx("music/boom", 6.25, 0.6); v.sfx("whoosh", 6.15, 0.35)
     # S4 seen from space: Earth alone
     v.key(8.6, 0, set="space", earthSun=1.0, earthLights=0.8, earthIce=0.0, cables=0.0, cableCut=0.0, laser=0.0, earthTilt=0.41,
-          spaceMoon=1.0, spaceMoonPos=[-24, 5, -22], earthRot=0.4, spaceCam=[14, 6, 40])
-    v.key(8.61, 2.8, earthRot=0.55, spaceCam=[10, 5, 34])
+          spaceMoon=1.0, spaceMoonPos=[-2, 17, -6], earthRot=0.4, spaceCam=[0, 0, 40], spaceFov=50)
+    v.key(8.61, 2.8, earthRot=0.55, spaceCam=[2, 0, 36])
     v.key(9.3, 0.7, spaceMoon=0.0)
     v.sfx("whoosh-short", 9.3, 0.3)
     # S5 NIGHT 1 the coast without moonlight
@@ -88,30 +88,30 @@ def build(v):
     v.shot(14.2, [0, 1.6, 6], [0, 1.2, -25], to_pos=[0, 1.6, 3], length=2.8, fov=50, bob=0.5)
     v.hands(14.2, "reach", 0.3, item="none")
     # S7 the deer freeze, the wolf moves
-    v.shot(17.0, [-4.5, 1.2, -25], [-9, 0.9, -34], to_pos=[-5, 1.15, -27], length=2.8, fov=46, bob=0.0, dof=0.4, focus=9, animals="alert",
-           exposure=1.4)
+    v.shot(17.0, [-4.0, 2.0, -24], [-9, 0.4, -34], to_pos=[-4.5, 1.95, -26], length=2.8, fov=46, bob=0.0, dof=0.4, focus=9, animals="alert",
+           exposure=1.6, envI=0.3, ambient=0.12, light=0.4, lightColor="#9db0ff", sunDir=[0.3, 0.5, 0.8])
     v.hands(17.0, "hidden", 0)
     # S8 DAY 1 the harbour: the tide barely rises
     v.key(19.8, 0, **mix(DAY, set="coast", tide=0.25, crowd=0.6, dof=0.0))
     v.shot(19.8, [36, 2.2, 2], [44, 0.0, -50], to_pos=[35, 2.3, -2], length=2.8, fov=48)
     v.key(19.81, 2.8, tide=0.4)
     # S9 the waterline on the beach, almost not moving
-    v.shot(22.6, [-8, 1.0, -8], [10, -0.6, -40], to_pos=[-6, 1.0, -10], length=2.8, fov=50, tide=0.4, beach=0.0)
+    v.shot(22.6, [-8, 1.0, -27], [6, -0.8, -60], to_pos=[-6, 1.0, -29], length=2.8, fov=50, tide=0.4, beach=0.0)
     v.key(22.61, 2.8, tide=0.33)
     # S10 fishermen on the pier
     v.shot(25.4, [39.5, 2.4, -56], [43, 1.2, -72], to_pos=[40, 2.3, -58], length=2.8, fov=46, dof=0.3, focus=14)
     # S11 the wolf in the dark forest
-    v.key(28.2, 0, **mix(NIGHT, DARKNIGHT, set="forest", animals="graze", exposure=1.4))
-    v.shot(28.2, [2.6, 0.9, -19.5], [6, 0.8, -26], to_pos=[2.9, 0.85, -20.5], length=2.8, fov=44, dof=0.5, focus=7)
+    v.key(28.2, 0, **mix(NIGHT, DARKNIGHT, set="forest", animals="graze", exposure=1.6, envI=0.3, ambient=0.12, light=0.4, lightColor="#9db0ff", sunDir=[0.3, 0.5, 0.8]))
+    v.shot(28.2, [2.8, 1.9, -19], [6, 0.3, -26], to_pos=[3.1, 1.85, -20], length=2.8, fov=44, dof=0.5, focus=7)
     # S12 the stars over the bay
     v.key(31.0, 0, **mix(NIGHT, set="coast", moon=0.0, moonLight=0.0, stars=1.0, milkyway=1.0, cityLights=0.2, lamps=0.0, crowd=0.3,
                         tide=0.35, exposure=1.1, dof=0.0))
     v.shot(31.0, [0, 1.7, 22], [-20, 120, -400], to_look=[-10, 150, -400], length=2.8, fov=55)
     # S13 the forest clearing under the Milky Way
-    v.key(33.8, 0, **mix(NIGHT, DARKNIGHT, set="forest", milkyway=1.0, stars=1.0, animals="graze", exposure=1.3))
+    v.key(33.8, 0, **mix(NIGHT, DARKNIGHT, set="forest", milkyway=1.0, stars=1.0, animals="graze", exposure=1.5, envI=0.25, ambient=0.1))
     v.shot(33.8, [0, 1.2, 8], [0, 40, -120], to_pos=[0, 1.2, 5], to_look=[0, 60, -120], length=2.8, fov=58)
     # S14 YEAR 1 Earth in full sunlight, no Moon to cast a shadow
-    v.key(36.6, 0, set="space", earthSun=1.0, earthLights=0.6, spaceMoon=0.0, laser=0.0, earthTilt=0.41, earthRot=1.8, spaceCam=[0, 4, 36],
+    v.key(36.6, 0, set="space", earthSun=1.0, earthLights=0.6, spaceMoon=0.0, laser=0.0, earthTilt=0.41, earthRot=1.8, spaceCam=[0, 4, 36], spaceFov=40,
           exposure=1.0)
     v.key(36.61, 2.8, earthRot=2.0, spaceCam=[6, 3, 31])
     # S15 the tilt starts to wobble
@@ -127,20 +127,20 @@ def build(v):
                         saturation=1.05, lookUp=1.0))
     v.shot(45.0, [10, 1.5, 27], [-4, 2.5, -200], to_pos=[7, 1.5, 26], length=3.0, fov=52, dof=0.2, focus=14, bob=0.0)
     # S18 PLOT TWIST: the Moon is back... and slowly drifting away
-    v.key(48.0, 0, set="space", earthSun=1.0, earthLights=0.8, spaceMoon=1.0, spaceMoonPos=[-22, 5, -20], laser=0.0, earthTilt=0.41,
-          earthRot=0.4, spaceCam=[16, 8, 42], lookUp=0.0, beach=0.0)
-    v.key(48.01, 3.0, spaceMoonPos=[-27, 6, -25], spaceCam=[18, 9, 46])
+    v.key(48.0, 0, set="space", earthSun=1.0, earthLights=0.8, spaceMoon=1.0, spaceMoonPos=[-2, 15, -4], laser=0.0, earthTilt=0.41,
+          earthRot=0.4, spaceCam=[0, -2, 42], spaceFov=50, lookUp=0.0, beach=0.0)
+    v.key(48.01, 3.0, spaceMoonPos=[-2, 19, -10])
     v.sfx("riser", 48.0, 0.35)
     # S19 a laser from Earth to the Apollo mirrors
-    v.key(51.0, 0, spaceMoonPos=[-24, 5, -22], spaceCam=[6, 14, 44], laser=0.0)
+    v.key(51.0, 0, spaceMoonPos=[-2, 17, -6], spaceCam=[0, -2, 40], laser=0.0)
     v.key(51.4, 0.3, laser=1.0)
-    v.key(51.01, 3.0, spaceCam=[0, 12, 40])
+    v.key(51.01, 3.0, spaceCam=[1, -2, 36])
     v.sfx("sparkle", 51.4, 0.35)
     # S20 behind the Moon, looking back at Earth along the beam
-    v.key(54.0, 0, spaceMoonPos=[-24, 5, -22], spaceCam=[-31, 12, -34], laser=1.0)
-    v.key(54.01, 3.0, spaceCam=[-29, 11, -31])
+    v.key(54.0, 0, spaceMoonPos=[-2, 17, -6], spaceCam=[36, 4, 8], spaceFov=60, laser=1.0)
+    v.key(54.01, 3.0, spaceCam=[34, 6, 14])
     # S21 back on the beach: the full Moon, people watching
-    v.key(57.0, 0, **mix(NIGHT, set="coast", moon=1.0, moonPos=MOONPOS, moonPath=1.0, tide=0.7, crowd=1.0, lookUp=1.0, laser=0.0))
+    v.key(57.0, 0, **mix(NIGHT, set="coast", spaceFov=40, light=0.0, sunDir=[0.2, 0.5, -0.6], moon=1.0, moonPos=MOONPOS, moonPath=1.0, tide=0.7, crowd=1.0, lookUp=1.0, laser=0.0))
     v.shot(57.0, [12, 1.5, 24], [-40, 60, -900], to_pos=[9, 1.5, 22], length=3.5, fov=52)
     # S22 POV, the Moon over the bay (loops into the start)
     v.key(60.5, 0, lookUp=0.0)

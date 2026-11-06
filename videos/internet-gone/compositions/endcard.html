@@ -1,0 +1,35 @@
+<template>
+<style>
+@font-face{font-family:"WI Serif";src:url("assets/fonts/spectral-400-normal.woff2") format("woff2");font-weight:400}
+@font-face{font-family:"WI Serif";src:url("assets/fonts/spectral-500-normal.woff2") format("woff2");font-weight:500}
+@font-face{font-family:"WI Serif";src:url("assets/fonts/spectral-400-italic.woff2") format("woff2");font-weight:400;font-style:italic}
+#root{position:absolute;inset:0;background:#121212;}
+#ec{position:absolute;left:70px;width:940px;top:700px;text-align:center;color:#f2f2f2;}
+#ec-title{font:400 66px/1.18 "WI Serif";}
+#ec-title .k{color:#5ff3ff;}
+#ec-sub{margin-top:40px;font:500 19px/1.7 "IBM Plex Mono";letter-spacing:4px;color:#9a9aa3;}
+#ec-share{display:block;margin:150px auto 0;width:84px;height:70px;}
+#ec-cta{margin-top:26px;font:600 24px/1.7 "IBM Plex Mono";letter-spacing:4px;color:#fff;text-decoration:underline;text-underline-offset:8px;}
+#ec-handle{margin-top:190px;font:600 34px "Inter";color:#fff;display:flex;align-items:center;justify-content:center;gap:18px;}
+#ec-av{width:64px;height:64px;border-radius:50%;border:2px solid #4b4b55;object-fit:cover;display:inline-block;background:#2b2b3a;}
+</style>
+<div id="root" data-composition-id="endcard" data-width="1080" data-height="1920">
+ <div id="ec">
+  <div id="ec-title">What if the <span class="k">internet</span> disappeared for a week?</div>
+  <div id="ec-sub">ALMOST ALL DATA BETWEEN CONTINENTS RUNS THROUGH UNDERSEA CABLES<br>IN 2022 A VOLCANO CUT TONGA&#x27;S ONLY ONE</div>
+  <svg id="ec-share" viewBox="-60 -50 120 100"><path d="M-42 26 C-40 -14 -8 -26 14 -26 L14 -46 L50 -9 L14 28 L14 8 C-12 8 -30 11 -42 26 Z" fill="#fff"/></svg>
+  <div id="ec-cta">SEND THIS TO SOMEONE<br>WHO CHECKS THEIR PHONE 100x A DAY.</div>
+  <div id="ec-handle"><img id="ec-av" src="assets/avatar.png" alt=""><span>@manwhat.3</span></div>
+ </div>
+</div>
+<script>
+(function(){
+const tl = gsap.timeline({paused:true,defaults:{lazy:false}});
+tl.fromTo("#ec-title",{opacity:0},{opacity:1,duration:.6},0.15);
+tl.fromTo("#ec-sub",{opacity:0},{opacity:1,duration:.5},0.55);
+tl.fromTo(["#ec-share","#ec-cta"],{opacity:0,y:14},{opacity:1,y:0,duration:.5,stagger:.12},0.9);
+tl.fromTo("#ec-handle",{opacity:0},{opacity:1,duration:.5},1.3);
+window.__timelines["endcard"] = tl;
+})();
+</script>
+</template>

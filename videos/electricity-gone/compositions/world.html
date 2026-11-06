@@ -588,7 +588,7 @@ window.PEOPLE = ["animatedmen/FBX/Male_Casual.fbx", "animatedwomen/FBX/Female_Ca
   });
 })();
 
-/* More model sets: "coast" (beach, harbour, ocean with tide, boats, palms, houses, moon), "forest" (night forest with
+/* More model sets: "coast" (beach [track beach = umbrellas + sunbathers], harbour, ocean with tide, boats, palms, houses, moon), "forest" (night forest with
    animated animals), "rooms" (hospital, airport, telegraph office 1859, kitchen, office, living room with candles),
    "moonspace" (Earth + Moon, laser to the Moon).  Needs sets_common.js, sets_models.js (WI_MODELKIT) and world.js. */
 window.COAST_MODELS = ["ships/FBX/Boat.fbx", "ships/FBX/BoatWSail.fbx", "ships/FBX/Lifeboat.fbx", "ships/FBX/CruiseShip.fbx",
@@ -648,6 +648,16 @@ window.ROOMS_MODELS = ["ultimatehomeinterior/FBX/Bed_Single.fbx", "ultimatehomei
       h.position.set(-110 + i * 20, 0, 70); scene.add(h); }
     const lamps = []; for (let x = -110; x < 130; x += 18) lamps.push(MK.lamp(scene, x, 52, 4.5));
     const people = []; for (let i = 0; i < 22; i++) { const r = R(); people.push(MK.person(scene, window.PEOPLE[i % 8], { x: rr(-60, 60), z: rr(-6, 30), rot: R() * 6.28, mode: r < 0.45 ? "walk" : r < 0.8 ? "stand" : "sit", span: 50 })); }
+    // beach day: umbrellas, towels and a crowd of sunbathers (track "beach")
+    const beach = new THREE.Group(); scene.add(beach); const beachPeople = [];
+    const umbC = [0xe63946, 0x2a9d8f, 0xf4a261, 0x457b9d, 0xe9c46a, 0xff6f91];
+    for (let i = 0; i < 14; i++) { const x = rr(-16, 16), z = rr(4, 22), c = umbC[i % umbC.length];
+      const pole = new THREE.Mesh(new THREE.CylinderGeometry(0.03, 0.03, 2.3, 6), MK.std(0xeeeeee)); pole.position.set(x, 1.15, z); beach.add(pole);
+      const top = new THREE.Mesh(new THREE.ConeGeometry(1.3, 0.5, 12, 1, true), new THREE.MeshStandardMaterial({ color: c, roughness: 0.8, side: THREE.DoubleSide })); top.position.set(x, 2.3, z); beach.add(top);
+      const towel = new THREE.Mesh(new THREE.BoxGeometry(0.8, 0.02, 1.8), MK.std(umbC[(i + 2) % umbC.length])); towel.position.set(x + 0.9, 0.01, z + 0.4); towel.rotation.y = rr(-0.3, 0.3); beach.add(towel);
+      if (i % 2 === 0) beachPeople.push(MK.person(scene, window.PEOPLE[i % 8], { x: x + 0.9, seat: 0.25, z: z + 0.2, rot: Math.PI + rr(-0.5, 0.5), mode: "sit" }));
+      else beachPeople.push(MK.person(scene, window.PEOPLE[(i + 3) % 8], { x: x - 0.8, z: z + 0.8, rot: rr(0, 6.28), mode: "stand" })); }
+    beach.traverse((o) => { if (o.isMesh) o.castShadow = true; });
     const fishers = [[43, -70], [41.5, -64]].map(([x, z]) => MK.person(scene, window.PEOPLE[0], { x, y: 0.8, z, rot: Math.PI, mode: "stand" }));
     return { name: "coast", scene, people, update(t, look, pos) {
       sky(t, num, col); env(t); L.update(t, num, col, new THREE.Vector3(pos[0] * 0.8 + look[0] * 0.2, 0, pos[2] * 0.8 + look[2] * 0.2), num("shadowSize", t, 35));
@@ -656,20 +666,21 @@ window.ROOMS_MODELS = ["ultimatehomeinterior/FBX/Bed_Single.fbx", "ultimatehomei
       foam.material.opacity = 0.35 + 0.15 * Math.sin(t * 1.7);
       boats.forEach((b, i) => { const [x, z] = b.userData.bx; b.position.set(x, water.position.y + 0.1 + Math.sin(t * 1.1 + i) * 0.08, z); b.rotation.z = Math.sin(t * 0.9 + i) * 0.04; });
       const ms = num("moon", t, 1); const mp = WI.val("moonPos", t) || [-60, 140, -900];
-      moon.visible = ms > 0.01; moon.scale.setScalar(Math.max(0.01, ms)); moon.position.set(mp[0], mp[1], mp[2]); halo.position.copy(moon.position); halo.material.opacity = ms * 0.55;
+      moon.visible = ms > 0.01; moon.scale.setScalar(Math.max(0.01, ms)); moon.position.set(mp[0], mp[1], mp[2]); halo.position.copy(moon.position); halo.material.opacity = ms * 0.55 * num("moonHalo", t, 1);
       path.visible = ms > 0.01; path.material.opacity = ms * num("moonPath", t, 1); path.position.set(mp[0] * 0.25 + pos[0] * 0.75, water.position.y + 0.12, -470); path.rotation.z = Math.atan2(mp[0] - pos[0], 900) * 0.4;
       moonLight.intensity = ms * num("moonLight", t, 0); moonLight.position.copy(moon.position).normalize().multiplyScalar(100); moonLight.target.position.set(pos[0], 0, pos[2]);
       stars.material.opacity = num("stars", t); mw.material.opacity = num("milkyway", t); aurora(num("aurora", t), t);
       const hl = num("cityLights", t); homes.forEach((m, i) => { m.opacity = WI.clamp01(hl * 3 - (i % 3)) * 0.9; });
       lamps.forEach((l, i) => l.set(num("lamps", t), t, i));
       MK.crowd(people, t, { frac: num("crowd", t, 1), panic: num("panic", t), look: num("lookUp", t) > 0.5 });
+      const bch = num("beach", t) > 0.5; beach.visible = bch; beachPeople.forEach((p) => p.visible = bch); if (bch) MK.crowd(beachPeople, t, { frac: 1 });
       fishers.forEach((f, i) => WI.play(f, "Idle", t, 1, i * 3));
       return scene; } };
   });
 
   // ================================================================ FOREST (night, animals)
   B.push(function (WI) {
-    const { THREE, R, rr, num, col, glowTex } = WI; const K = window.WI_COMMON(WI); const MK = window.WI_MODELKIT(WI);
+    const { THREE, R, rr, num, col, glowTex, canvasTex } = WI; const K = window.WI_COMMON(WI); const MK = window.WI_MODELKIT(WI);
     const scene = new THREE.Scene(); const sky = K.sky(scene); const L = K.lights(scene); const env = MK.envs(scene);
     MK.ground(scene, 2000, 0x3c4a2a); WI.grass(scene, [-25, 25, 10, -45], 40000, 0x5a7d3a, 0.22);
     const trees = ["PineTree_1", "PineTree_3", "CommonTree_2", "BirchTree_2"];
@@ -683,6 +694,10 @@ window.ROOMS_MODELS = ["ultimatehomeinterior/FBX/Bed_Single.fbx", "ultimatehomei
     const aurora = K.aurora(scene, new THREE.Vector3(0, 180, 0), 600);
     const stars = new THREE.Points(new THREE.BufferGeometry().setAttribute("position", new THREE.Float32BufferAttribute(Array.from({ length: 7500 }, (_, i) => i % 3 === 1 ? rr(150, 1100) : rr(-1400, 1400)), 3)),
       new THREE.PointsMaterial({ color: 0xffffff, size: 2.2, sizeAttenuation: false, transparent: true, opacity: 0, fog: false, depthWrite: false })); scene.add(stars);
+    const mwF = new THREE.Mesh(new THREE.PlaneGeometry(2600, 520), new THREE.MeshBasicMaterial({ map: canvasTex(512, 128, (g, w, h) => { const gr = g.createLinearGradient(0, 0, 0, h);
+      gr.addColorStop(0, "rgba(0,0,0,0)"); gr.addColorStop(0.5, "rgba(190,200,255,0.55)"); gr.addColorStop(1, "rgba(0,0,0,0)"); g.fillStyle = gr; g.fillRect(0, 0, w, h);
+      for (let i = 0; i < 1600; i++) { g.fillStyle = `rgba(255,255,255,${R() * 0.9})`; g.fillRect(R() * w, h / 2 + (R() + R() - 1) * h * 0.35, 1, 1); } }), transparent: true, opacity: 0, depthWrite: false, fog: false, blending: THREE.AdditiveBlending }));
+    mwF.position.set(0, 650, -1100); mwF.rotation.z = -0.6; scene.add(mwF);
     const animals = [["Fox", -4, -14, 0.9, 1.0], ["Wolf", 6, -26, 1.0, 1.3], ["Deer", -9, -34, 2.6, 1.8], ["Stag", 9, -42, 2.6, 2.0], ["Fox", 3, -10, 1.6, 0.9]].map(([n, x, z, rot, len]) => {
       const a = WI.model(`ultimateanimatedanimals/glTF/${n}.gltf`, { length: len * 1.4, clip: "Idle" }); a.position.set(x, 0, z); a.rotation.y = rot; a.userData.an = { n, x, z, rot, ph: R() * 5 }; scene.add(a); return a; });
     return { name: "forest", scene, update(t, look, pos) {
@@ -690,7 +705,7 @@ window.ROOMS_MODELS = ["ultimatehomeinterior/FBX/Bed_Single.fbx", "ultimatehomei
       const ms = num("moon", t, 1), mp = WI.val("moonPos", t) || [40, 160, -700];
       moon.visible = ms > 0.01; moon.scale.setScalar(Math.max(0.01, ms)); moon.position.set(mp[0], mp[1], mp[2]); halo.position.copy(moon.position); halo.material.opacity = 0.5 * ms;
       moonLight.intensity = ms * num("moonLight", t, 0); moonLight.position.copy(moon.position).normalize().multiplyScalar(100).add(new THREE.Vector3(pos[0], 0, pos[2])); moonLight.target.position.set(pos[0], 0, pos[2] - 12);
-      stars.material.opacity = num("stars", t); aurora(num("aurora", t), t);
+      stars.material.opacity = num("stars", t); aurora(num("aurora", t), t); mwF.material.opacity = num("milkyway", t);
       const beh = WI.val("animals", t) || "graze";    // graze | alert | run
       animals.forEach((a, i) => { const u = a.userData.an;
         if (beh === "run") { const d = ((t * 6 + u.ph * 3) % 60) - 30; a.position.set(u.x + Math.sin(u.rot) * d, 0, u.z + Math.cos(u.rot) * d); WI.play(a, "Gallop", t, 1, u.ph); }
@@ -701,7 +716,7 @@ window.ROOMS_MODELS = ["ultimatehomeinterior/FBX/Bed_Single.fbx", "ultimatehomei
 
 /* "rooms": several interiors side by side (camera picks one by position):
    hospital x=0, airport x=60, telegraph office 1859 x=120, kitchen x=180, office x=240, living room x=300.
-   Tracks: power (0 = blackout), backup (hospital emergency light), board (0 normal / 1 cancelled), offline (office screens),
+   Tracks: tv (living-room news), boardgame, power (0 = blackout), backup (hospital emergency light), board (0 normal / 1 cancelled), offline (office screens),
    sparks (telegraph), aurora (window), candles, fridge (0 closed-dark / 1 light), crowd. */
 (function () {
   const B = window.WI_SET_BUILDERS = window.WI_SET_BUILDERS || [];
@@ -788,7 +803,25 @@ window.ROOMS_MODELS = ["ultimatehomeinterior/FBX/Bed_Single.fbx", "ultimatehomei
     place("ultimatehomeinterior/FBX/Houseplant_3.fbx", { height: 1.2 }, 297.6, 0, -2.4);
     const fam = [[-0.8, -2.0, 0], [0.8, -2.0, 0], [0.0, 0.5, Math.PI]].map(([x, z, r], i) => MK.person(scene, window.PEOPLE[i + 4], { x: 300 + x, seat: i < 2 ? 0.45 : 0.42, z, rot: r, mode: "sit", kid: i === 2 }));
     fam.forEach((p) => people.push(p));
-    const candles = []; for (const [x, z] of [[299.7, -0.6], [300.3, -0.5], [300.0, -0.8], [302.4, -1.9]]) { const c = new THREE.Mesh(new THREE.CylinderGeometry(0.03, 0.03, 0.18, 10), MK.std(0xfff8e7)); c.position.set(x, x > 302 ? 1.25 : 0.86, z); scene.add(c);
+    // TV on the front wall (news broadcast) + board game on the table
+    const tvFrame = new THREE.Mesh(new THREE.BoxGeometry(1.5, 0.9, 0.06), MK.std(0x111215)); tvFrame.position.set(300, 1.45, 2.94); scene.add(tvFrame);
+    const tv = screen(1.4, 0.8, (g, w, h, k, t) => { if (k < 0.5) { g.fillStyle = "#050607"; g.fillRect(0, 0, w, h); return; }
+      const gr = g.createLinearGradient(0, 0, w, h); gr.addColorStop(0, "#0b2a5b"); gr.addColorStop(1, "#071631"); g.fillStyle = gr; g.fillRect(0, 0, w, h);
+      g.fillStyle = "#d61f26"; g.fillRect(w * 0.05, h * 0.08, w * 0.16, h * 0.13); g.fillStyle = "#fff"; g.font = `bold ${h * 0.09}px Arial`; g.fillText("LIVE", w * 0.075, h * 0.18);
+      g.fillStyle = "#1e3a8a"; g.fillRect(w * 0.6, h * 0.25, w * 0.32, h * 0.42); g.fillStyle = "#e8b88f"; g.beginPath(); g.arc(w * 0.76, h * 0.42, h * 0.09, 0, 7); g.fill(); g.fillStyle = "#273449"; g.fillRect(w * 0.68, h * 0.52, w * 0.16, h * 0.15);
+      g.fillStyle = "#ffffff"; g.fillRect(0, h * 0.7, w, h * 0.17); g.fillStyle = "#0b1b3a"; g.font = `bold ${h * 0.085}px Arial`; g.fillText("GLOBAL INTERNET OUTAGE", w * 0.04, h * 0.81);
+      g.fillStyle = "#d61f26"; g.fillRect(0, h * 0.87, w, h * 0.13); g.fillStyle = "#fff"; g.font = `${h * 0.07}px Arial`;
+      const msg = "BANKS CLOSED · FLIGHTS GROUNDED · TV AND RADIO STILL ON AIR · STAY TUNED · "; const x0 = w - ((t * 140) % (w * 3)); g.fillText(msg + msg, x0, h * 0.96); });
+    tv.rotation.y = Math.PI; tv.position.set(300, 1.45, 2.905); scene.add(tv);
+    const tvGlow = new THREE.PointLight(0x7fa8ff, 0, 5, 2); tvGlow.position.set(300, 1.4, 2.3); scene.add(tvGlow);
+    const game = new THREE.Group(); game.position.set(300, 0.765, -0.6); scene.add(game);
+    { const bc = document.createElement("canvas"); bc.width = bc.height = 256; const bg = bc.getContext("2d"); bg.fillStyle = "#f4ead2"; bg.fillRect(0, 0, 256, 256);
+      const cols = ["#e63946", "#2a9d8f", "#e9c46a", "#457b9d"]; for (let i = 0; i < 4; i++) { bg.fillStyle = cols[i]; bg.fillRect(i % 2 ? 160 : 0, i < 2 ? 0 : 160, 96, 96); }
+      bg.fillStyle = "#ffffff"; bg.fillRect(96, 0, 64, 256); bg.fillRect(0, 96, 256, 64); bg.strokeStyle = "#333"; for (let i = 0; i <= 11; i++) { bg.strokeRect(96, i * 23, 64, 23); bg.strokeRect(i * 23, 96, 23, 64); }
+      const board = new THREE.Mesh(new THREE.BoxGeometry(0.5, 0.012, 0.5), [MK.std(0x7a5a3a), MK.std(0x7a5a3a), new THREE.MeshStandardMaterial({ map: new THREE.CanvasTexture(bc), roughness: 0.7 }), MK.std(0x7a5a3a), MK.std(0x7a5a3a), MK.std(0x7a5a3a)]); game.add(board);
+      [[0xe63946, -0.15, -0.15], [0x2a9d8f, 0.15, -0.15], [0xe9c46a, -0.15, 0.15], [0x457b9d, 0.12, 0.17], [0xe63946, 0.0, -0.05]].forEach(([c, x, z]) => { const pc = new THREE.Mesh(new THREE.ConeGeometry(0.018, 0.05, 12), MK.std(c)); pc.position.set(x, 0.03, z); pc.castShadow = true; game.add(pc); });
+      const die = new THREE.Mesh(new THREE.BoxGeometry(0.03, 0.03, 0.03), MK.std(0xffffff)); die.position.set(0.08, 0.02, 0.05); die.rotation.y = 0.5; game.add(die); }
+    const candles = [], candleSticks = []; for (const [x, z] of [[299.7, -0.6], [300.3, -0.5], [300.0, -0.8], [302.4, -1.9]]) { const c = new THREE.Mesh(new THREE.CylinderGeometry(0.03, 0.03, 0.18, 10), MK.std(0xfff8e7)); c.position.set(x, x > 302 ? 1.25 : 0.86, z); scene.add(c); candleSticks.push(c);
       const f = new THREE.Sprite(new THREE.SpriteMaterial({ map: glowTex, color: 0xffb347, transparent: true, depthWrite: false, blending: THREE.AdditiveBlending })); f.scale.setScalar(0.18); f.position.set(x, c.position.y + 0.14, z); scene.add(f);
       const l = new THREE.PointLight(0xff9a40, 0, 5, 2); l.position.copy(f.position); scene.add(l); candles.push([f, l]); }
     const liv = ceilingLight(300, 2.55, -1, 0xfff1d6, 1.0, 9);
@@ -810,7 +843,8 @@ window.ROOMS_MODELS = ["ultimatehomeinterior/FBX/Bed_Single.fbx", "ultimatehomei
       // office
       const off = num("offline", t); officePanels.forEach(p => p.material.emissiveIntensity = 0.9 * pw); screens.forEach((s, i) => s.userData.draw(pw < 0.5 ? -1 : off > 0.5 ? 1 : 0, t));
       // candles
-      const cn = num("candles", t); candles.forEach(([f, l], i) => { f.visible = cn > 0.5; l.intensity = cn * (0.9 + 0.15 * Math.sin(t * 11 + i * 2)); f.scale.setScalar(0.17 + 0.02 * Math.sin(t * 17 + i)); });
+      const tvk = num("tv", t); tv.userData.draw(tvk, t); tvGlow.intensity = tvk * (0.7 + 0.1 * Math.sin(t * 9)); game.visible = num("boardgame", t) > 0.5;
+      const cn = num("candles", t); candleSticks.forEach((c) => c.visible = cn > 0.5 || num("boardgame", t) < 0.5); candles.forEach(([f, l], i) => { f.visible = cn > 0.5; l.intensity = cn * (0.9 + 0.15 * Math.sin(t * 11 + i * 2)); f.scale.setScalar(0.17 + 0.02 * Math.sin(t * 17 + i)); });
       MK.crowd(people, t, { frac: 1, panic: num("panic", t), look: num("lookUp", t) > 0.5 });
       return scene; } };
   });
@@ -1133,6 +1167,19 @@ window.ROOMS_MODELS = ["ultimatehomeinterior/FBX/Bed_Single.fbx", "ultimatehomei
   const clouds = new THREE.Mesh(new THREE.SphereGeometry(10.08, 64, 32), new THREE.MeshLambertMaterial({ map: earthCloud, transparent: true, opacity: 0.5, depthWrite: false }));
   const moonSp = new THREE.Mesh(new THREE.SphereGeometry(2.7, 64, 32), new THREE.MeshLambertMaterial({ map: loadTex("assets/lib/moon_1024.jpg") })); moonSp.position.set(-28, 6, -30); space.add(moonSp);
   const laser = new THREE.Mesh(new THREE.CylinderGeometry(0.03, 0.03, 1, 8), new THREE.MeshBasicMaterial({ color: 0x4dff7a, transparent: true, opacity: 0, blending: THREE.AdditiveBlending })); space.add(laser);
+  // undersea internet cables (great-circle tubes on the globe) - tracks: cables (draw 0..1), cableCut (Tonga cable red/blinking), earthRot
+  const ll = (lat, lon, r) => { const ph = (lon + 180) * Math.PI / 180, th = (90 - lat) * Math.PI / 180; return new THREE.Vector3(-r * Math.cos(ph) * Math.sin(th), r * Math.cos(th), r * Math.sin(ph) * Math.sin(th)); };
+  const cableGroup = new THREE.Group(); earth.add(cableGroup); const cables = [];
+  const routes = [[[40.7, -74], [50.8, -4.5]], [[36.8, -76], [43.3, -2.9]], [[42.3, -70.9], [52, -10], [53.3, -6.2]], [[-3.7, -38.5], [38, -8.9]], [[25.8, -80.2], [10, -50], [-3.7, -38.5]],
+    [[43.3, 5.4], [36, 14], [31.2, 29.9]], [[29.9, 32.5], [21.5, 39.2], [12.5, 44], [14, 55], [19, 72.8]], [[19, 72.8], [6, 80], [5.5, 95], [1.3, 103.8]], [[1.3, 103.8], [12, 110], [22.3, 114]],
+    [[22.3, 114], [26, 125], [35.7, 139.7]], [[35.7, 139.7], [45, -170], [34, -118.4]], [[34, -118.4], [21.3, -157.8], [-5, 175], [-33.9, 151.2]], [[37.6, -122.4], [21.3, -157.8]],
+    [[-33.9, 18.4], [-10, 8], [6.5, 3.4], [20, -20], [38.7, -9.1]], [[-33.9, 151.2], [-25, 160], [-18.1, 178.4]], [[1.3, 103.8], [-10, 112], [-31.9, 115.8]], [[-33.9, 18.4], [-30, 45], [-12, 60], [19, 72.8]],
+    [[-18.1, 178.4], [-21.1, -175.2]]];
+  routes.forEach((rt, ri) => { const pts = []; for (let i = 0; i < rt.length - 1; i++) { const a = ll(rt[i][0], rt[i][1], 1), b = ll(rt[i + 1][0], rt[i + 1][1], 1), ang = a.angleTo(b), n = Math.max(4, Math.ceil(ang * 40));
+      for (let j = 0; j <= n; j++) { if (i > 0 && j === 0) continue; const f = j / n; const v = a.clone().multiplyScalar(Math.sin((1 - f) * ang)).add(b.clone().multiplyScalar(Math.sin(f * ang))).divideScalar(Math.sin(ang) || 1); pts.push(v.normalize().multiplyScalar(10.04)); } }
+    const geo = new THREE.TubeGeometry(new THREE.CatmullRomCurve3(pts), pts.length * 3, 0.035, 6, false);
+    const m = new THREE.Mesh(geo, new THREE.MeshBasicMaterial({ color: 0x5ff3ff, transparent: true, opacity: 0, blending: THREE.AdditiveBlending, depthWrite: false })); m.userData.tonga = ri === routes.length - 1; cableGroup.add(m); cables.push(m); });
+  const tongaPulse = new THREE.Sprite(new THREE.SpriteMaterial({ map: glowTex, color: 0xff3b30, transparent: true, opacity: 0, depthWrite: false, blending: THREE.AdditiveBlending })); tongaPulse.position.copy(ll(-21.1, -175.2, 10.1)); cableGroup.add(tongaPulse);
   space.add(clouds); const spaceLight = new THREE.DirectionalLight(0xffffff, 1); spaceLight.position.set(-30, 6, 12); space.add(spaceLight);
   space.add(new THREE.Points(starGeo, new THREE.PointsMaterial({ color: 0xffffff, size: 1.8, sizeAttenuation: false })));
 
@@ -1269,7 +1316,7 @@ window.ROOMS_MODELS = ["ultimatehomeinterior/FBX/Bed_Single.fbx", "ultimatehomei
     skinCols, shirtCols, fitShadow, loadTex, cam, W, H };
   const SETS = {};
   (window.WI_SET_BUILDERS || []).forEach((b) => { const st = b(WI); SETS[st.name] = st; shadowAll(st.scene); });
-  window.WI_SETS = SETS;
+  window.WI_SETS = SETS; window.WI_SPACE = space;
   function setPose(g, p, side) { g.position.set(p[0] * side, p[1], p[2]); g.rotation.set(p[3], p[4] * side, p[5] * side); }
 
   // ================= draw(t)
@@ -1298,7 +1345,10 @@ window.ROOMS_MODELS = ["ultimatehomeinterior/FBX/Bed_Single.fbx", "ultimatehomei
     if (set === "space") {
       const p = val("spaceCam", t) || [0, 0, 34];
       cam.position.set(p[0], p[1], p[2]); cam.lookAt(0, 0, 0); cam.fov = num("spaceFov", t, 40); cam.updateProjectionMatrix();
-      earth.rotation.y = 2.2 + t * 0.04; clouds.rotation.y = earth.rotation.y + t * 0.01;
+      const erot = val("earthRot", t); earth.rotation.y = erot != null ? erot : 2.2 + t * 0.04; earth.rotation.z = num("earthTilt", t, 0); clouds.rotation.z = earth.rotation.z;
+      const cb = num("cables", t), cc = num("cableCut", t); cableGroup.visible = cb > 0.001; if (cableGroup.visible) cables.forEach((m, i) => { const idx = m.geometry.index.count; m.geometry.setDrawRange(0, Math.floor(idx * Math.min(1, Math.max(0, cb * 1.6 - (i % 5) * 0.12)) / 3) * 3);
+        const blink = Math.sin(t * 14) > 0 ? 1 : 0.15; if (m.userData.tonga && cc > 0.01) { m.material.color.setHex(0xff3b30); m.material.opacity = cb * (0.4 + 0.6 * blink); } else { m.material.color.setHex(0x5ff3ff); m.material.opacity = cb * (0.75 + 0.25 * Math.sin(t * 3 + i)); } });
+      tongaPulse.material.opacity = cc * (0.5 + 0.5 * Math.sin(t * 7)); tongaPulse.scale.setScalar(0.2 + cc * (0.45 + 0.2 * Math.sin(t * 7))); clouds.rotation.y = earth.rotation.y + t * 0.01;
       earthU.sun.value = num("earthSun", t, 1); earthU.lights.value = num("earthLights", t, 1); earthU.ice.value = num("earthIce", t);
       clouds.material.opacity = 0.5 * num("earthSun", t, 1) + 0.08; spaceLight.intensity = num("earthSun", t, 1);
       const mv = num("spaceMoon", t); moonSp.visible = mv > 0.01; moonSp.scale.setScalar(Math.max(0.01, mv)); const mpos = val("spaceMoonPos", t) || [-28, 6, -30]; moonSp.position.set(mpos[0], mpos[1], mpos[2]); moonSp.rotation.y = t * 0.02;

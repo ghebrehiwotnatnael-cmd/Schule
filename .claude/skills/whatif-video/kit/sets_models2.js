@@ -76,7 +76,7 @@ window.ROOMS_MODELS = ["ultimatehomeinterior/FBX/Bed_Single.fbx", "ultimatehomei
       foam.material.opacity = 0.35 + 0.15 * Math.sin(t * 1.7);
       boats.forEach((b, i) => { const [x, z] = b.userData.bx; b.position.set(x, water.position.y + 0.1 + Math.sin(t * 1.1 + i) * 0.08, z); b.rotation.z = Math.sin(t * 0.9 + i) * 0.04; });
       const ms = num("moon", t, 1); const mp = WI.val("moonPos", t) || [-60, 140, -900];
-      moon.visible = ms > 0.01; moon.scale.setScalar(Math.max(0.01, ms)); moon.position.set(mp[0], mp[1], mp[2]); halo.position.copy(moon.position); halo.material.opacity = ms * 0.55;
+      moon.visible = ms > 0.01; moon.scale.setScalar(Math.max(0.01, ms)); moon.position.set(mp[0], mp[1], mp[2]); halo.position.copy(moon.position); halo.material.opacity = ms * 0.55 * num("moonHalo", t, 1);
       path.visible = ms > 0.01; path.material.opacity = ms * num("moonPath", t, 1); path.position.set(mp[0] * 0.25 + pos[0] * 0.75, water.position.y + 0.12, -470); path.rotation.z = Math.atan2(mp[0] - pos[0], 900) * 0.4;
       moonLight.intensity = ms * num("moonLight", t, 0); moonLight.position.copy(moon.position).normalize().multiplyScalar(100); moonLight.target.position.set(pos[0], 0, pos[2]);
       stars.material.opacity = num("stars", t); mw.material.opacity = num("milkyway", t); aurora(num("aurora", t), t);
@@ -90,7 +90,7 @@ window.ROOMS_MODELS = ["ultimatehomeinterior/FBX/Bed_Single.fbx", "ultimatehomei
 
   // ================================================================ FOREST (night, animals)
   B.push(function (WI) {
-    const { THREE, R, rr, num, col, glowTex } = WI; const K = window.WI_COMMON(WI); const MK = window.WI_MODELKIT(WI);
+    const { THREE, R, rr, num, col, glowTex, canvasTex } = WI; const K = window.WI_COMMON(WI); const MK = window.WI_MODELKIT(WI);
     const scene = new THREE.Scene(); const sky = K.sky(scene); const L = K.lights(scene); const env = MK.envs(scene);
     MK.ground(scene, 2000, 0x3c4a2a); WI.grass(scene, [-25, 25, 10, -45], 40000, 0x5a7d3a, 0.22);
     const trees = ["PineTree_1", "PineTree_3", "CommonTree_2", "BirchTree_2"];

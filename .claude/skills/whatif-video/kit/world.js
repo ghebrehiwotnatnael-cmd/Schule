@@ -464,7 +464,7 @@
     skinCols, shirtCols, fitShadow, loadTex, cam, W, H };
   const SETS = {};
   (window.WI_SET_BUILDERS || []).forEach((b) => { const st = b(WI); SETS[st.name] = st; shadowAll(st.scene); });
-  window.WI_SETS = SETS;
+  window.WI_SETS = SETS; window.WI_SPACE = space;
   function setPose(g, p, side) { g.position.set(p[0] * side, p[1], p[2]); g.rotation.set(p[3], p[4] * side, p[5] * side); }
 
   // ================= draw(t)
