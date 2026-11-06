@@ -127,6 +127,7 @@ venv.bak/
 dmypy.json
 
 # Pyre type checker
-.pyre/.claude/skills/whatif-video/kit/models/
+.pyre/
+.claude/skills/whatif-video/kit/models/
 .claude/skills/whatif-video/kit/_preview/
 videos/_test-*/
