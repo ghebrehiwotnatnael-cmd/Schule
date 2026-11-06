@@ -40,6 +40,25 @@ and camera angles**, and **lots happening on screen** so it never feels monotono
 - Test hand poses fast without HyperFrames: copy `kit/tools/make.py` + `shot.js` into `<video>/build/handtest/`,
   run `python3 build/handtest/make.py hold,shield` then `node build/handtest/shot.js hold shield` from the video dir.
 
+### Model sets (real CC0 models, HDRI light) - `MODELS = "all"` + `SET_FILES` in video.py
+Models live in `kit/models/` (gitignored, fetch with `python3 kit/tools/fetch_models.py`; Drive rate limits → rerun).
+- `street` (sets_models.js): Manhattan-like block. Tracks env (day|dusk|night), cityLights, lamps, signals,
+  headlights, traffic, cars, jam, crowd, panic, lookUp, stars. Sidewalk POV cam e.g. [7.6,1.65,6] → [3,3.5,-40].
+- `coast` (sets_models2.js): beach, harbour/pier (x≈42), boats, cruise ship, palms, houses (z=70), people.
+  Tracks tide, moon/moonPos/moonPath/moonLight, milkyway, aurora, beach (umbrellas + sunbathers), crowd.
+- `forest`: night forest, clearing |x|<9; animals Fox/Wolf/Deer/Stag, track animals = graze|alert|run; moon, stars, milkyway.
+- `rooms` (sets_rooms.js): hospital x=0, airport x=60 (board), telegraph 1859 x=120 (sparks), kitchen x=180
+  (fridge, tapDrip), office x=240 (offline screens, black when power=0), living room x=300 (candles, tv news, boardgame).
+  power, backup, daylight (sun through windows - interiors go black without it in a daytime blackout).
+- `space` (world.js): earthSun, earthLights, earthIce, earthRot (fix the globe: face lon L with R = pi/2 - (L+180)deg),
+  earthTilt, spaceCam, spaceMoon/spaceMoonPos, laser, cables (undersea cable network draws in), cableCut (Tonga cable red).
+- Phone screen modes (`phoneUI`): feed, nosignal, offline, battery, declined, notifs, map.
+- Day light: keep `light` ≈ 0.7, `envI` ≈ 0.4, `ambient` ≈ 0.2. Over-lit scenes clip before the grade, so
+  lowering `exposure` only greys them.
+- Fast stills: `python3 kit/tools/preview.py videos/<slug> 1.5,13,43 --scale 0.3` → `build/preview/sheet.jpg`.
+- Render of a model video with 4 workers is slow (2-4 h for 64 s on 4 cores); don't run previews alongside if not needed.
+- HeyGen token expired → `npx hyperframes auth refresh`.
+
 ## Working rules (from the creator)
 - Do NOT make a new video until the creator explicitly asks for one.
 - Any NEW idea or improvement: propose it first, wait for confirmation, only then use it.

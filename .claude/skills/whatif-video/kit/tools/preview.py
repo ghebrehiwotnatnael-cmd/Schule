@@ -43,20 +43,18 @@ page_url = f"{H}/_preview/" + os.path.basename(vdir) + ".html"
 runner = os.path.join(out, "shot.js")
 open(runner, "w").write('''const { chromium } = require('playwright');
 (async()=>{const b=await chromium.launch({args:['--use-gl=swiftshader','--enable-unsafe-swiftshader','--allow-file-access-from-files']});
-const p=await b.newPage({viewport:{width:1080,height:1920}}); p.on('pageerror',e=>console.log('ERR',e.message));
+const p=await b.newPage({viewport:{width:1080,height:1920}}); p.setDefaultTimeout(600000); p.on('pageerror',e=>console.log('ERR',e.message));
 await p.goto(process.argv[2]); await p.waitForFunction('window.WI_DRAW'); await p.evaluate(()=>window.__hf.buildReady.world);
-for (const t of process.argv.slice(3)) { await p.evaluate((t)=>window.WI_DRAW(+t), t); await p.screenshot({path: process.argv[3+0] && (process.env.OUT + '/t_' + t + '.png')}); }
+for (const t of process.argv.slice(3)) { try { await p.evaluate((t)=>window.WI_DRAW(+t), t); await p.screenshot({path: process.env.OUT + '/t_' + t + '.png'}); } catch (e) { console.log('FRAME FAIL', t, e.message); } }
 await b.close();})();''')
 r = subprocess.run(["node", runner, page_url] + [str(t) for t in times], capture_output=True, text=True, cwd=vdir, env=dict(os.environ, OUT=out))
 print(r.stdout[-2000:], r.stderr[-2000:])
-files = [os.path.join(out, f"t_{t}.png") for t in times]
-cols = min(6, len(files))
-inputs = sum([["-i", f] for f in files], [])
-w = int(1080 * scale)
-filt = "".join(f"[{i}]scale={w}:-1[s{i}];" for i in range(len(files)))
-rows = (len(files) + cols - 1) // cols
-pad = cols * rows - len(files)
-filt += "".join(f"[s{i}]" for i in range(len(files))) + (f"xstack=inputs={len(files)}:layout=" + "|".join(
-    f"{(i % cols) * w}_{(i // cols) * int(1920 * scale)}" for i in range(len(files))) + ":fill=black" if len(files) > 1 else "copy")
-subprocess.run(["ffmpeg", "-v", "error", "-y"] + inputs + ["-filter_complex", filt, os.path.join(out, "sheet.jpg")], check=True)
-print("sheet:", os.path.join(out, "sheet.jpg"))
+files = [f for f in (os.path.join(out, f"t_{t}.png") for t in times) if os.path.exists(f)]
+from PIL import Image
+cols = min(6, len(files)); rows = (len(files) + cols - 1) // cols
+w, h = int(1080 * scale), int(1920 * scale)
+sheet = Image.new("RGB", (cols * w, rows * h))
+for i, f in enumerate(files):
+    sheet.paste(Image.open(f).convert("RGB").resize((w, h)), ((i % cols) * w, (i // cols) * h))
+sheet.save(os.path.join(out, "sheet.jpg"), quality=85)
+print("sheet:", os.path.join(out, "sheet.jpg"), len(files), "of", len(times))

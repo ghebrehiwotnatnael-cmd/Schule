@@ -328,7 +328,11 @@ window.__timelines["endcard"] = tl;
             else:
                 shutil.copy(src, os.path.join(d, "assets", "lib", f))
         # models: copy only the files this video uses (MODELS in video.py, plus files next to glTF: .bin + textures)
-        for rel in getattr(self.m, "MODELS", []):
+        models = getattr(self.m, "MODELS", [])
+        if models == "all":
+            shutil.copytree(os.path.join(KIT, "models"), os.path.join(d, "assets", "models"), dirs_exist_ok=True)
+            models = []
+        for rel in models:
             srcf = os.path.join(KIT, "models", rel)
             if not os.path.exists(srcf):
                 print("WARNING missing model", rel, "- run kit/tools/fetch_models.py"); continue
@@ -346,7 +350,8 @@ window.__timelines["endcard"] = tl;
         if os.path.exists(avatar):
             shutil.copy(avatar, os.path.join(d, "assets", "avatar.png"))
         for n in {n for n, _, _ in self.sfx_list}:
-            shutil.copy(os.path.join(KIT, "sfx", n + ".mp3"), os.path.join(d, "assets", "sfx", n + ".mp3"))
+            if "/" not in n:
+                shutil.copy(os.path.join(KIT, "sfx", n + ".mp3"), os.path.join(d, "assets", "sfx", n + ".mp3"))
         shutil.copy(os.path.join(KIT, "sfx", "CREDITS.md"), os.path.join(d, "assets", "sfx", "CREDITS.md"))
         comps = [("world", self.world_html(), 0, self.story_end, 1, "graphics"),
                  ("title", self.title_html(), 0, self.title_end, 3, "graphics"),
@@ -377,12 +382,12 @@ window.__timelines["endcard"] = tl;
             shutil.copy(os.path.join(KIT, "ambient", "CREDITS.md"), os.path.join(d, "assets", "ambient", "CREDITS.md"))
         lanes = []
         for k, (n, t, vol) in enumerate(sorted(self.sfx_list, key=lambda x: x[1])):
-            dur = min(sfx_len(n), max(0.2, self.duration - t))
+            dur = min(sfx_len(n, d), max(0.2, self.duration - t))
             lane = next((j for j, e in enumerate(lanes) if e <= t), None)
             if lane is None:
                 lanes.append(0); lane = len(lanes) - 1
             lanes[lane] = t + dur + 0.01
-            audio.append(f'<audio id="sfx-{k}" class="clip" src="assets/sfx/{n}.mp3" data-start="{r3(t)}" data-duration="{r3(dur)}" '
+            audio.append(f'<audio id="sfx-{k}" class="clip" src="assets/{n if "/" in n else "sfx/" + n}.mp3" data-start="{r3(t)}" data-duration="{r3(dur)}" '
                          f'data-track-index="{11 + lane}" data-volume="{vol}"></audio>')
         index = f'''<!doctype html>
 <html lang="en" data-resolution="portrait">

@@ -969,11 +969,12 @@ window.__timelines["main"] = gsap.timeline({{ paused: true }});
 _SFX_LEN = {}
 
 
-def sfx_len(name):
+def sfx_len(name, project=None):
     if name not in _SFX_LEN:
         import subprocess
+        path = os.path.join(project, "assets", name + ".mp3") if (project and "/" in name) else os.path.join(KIT, "sfx", name + ".mp3")
         out = subprocess.run(["ffprobe", "-v", "error", "-show_entries", "format=duration", "-of", "csv=p=0",
-                              os.path.join(KIT, "sfx", name + ".mp3")], capture_output=True, text=True).stdout
+                              path], capture_output=True, text=True).stdout
         _SFX_LEN[name] = round(float(out.strip() or 1.0), 3)
     return _SFX_LEN[name]
 

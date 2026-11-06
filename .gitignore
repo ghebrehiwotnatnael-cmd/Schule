@@ -131,3 +131,4 @@ dmypy.json
 .claude/skills/whatif-video/kit/models/
 .claude/skills/whatif-video/kit/_preview/
 videos/_test-*/
+videos/*/assets/models/

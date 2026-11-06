@@ -5,7 +5,7 @@
 window.STREET_MODELS = ["simplebuildings/FBX/Flat.fbx", "simplebuildings/FBX/Flat2.fbx", "simplebuildings/FBX/Bank.fbx",
   "simplebuildings/FBX/Shop.fbx", "simplebuildings/FBX/Hospital.fbx", "simplebuildings/FBX/House.fbx",
   "cars/FBX/NormalCar1.fbx", "cars/FBX/NormalCar2.fbx", "cars/FBX/SUV.fbx", "cars/FBX/Taxi.fbx", "cars/FBX/Cop.fbx",
-  "publictransport/FBX/Bus.fbx", "publictransport/FBX/Ambulance.fbx", "publictransport/FBX/TrafficLight.fbx",
+  "publictransport/FBX/Bus.fbx", "publictransport/FBX/Ambulance.fbx",
   "ultimatenature/FBX/CommonTree_1.fbx", "ultimatenature/FBX/CommonTree_3.fbx",
   "animatedmen/FBX/Male_Casual.fbx", "animatedmen/FBX/Male_Suit.fbx", "animatedmen/FBX/Male_Shirt.fbx", "animatedmen/FBX/Male_LongSleeve.fbx",
   "animatedwomen/FBX/Female_Casual.fbx", "animatedwomen/FBX/Female_Dress.fbx", "animatedwomen/FBX/Female_TankTop.fbx", "animatedwomen/FBX/Female_Alternative.fbx"];
@@ -82,15 +82,19 @@ window.PEOPLE = ["animatedmen/FBX/Male_Casual.fbx", "animatedwomen/FBX/Female_Ca
     for (let i = 0; i < 26; i++) { const w = rr(20, 40), h = rr(60, 200), d = rr(20, 40); const g = new THREE.BoxGeometry(w, h, d); const uv = g.attributes.uv; for (let j = 0; j < uv.count; j++) uv.setXY(j, uv.getX(j) * w / 12, uv.getY(j) * h / 20);
       const m = new THREE.Mesh(g, towerMats[i % 3]); m.position.set(rr(-260, 260), h / 2, rr(-420, -620)); scene.add(m); }
     // street lamps, trees, traffic lights
-    const lamps = []; for (let z = 10; z > -330; z -= 16) for (const s of [-1, 1]) lamps.push(MK.lamp(scene, s * 6.6, z + (s > 0 ? 8 : 0)));
-    for (let z = 4; z > -330; z -= 12) for (const s of [-1, 1]) { const tr = WI.model(`ultimatenature/FBX/CommonTree_${s > 0 ? 1 : 3}.fbx`, { height: rr(6, 8) }); tr.position.set(s * 9.2, 0.18, z); tr.rotation.y = R() * 6; scene.add(tr); }
-    const signals = []; for (const [x, z, r] of [[-6.4, -35, Math.PI], [6.4, -41, 0]]) { const tl = WI.model("publictransport/FBX/TrafficLight.fbx", { height: 4.6, autoUp: true }); tl.position.set(x, 0.18, z); tl.rotation.y = r; scene.add(tl);
+    const lamps = []; for (let z = 10; z > -330; z -= 16) for (const s of [-1, 1]) { if (s > 0 && z + 8 === 2) continue; lamps.push(MK.lamp(scene, s * 6.6, z + (s > 0 ? 8 : 0))); }
+    for (let z = 4; z > -330; z -= 12) for (const s of [-1, 1]) { const tr = WI.model(`ultimatenature/FBX/CommonTree_${s > 0 ? 2 : 4}.fbx`, { height: rr(6, 8) }); tr.position.set(s * 9.2, 0.18, z); tr.rotation.y = R() * 6; scene.add(tr); }
+    const signals = []; for (const [x, z, r] of [[-6.4, -35, Math.PI], [6.4, -41, 0]]) { const tl = new THREE.Group(); const dk = new THREE.MeshStandardMaterial({ color: 0x23262c, roughness: 0.6, metalness: 0.4 });
+      const pole = new THREE.Mesh(new THREE.CylinderGeometry(0.08, 0.1, 4.4, 10), dk); pole.position.y = 2.2; tl.add(pole);
+      const box = new THREE.Mesh(new THREE.BoxGeometry(0.42, 1.25, 0.32), dk); box.position.set(0, 3.75, -0.12); tl.add(box);
+      [[4.1, 0x5a1a14], [3.75, 0x4a3a10], [3.4, 0x13401f]].forEach(([y, c]) => { const l = new THREE.Mesh(new THREE.CircleGeometry(0.13, 16), new THREE.MeshStandardMaterial({ color: c, emissive: c, emissiveIntensity: 0.6 })); l.position.set(0, y, -0.285); l.rotation.y = Math.PI; tl.add(l); });
+      tl.traverse(o => { if (o.isMesh) o.castShadow = true; }); tl.position.set(x, 0.18, z); tl.rotation.y = r; scene.add(tl);
       const red = new THREE.Sprite(new THREE.SpriteMaterial({ map: glowTex, color: 0xff3020, transparent: true, depthWrite: false })); red.scale.set(1.1, 1.1, 1); red.position.set(x, 4.1, z + (r ? 0.3 : -0.3)); scene.add(red);
       const grn = new THREE.Sprite(new THREE.SpriteMaterial({ map: glowTex, color: 0x30ff70, transparent: true, depthWrite: false })); grn.scale.set(1.1, 1.1, 1); grn.position.set(x, 3.4, z + (r ? 0.3 : -0.3)); scene.add(grn); signals.push([red, grn]); }
     // traffic
     const carFiles = ["NormalCar1", "NormalCar2", "SUV", "Taxi", "NormalCar1", "Cop", "SUV", "NormalCar2", "Taxi", "NormalCar1"]; const cars = [];
     for (let i = 0; i < 22; i++) { const dir = i % 2 ? 1 : -1; const f = i === 5 ? "publictransport/FBX/Bus.fbx" : i === 12 ? "publictransport/FBX/Ambulance.fbx" : `cars/FBX/${carFiles[i % carFiles.length]}.fbx`;
-      const c = WI.model(f, { length: f.includes("Bus") ? 11 : f.includes("Ambulance") ? 6 : 4.4, autoUp: true, alongZ: true, rotY: dir > 0 ? Math.PI : 0 });
+      const c = WI.model(f, { length: f.includes("Bus") ? 11 : f.includes("Ambulance") ? 6 : 4.4, autoUp: true, alongZ: true, rotY: dir > 0 ? Math.PI : 0, onLoad: f.includes("Bus") ? (h) => h.traverse(o => { if (o.isMesh) (Array.isArray(o.material) ? o.material : [o.material]).forEach(m => { if (!m.map) { m.color.set(0xc9372c); m.roughness = 0.45; } }); }) : undefined });
       const hl = new THREE.Sprite(new THREE.SpriteMaterial({ map: glowTex, color: 0xfff1c4, transparent: true, depthWrite: false, opacity: 0 })); hl.scale.set(3.4, 1.8, 1); hl.position.set(0, 0.8, -2.4); c.add(hl);
       const hl2 = new THREE.PointLight(0xfff1d0, 0, 22, 2); hl2.position.set(0, 0.9, -3.2); c.add(hl2);
       c.userData.car = { dir, lane: dir > 0 ? 2.8 : -2.8, z0: rr(-330, 20), speed: rr(8, 12), hl, hl2 }; scene.add(c); cars.push(c); }

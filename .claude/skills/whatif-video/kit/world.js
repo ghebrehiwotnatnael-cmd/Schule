@@ -315,6 +315,19 @@
   const clouds = new THREE.Mesh(new THREE.SphereGeometry(10.08, 64, 32), new THREE.MeshLambertMaterial({ map: earthCloud, transparent: true, opacity: 0.5, depthWrite: false }));
   const moonSp = new THREE.Mesh(new THREE.SphereGeometry(2.7, 64, 32), new THREE.MeshLambertMaterial({ map: loadTex("assets/lib/moon_1024.jpg") })); moonSp.position.set(-28, 6, -30); space.add(moonSp);
   const laser = new THREE.Mesh(new THREE.CylinderGeometry(0.03, 0.03, 1, 8), new THREE.MeshBasicMaterial({ color: 0x4dff7a, transparent: true, opacity: 0, blending: THREE.AdditiveBlending })); space.add(laser);
+  // undersea internet cables (great-circle tubes on the globe) - tracks: cables (draw 0..1), cableCut (Tonga cable red/blinking), earthRot
+  const ll = (lat, lon, r) => { const ph = (lon + 180) * Math.PI / 180, th = (90 - lat) * Math.PI / 180; return new THREE.Vector3(-r * Math.cos(ph) * Math.sin(th), r * Math.cos(th), r * Math.sin(ph) * Math.sin(th)); };
+  const cableGroup = new THREE.Group(); earth.add(cableGroup); const cables = [];
+  const routes = [[[40.7, -74], [50.8, -4.5]], [[36.8, -76], [43.3, -2.9]], [[42.3, -70.9], [52, -10], [53.3, -6.2]], [[-3.7, -38.5], [38, -8.9]], [[25.8, -80.2], [10, -50], [-3.7, -38.5]],
+    [[43.3, 5.4], [36, 14], [31.2, 29.9]], [[29.9, 32.5], [21.5, 39.2], [12.5, 44], [14, 55], [19, 72.8]], [[19, 72.8], [6, 80], [5.5, 95], [1.3, 103.8]], [[1.3, 103.8], [12, 110], [22.3, 114]],
+    [[22.3, 114], [26, 125], [35.7, 139.7]], [[35.7, 139.7], [45, -170], [34, -118.4]], [[34, -118.4], [21.3, -157.8], [-5, 175], [-33.9, 151.2]], [[37.6, -122.4], [21.3, -157.8]],
+    [[-33.9, 18.4], [-10, 8], [6.5, 3.4], [20, -20], [38.7, -9.1]], [[-33.9, 151.2], [-25, 160], [-18.1, 178.4]], [[1.3, 103.8], [-10, 112], [-31.9, 115.8]], [[-33.9, 18.4], [-30, 45], [-12, 60], [19, 72.8]],
+    [[-18.1, 178.4], [-21.1, -175.2]]];
+  routes.forEach((rt, ri) => { const pts = []; for (let i = 0; i < rt.length - 1; i++) { const a = ll(rt[i][0], rt[i][1], 1), b = ll(rt[i + 1][0], rt[i + 1][1], 1), ang = a.angleTo(b), n = Math.max(4, Math.ceil(ang * 40));
+      for (let j = 0; j <= n; j++) { if (i > 0 && j === 0) continue; const f = j / n; const v = a.clone().multiplyScalar(Math.sin((1 - f) * ang)).add(b.clone().multiplyScalar(Math.sin(f * ang))).divideScalar(Math.sin(ang) || 1); pts.push(v.normalize().multiplyScalar(10.04)); } }
+    const geo = new THREE.TubeGeometry(new THREE.CatmullRomCurve3(pts), pts.length * 3, 0.035, 6, false);
+    const m = new THREE.Mesh(geo, new THREE.MeshBasicMaterial({ color: 0x5ff3ff, transparent: true, opacity: 0, blending: THREE.AdditiveBlending, depthWrite: false })); m.userData.tonga = ri === routes.length - 1; cableGroup.add(m); cables.push(m); });
+  const tongaPulse = new THREE.Sprite(new THREE.SpriteMaterial({ map: glowTex, color: 0xff3b30, transparent: true, opacity: 0, depthWrite: false, blending: THREE.AdditiveBlending })); tongaPulse.position.copy(ll(-21.1, -175.2, 10.1)); cableGroup.add(tongaPulse);
   space.add(clouds); const spaceLight = new THREE.DirectionalLight(0xffffff, 1); spaceLight.position.set(-30, 6, 12); space.add(spaceLight);
   space.add(new THREE.Points(starGeo, new THREE.PointsMaterial({ color: 0xffffff, size: 1.8, sizeAttenuation: false })));
 
@@ -451,6 +464,7 @@
     skinCols, shirtCols, fitShadow, loadTex, cam, W, H };
   const SETS = {};
   (window.WI_SET_BUILDERS || []).forEach((b) => { const st = b(WI); SETS[st.name] = st; shadowAll(st.scene); });
+  window.WI_SETS = SETS;
   function setPose(g, p, side) { g.position.set(p[0] * side, p[1], p[2]); g.rotation.set(p[3], p[4] * side, p[5] * side); }
 
   // ================= draw(t)
@@ -479,7 +493,10 @@
     if (set === "space") {
       const p = val("spaceCam", t) || [0, 0, 34];
       cam.position.set(p[0], p[1], p[2]); cam.lookAt(0, 0, 0); cam.fov = num("spaceFov", t, 40); cam.updateProjectionMatrix();
-      earth.rotation.y = 2.2 + t * 0.04; clouds.rotation.y = earth.rotation.y + t * 0.01;
+      const erot = val("earthRot", t); earth.rotation.y = erot != null ? erot : 2.2 + t * 0.04; earth.rotation.z = num("earthTilt", t, 0); clouds.rotation.z = earth.rotation.z;
+      const cb = num("cables", t), cc = num("cableCut", t); cableGroup.visible = cb > 0.001; if (cableGroup.visible) cables.forEach((m, i) => { const idx = m.geometry.index.count; m.geometry.setDrawRange(0, Math.floor(idx * Math.min(1, Math.max(0, cb * 1.6 - (i % 5) * 0.12)) / 3) * 3);
+        const blink = Math.sin(t * 14) > 0 ? 1 : 0.15; if (m.userData.tonga && cc > 0.01) { m.material.color.setHex(0xff3b30); m.material.opacity = cb * (0.4 + 0.6 * blink); } else { m.material.color.setHex(0x5ff3ff); m.material.opacity = cb * (0.75 + 0.25 * Math.sin(t * 3 + i)); } });
+      tongaPulse.material.opacity = cc * (0.5 + 0.5 * Math.sin(t * 7)); tongaPulse.scale.setScalar(0.2 + cc * (0.45 + 0.2 * Math.sin(t * 7))); clouds.rotation.y = earth.rotation.y + t * 0.01;
       earthU.sun.value = num("earthSun", t, 1); earthU.lights.value = num("earthLights", t, 1); earthU.ice.value = num("earthIce", t);
       clouds.material.opacity = 0.5 * num("earthSun", t, 1) + 0.08; spaceLight.intensity = num("earthSun", t, 1);
       const mv = num("spaceMoon", t); moonSp.visible = mv > 0.01; moonSp.scale.setScalar(Math.max(0.01, mv)); const mpos = val("spaceMoonPos", t) || [-28, 6, -30]; moonSp.position.set(mpos[0], mpos[1], mpos[2]); moonSp.rotation.y = t * 0.02;

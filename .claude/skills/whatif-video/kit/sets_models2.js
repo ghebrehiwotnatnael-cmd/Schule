@@ -1,4 +1,4 @@
-/* More model sets: "coast" (beach, harbour, ocean with tide, boats, palms, houses, moon), "forest" (night forest with
+/* More model sets: "coast" (beach [track beach = umbrellas + sunbathers], harbour, ocean with tide, boats, palms, houses, moon), "forest" (night forest with
    animated animals), "rooms" (hospital, airport, telegraph office 1859, kitchen, office, living room with candles),
    "moonspace" (Earth + Moon, laser to the Moon).  Needs sets_common.js, sets_models.js (WI_MODELKIT) and world.js. */
 window.COAST_MODELS = ["ships/FBX/Boat.fbx", "ships/FBX/BoatWSail.fbx", "ships/FBX/Lifeboat.fbx", "ships/FBX/CruiseShip.fbx",
@@ -58,6 +58,16 @@ window.ROOMS_MODELS = ["ultimatehomeinterior/FBX/Bed_Single.fbx", "ultimatehomei
       h.position.set(-110 + i * 20, 0, 70); scene.add(h); }
     const lamps = []; for (let x = -110; x < 130; x += 18) lamps.push(MK.lamp(scene, x, 52, 4.5));
     const people = []; for (let i = 0; i < 22; i++) { const r = R(); people.push(MK.person(scene, window.PEOPLE[i % 8], { x: rr(-60, 60), z: rr(-6, 30), rot: R() * 6.28, mode: r < 0.45 ? "walk" : r < 0.8 ? "stand" : "sit", span: 50 })); }
+    // beach day: umbrellas, towels and a crowd of sunbathers (track "beach")
+    const beach = new THREE.Group(); scene.add(beach); const beachPeople = [];
+    const umbC = [0xe63946, 0x2a9d8f, 0xf4a261, 0x457b9d, 0xe9c46a, 0xff6f91];
+    for (let i = 0; i < 14; i++) { const x = rr(-16, 16), z = rr(4, 22), c = umbC[i % umbC.length];
+      const pole = new THREE.Mesh(new THREE.CylinderGeometry(0.03, 0.03, 2.3, 6), MK.std(0xeeeeee)); pole.position.set(x, 1.15, z); beach.add(pole);
+      const top = new THREE.Mesh(new THREE.ConeGeometry(1.3, 0.5, 12, 1, true), new THREE.MeshStandardMaterial({ color: c, roughness: 0.8, side: THREE.DoubleSide })); top.position.set(x, 2.3, z); beach.add(top);
+      const towel = new THREE.Mesh(new THREE.BoxGeometry(0.8, 0.02, 1.8), MK.std(umbC[(i + 2) % umbC.length])); towel.position.set(x + 0.9, 0.01, z + 0.4); towel.rotation.y = rr(-0.3, 0.3); beach.add(towel);
+      if (i % 2 === 0) beachPeople.push(MK.person(scene, window.PEOPLE[i % 8], { x: x + 0.9, seat: 0.25, z: z + 0.2, rot: Math.PI + rr(-0.5, 0.5), mode: "sit" }));
+      else beachPeople.push(MK.person(scene, window.PEOPLE[(i + 3) % 8], { x: x - 0.8, z: z + 0.8, rot: rr(0, 6.28), mode: "stand" })); }
+    beach.traverse((o) => { if (o.isMesh) o.castShadow = true; });
     const fishers = [[43, -70], [41.5, -64]].map(([x, z]) => MK.person(scene, window.PEOPLE[0], { x, y: 0.8, z, rot: Math.PI, mode: "stand" }));
     return { name: "coast", scene, people, update(t, look, pos) {
       sky(t, num, col); env(t); L.update(t, num, col, new THREE.Vector3(pos[0] * 0.8 + look[0] * 0.2, 0, pos[2] * 0.8 + look[2] * 0.2), num("shadowSize", t, 35));
@@ -73,6 +83,7 @@ window.ROOMS_MODELS = ["ultimatehomeinterior/FBX/Bed_Single.fbx", "ultimatehomei
       const hl = num("cityLights", t); homes.forEach((m, i) => { m.opacity = WI.clamp01(hl * 3 - (i % 3)) * 0.9; });
       lamps.forEach((l, i) => l.set(num("lamps", t), t, i));
       MK.crowd(people, t, { frac: num("crowd", t, 1), panic: num("panic", t), look: num("lookUp", t) > 0.5 });
+      const bch = num("beach", t) > 0.5; beach.visible = bch; beachPeople.forEach((p) => p.visible = bch); if (bch) MK.crowd(beachPeople, t, { frac: 1 });
       fishers.forEach((f, i) => WI.play(f, "Idle", t, 1, i * 3));
       return scene; } };
   });
@@ -93,6 +104,10 @@ window.ROOMS_MODELS = ["ultimatehomeinterior/FBX/Bed_Single.fbx", "ultimatehomei
     const aurora = K.aurora(scene, new THREE.Vector3(0, 180, 0), 600);
     const stars = new THREE.Points(new THREE.BufferGeometry().setAttribute("position", new THREE.Float32BufferAttribute(Array.from({ length: 7500 }, (_, i) => i % 3 === 1 ? rr(150, 1100) : rr(-1400, 1400)), 3)),
       new THREE.PointsMaterial({ color: 0xffffff, size: 2.2, sizeAttenuation: false, transparent: true, opacity: 0, fog: false, depthWrite: false })); scene.add(stars);
+    const mwF = new THREE.Mesh(new THREE.PlaneGeometry(2600, 520), new THREE.MeshBasicMaterial({ map: canvasTex(512, 128, (g, w, h) => { const gr = g.createLinearGradient(0, 0, 0, h);
+      gr.addColorStop(0, "rgba(0,0,0,0)"); gr.addColorStop(0.5, "rgba(190,200,255,0.55)"); gr.addColorStop(1, "rgba(0,0,0,0)"); g.fillStyle = gr; g.fillRect(0, 0, w, h);
+      for (let i = 0; i < 1600; i++) { g.fillStyle = `rgba(255,255,255,${R() * 0.9})`; g.fillRect(R() * w, h / 2 + (R() + R() - 1) * h * 0.35, 1, 1); } }), transparent: true, opacity: 0, depthWrite: false, fog: false, blending: THREE.AdditiveBlending }));
+    mwF.position.set(0, 650, -1100); mwF.rotation.z = -0.6; scene.add(mwF);
     const animals = [["Fox", -4, -14, 0.9, 1.0], ["Wolf", 6, -26, 1.0, 1.3], ["Deer", -9, -34, 2.6, 1.8], ["Stag", 9, -42, 2.6, 2.0], ["Fox", 3, -10, 1.6, 0.9]].map(([n, x, z, rot, len]) => {
       const a = WI.model(`ultimateanimatedanimals/glTF/${n}.gltf`, { length: len * 1.4, clip: "Idle" }); a.position.set(x, 0, z); a.rotation.y = rot; a.userData.an = { n, x, z, rot, ph: R() * 5 }; scene.add(a); return a; });
     return { name: "forest", scene, update(t, look, pos) {
@@ -100,7 +115,7 @@ window.ROOMS_MODELS = ["ultimatehomeinterior/FBX/Bed_Single.fbx", "ultimatehomei
       const ms = num("moon", t, 1), mp = WI.val("moonPos", t) || [40, 160, -700];
       moon.visible = ms > 0.01; moon.scale.setScalar(Math.max(0.01, ms)); moon.position.set(mp[0], mp[1], mp[2]); halo.position.copy(moon.position); halo.material.opacity = 0.5 * ms;
       moonLight.intensity = ms * num("moonLight", t, 0); moonLight.position.copy(moon.position).normalize().multiplyScalar(100).add(new THREE.Vector3(pos[0], 0, pos[2])); moonLight.target.position.set(pos[0], 0, pos[2] - 12);
-      stars.material.opacity = num("stars", t); aurora(num("aurora", t), t);
+      stars.material.opacity = num("stars", t); aurora(num("aurora", t), t); mwF.material.opacity = num("milkyway", t);
       const beh = WI.val("animals", t) || "graze";    // graze | alert | run
       animals.forEach((a, i) => { const u = a.userData.an;
         if (beh === "run") { const d = ((t * 6 + u.ph * 3) % 60) - 30; a.position.set(u.x + Math.sin(u.rot) * d, 0, u.z + Math.cos(u.rot) * d); WI.play(a, "Gallop", t, 1, u.ph); }
