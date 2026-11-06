@@ -1,0 +1,61 @@
+<template>
+<style>
+@font-face{font-family:"WI Serif";src:url("assets/fonts/spectral-400-normal.woff2") format("woff2");font-weight:400}
+@font-face{font-family:"WI Serif";src:url("assets/fonts/spectral-500-normal.woff2") format("woff2");font-weight:500}
+@font-face{font-family:"WI Serif";src:url("assets/fonts/spectral-400-italic.woff2") format("woff2");font-weight:400;font-style:italic}
+#root{position:absolute;inset:0;pointer-events:none;}
+.cap{position:absolute;left:0;top:1236px;width:1080px;height:200px;text-align:center;}
+.cap-in{display:inline-block;max-width:930px;font:italic 400 46px/1.25 "WI Serif";color:#fff;
+  text-shadow:0 2px 14px rgba(0,0,0,.7),0 1px 3px rgba(0,0,0,.8);}
+</style>
+<div id="root" data-composition-id="captions" data-width="1080" data-height="1920">
+<div id="cap-0" class="clip cap" data-start="3.4" data-duration="2.5" data-track-index="0"><div class="cap-in">Tonight. A full moon over the bay.</div></div>
+<div id="cap-1" class="clip cap" data-start="6.4" data-duration="2.1" data-track-index="0"><div class="cap-in">Then it&#x27;s just... gone.</div></div>
+<div id="cap-2" class="clip cap" data-start="8.8" data-duration="2.5" data-track-index="0"><div class="cap-in">No crash. No debris. It simply vanishes.</div></div>
+<div id="cap-3" class="clip cap" data-start="11.6" data-duration="2.5" data-track-index="0"><div class="cap-in">Night 1. Nights get much darker.</div></div>
+<div id="cap-4" class="clip cap" data-start="14.4" data-duration="2.5" data-track-index="0"><div class="cap-in">In the forest, you can&#x27;t see your own hands.</div></div>
+<div id="cap-5" class="clip cap" data-start="17.2" data-duration="2.5" data-track-index="0"><div class="cap-in">Animals that use moonlight to hunt or hide get confused.</div></div>
+<div id="cap-6" class="clip cap" data-start="20.0" data-duration="2.5" data-track-index="0"><div class="cap-in">Day 1. The tide comes in... barely.</div></div>
+<div id="cap-7" class="clip cap" data-start="22.8" data-duration="2.5" data-track-index="0"><div class="cap-in">Without the Moon, tides shrink to about a third.</div></div>
+<div id="cap-8" class="clip cap" data-start="25.6" data-duration="2.5" data-track-index="0"><div class="cap-in">Only the Sun is still pulling on the oceans.</div></div>
+<div id="cap-9" class="clip cap" data-start="28.4" data-duration="2.5" data-track-index="0"><div class="cap-in">Fun fact: wolves never howled at the Moon anyway.</div></div>
+<div id="cap-10" class="clip cap" data-start="31.2" data-duration="2.5" data-track-index="0"><div class="cap-in">But the stars have never looked brighter.</div></div>
+<div id="cap-11" class="clip cap" data-start="34.0" data-duration="2.5" data-track-index="0"><div class="cap-in">The Milky Way. Every single night.</div></div>
+<div id="cap-12" class="clip cap" data-start="36.8" data-duration="2.5" data-track-index="0"><div class="cap-in">Year 1. No more solar eclipses. Ever.</div></div>
+<div id="cap-13" class="clip cap" data-start="39.6" data-duration="2.5" data-track-index="0"><div class="cap-in">Over millions of years, Earth&#x27;s tilt starts to wobble.</div></div>
+<div id="cap-14" class="clip cap" data-start="42.4" data-duration="2.5" data-track-index="0"><div class="cap-in">Seasons could swing to extremes.</div></div>
+<div id="cap-15" class="clip cap" data-start="45.2" data-duration="2.7" data-track-index="0"><div class="cap-in">Life would go on. On a very different planet.</div></div>
+<div id="cap-16" class="clip cap" data-start="48.2" data-duration="2.7" data-track-index="0"><div class="cap-in">Plot twist: the Moon is already leaving.</div></div>
+<div id="cap-17" class="clip cap" data-start="51.2" data-duration="2.7" data-track-index="0"><div class="cap-in">It drifts 3.8 cm farther away every year.</div></div>
+<div id="cap-18" class="clip cap" data-start="54.2" data-duration="2.7" data-track-index="0"><div class="cap-in">We measure it by laser, off mirrors Apollo astronauts left.</div></div>
+<div id="cap-19" class="clip cap" data-start="57.2" data-duration="3.1" data-track-index="0"><div class="cap-in">In ~600 million years: no more total solar eclipses.</div></div>
+<div id="cap-20" class="clip cap" data-start="60.6" data-duration="2.8" data-track-index="0"><div class="cap-in">Look up tonight. While it&#x27;s still close.</div></div>
+</div>
+<script>
+(function(){
+const tl = gsap.timeline({paused:true,defaults:{lazy:false}});
+tl.fromTo("#cap-0 .cap-in",{opacity:0,y:8},{opacity:1,y:0,duration:.28,ease:"power2.out"},3.4);tl.to("#cap-0 .cap-in",{opacity:0,duration:.18},5.71);
+tl.fromTo("#cap-1 .cap-in",{opacity:0,y:8},{opacity:1,y:0,duration:.28,ease:"power2.out"},6.4);tl.to("#cap-1 .cap-in",{opacity:0,duration:.18},8.31);
+tl.fromTo("#cap-2 .cap-in",{opacity:0,y:8},{opacity:1,y:0,duration:.28,ease:"power2.out"},8.8);tl.to("#cap-2 .cap-in",{opacity:0,duration:.18},11.11);
+tl.fromTo("#cap-3 .cap-in",{opacity:0,y:8},{opacity:1,y:0,duration:.28,ease:"power2.out"},11.6);tl.to("#cap-3 .cap-in",{opacity:0,duration:.18},13.91);
+tl.fromTo("#cap-4 .cap-in",{opacity:0,y:8},{opacity:1,y:0,duration:.28,ease:"power2.out"},14.4);tl.to("#cap-4 .cap-in",{opacity:0,duration:.18},16.71);
+tl.fromTo("#cap-5 .cap-in",{opacity:0,y:8},{opacity:1,y:0,duration:.28,ease:"power2.out"},17.2);tl.to("#cap-5 .cap-in",{opacity:0,duration:.18},19.51);
+tl.fromTo("#cap-6 .cap-in",{opacity:0,y:8},{opacity:1,y:0,duration:.28,ease:"power2.out"},20.0);tl.to("#cap-6 .cap-in",{opacity:0,duration:.18},22.31);
+tl.fromTo("#cap-7 .cap-in",{opacity:0,y:8},{opacity:1,y:0,duration:.28,ease:"power2.out"},22.8);tl.to("#cap-7 .cap-in",{opacity:0,duration:.18},25.11);
+tl.fromTo("#cap-8 .cap-in",{opacity:0,y:8},{opacity:1,y:0,duration:.28,ease:"power2.out"},25.6);tl.to("#cap-8 .cap-in",{opacity:0,duration:.18},27.91);
+tl.fromTo("#cap-9 .cap-in",{opacity:0,y:8},{opacity:1,y:0,duration:.28,ease:"power2.out"},28.4);tl.to("#cap-9 .cap-in",{opacity:0,duration:.18},30.71);
+tl.fromTo("#cap-10 .cap-in",{opacity:0,y:8},{opacity:1,y:0,duration:.28,ease:"power2.out"},31.2);tl.to("#cap-10 .cap-in",{opacity:0,duration:.18},33.51);
+tl.fromTo("#cap-11 .cap-in",{opacity:0,y:8},{opacity:1,y:0,duration:.28,ease:"power2.out"},34.0);tl.to("#cap-11 .cap-in",{opacity:0,duration:.18},36.31);
+tl.fromTo("#cap-12 .cap-in",{opacity:0,y:8},{opacity:1,y:0,duration:.28,ease:"power2.out"},36.8);tl.to("#cap-12 .cap-in",{opacity:0,duration:.18},39.11);
+tl.fromTo("#cap-13 .cap-in",{opacity:0,y:8},{opacity:1,y:0,duration:.28,ease:"power2.out"},39.6);tl.to("#cap-13 .cap-in",{opacity:0,duration:.18},41.91);
+tl.fromTo("#cap-14 .cap-in",{opacity:0,y:8},{opacity:1,y:0,duration:.28,ease:"power2.out"},42.4);tl.to("#cap-14 .cap-in",{opacity:0,duration:.18},44.71);
+tl.fromTo("#cap-15 .cap-in",{opacity:0,y:8},{opacity:1,y:0,duration:.28,ease:"power2.out"},45.2);tl.to("#cap-15 .cap-in",{opacity:0,duration:.18},47.71);
+tl.fromTo("#cap-16 .cap-in",{opacity:0,y:8},{opacity:1,y:0,duration:.28,ease:"power2.out"},48.2);tl.to("#cap-16 .cap-in",{opacity:0,duration:.18},50.71);
+tl.fromTo("#cap-17 .cap-in",{opacity:0,y:8},{opacity:1,y:0,duration:.28,ease:"power2.out"},51.2);tl.to("#cap-17 .cap-in",{opacity:0,duration:.18},53.71);
+tl.fromTo("#cap-18 .cap-in",{opacity:0,y:8},{opacity:1,y:0,duration:.28,ease:"power2.out"},54.2);tl.to("#cap-18 .cap-in",{opacity:0,duration:.18},56.71);
+tl.fromTo("#cap-19 .cap-in",{opacity:0,y:8},{opacity:1,y:0,duration:.28,ease:"power2.out"},57.2);tl.to("#cap-19 .cap-in",{opacity:0,duration:.18},60.11);
+tl.fromTo("#cap-20 .cap-in",{opacity:0,y:8},{opacity:1,y:0,duration:.28,ease:"power2.out"},60.6);tl.to("#cap-20 .cap-in",{opacity:0,duration:.18},63.21);
+window.__timelines["captions"] = tl;
+})();
+</script>
+</template>
