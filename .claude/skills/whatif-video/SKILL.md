@@ -77,6 +77,21 @@ Models live in `kit/models/` (gitignored, fetch with `python3 kit/tools/fetch_mo
 - (approved 2026-11-06) Quality upgrade: real CC0 3D models (animated people, animals, cars, plants), HDRI lighting
   + PBR materials, denser grass/crops, filmic colour grade, detailed hero props. The creator also said: build the
   final videos directly (no shot-list approval needed when they say "direkt fertig bauen").
+- (approved 2026-11-07, after studying @weirdsecret_ references: hell / coma / Islam videos) NEW STORY STYLE:
+  - **Personal, second person**: "you" are the main character with a personal, emotional arc ("You jump. Not
+    far enough." / "Your mom is crying next to you."), not a documentary about the world.
+  - **Long, flowing camera moves**: few cuts (about 6-10 per video), transitions inside the motion (falling,
+    diving, passing through), mostly one main location built in great detail.
+  - **Huge crowds** where the story allows it (hundreds-thousands of people: instanced figures).
+  - **Characters with faces** (eyes, mouth, brows) that show emotions through facial expression and gestures
+    (crying, screaming, hands on head, kneeling, hugging, looking straight at the viewer).
+  - **Character voice lines in scenes** (friends, doctor, mother ...; still NO narrator). ALWAYS list the planned
+    lines + speaker per scene and get the creator's OK before generating them. Voices: HeyGen voices through the
+    existing HyperFrames sign-in (`media-use generate --type voice`), one distinct voice per character.
+  - **Look**: lots of particles (embers, sparks, dust, snow), strong depth of field, strong glow/bloom, one
+    consistent colour mood per video.
+  - **Text and ending**: captions of at most ~6 words, a hard closing line that hits the viewer personally, a plain
+    black end card with just the title, TikTok caption phrased as a direct question to the viewer.
 
 ## Creator feedback - apply to EVERY video (latest first)
 - After "insects-gone" draft: **raise the visual quality next time.** Plan: real CC0 3D models instead of box
