@@ -89,7 +89,8 @@ Models live in `kit/models/` (gitignored, fetch with `python3 kit/tools/fetch_mo
     lines + speaker per scene and get the creator's OK before generating them. Voices: HeyGen voices through the
     existing HyperFrames sign-in (`media-use generate --type voice`), one distinct voice per character.
   - **Look**: lots of particles (embers, sparks, dust, snow), strong depth of field, strong glow/bloom, one
-    consistent colour mood per video.
+    consistent colour mood per video. **Rich, saturated colours, well lit: never dark, never neutral or pale**
+    (creator, 2026-11-07).
   - **Text and ending**: captions of at most ~6 words, a hard closing line that hits the viewer personally, a plain
     black end card with just the title, TikTok caption phrased as a direct question to the viewer.
 
