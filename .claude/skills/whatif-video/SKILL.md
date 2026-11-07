@@ -88,6 +88,9 @@ Models live in `kit/models/` (gitignored, fetch with `python3 kit/tools/fetch_mo
   - **Character voice lines in scenes** (friends, doctor, mother ...; still NO narrator). ALWAYS list the planned
     lines + speaker per scene and get the creator's OK before generating them. Voices: HeyGen voices through the
     existing HyperFrames sign-in (`media-use generate --type voice`), one distinct voice per character.
+    ElevenLabs is connected too (key injected by the proxy for api.elevenlabs.io, free tier 10,000 characters/month):
+    `curl -X POST "https://api.elevenlabs.io/v1/text-to-speech/<voice_id>?output_format=mp3_44100_128" -H "Content-Type: application/json" -d '{"text":"...","model_id":"eleven_multilingual_v2"}' -o line.mp3`
+    (no header needed). The key has no voices_read permission: use premade voice ids (e.g. George JBFqnCBsd6RMkjVDRZzb).
   - **Look**: lots of particles (embers, sparks, dust, snow), strong depth of field, strong glow/bloom, one
     consistent colour mood per video. **Rich, saturated colours, well lit: never dark, never neutral or pale**
     (creator, 2026-11-07).
