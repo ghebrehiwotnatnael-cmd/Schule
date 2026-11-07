@@ -56,7 +56,7 @@ class Cinema:
         self.keys, self.widgets, self.sfx_list, self.no_caption, self.ambient_list = [], [], [], set(), []
         self.caps = list(getattr(mod, "CAPTIONS", []))   # no-voice mode: [(t0, t1, text)]
         self.story_end = r3(self.T.voice_end + 0.6) if self.voice else r3(getattr(mod, "DURATION", 60))
-        self.end_card = 4.0
+        self.end_card = float(getattr(mod, "END_CARD", 4.0))
         self.duration = r3(self.story_end + self.end_card)
         self.title_end = 3.0
         self.icon = ""
@@ -69,9 +69,52 @@ class Cinema:
         """start of the first line of a beat (scene field)"""
         return next(l["start"] for l in self.T.order if l["scene"] == name)
 
-    def key(self, t, dur=1.2, **props):
-        """from global time t, ease every given world property to its new value over dur seconds"""
+    def key(self, t, dur=1.2, lin=False, **props):
+        """from global time t, ease every given world property to its new value over dur seconds
+        (lin=True: linear instead of smoothstep, used by path() so chained segments keep their speed)"""
+        if lin:
+            props = dict(props, __lin__=True)
         self.keys.append((t, dur, props))
+        return self
+
+    def vpath(self, prop, t0, t1, pts, step=0.1):
+        """move any vector property (e.g. a character position) along a smooth Catmull-Rom path"""
+        def cr(u):
+            n = len(pts) - 1
+            f = min(max(u, 0.0), 1.0) * n
+            i = min(int(f), n - 1)
+            s = f - i
+            p0, p1, p2, p3 = pts[max(i - 1, 0)], pts[i], pts[i + 1], pts[min(i + 2, n)]
+            return [round(0.5 * ((2 * b) + (-a + c) * s + (2 * a - 5 * b + 4 * c - d) * s * s + (-a + 3 * b - 3 * c + d) * s ** 3), 3)
+                    for a, b, c, d in zip(p0, p1, p2, p3)]
+        self.key(t0, 0, **{prop: cr(0)})
+        n = max(1, int(round((t1 - t0) / step)))
+        for k in range(1, n + 1):
+            self.key(t0 + (k - 1) * (t1 - t0) / n + 0.0005, (t1 - t0) / n, lin=True, **{prop: cr(k / n)})
+        return self
+
+    def path(self, t0, t1, pos_pts, look_pts=None, step=0.1, **extra):
+        """one long flowing camera move through several points (Catmull-Rom), from t0 to t1.
+        pos_pts / look_pts: lists of [x,y,z]; the look path may have a different number of points."""
+        def cr(pts, u):
+            n = len(pts) - 1
+            if n == 0:
+                return list(pts[0])
+            f = min(max(u, 0.0), 1.0) * n
+            i = min(int(f), n - 1)
+            s = f - i
+            p0, p1, p2, p3 = pts[max(i - 1, 0)], pts[i], pts[i + 1], pts[min(i + 2, n)]
+            return [0.5 * ((2 * b) + (-a + c) * s + (2 * a - 5 * b + 4 * c - d) * s * s + (-a + 3 * b - 3 * c + d) * s ** 3)
+                    for a, b, c, d in zip(p0, p1, p2, p3)]
+        ease = lambda u: u * u * (3 - 2 * u) * 0.35 + u * 0.65      # gentle ease in/out over the whole move
+        look_pts = look_pts or [[p[0], p[1], p[2] - 10] for p in pos_pts]
+        self.key(t0, 0, camPos=[round(x, 3) for x in cr(pos_pts, 0)], camLook=[round(x, 3) for x in cr(look_pts, 0)], **extra)
+        n = max(1, int(round((t1 - t0) / step)))
+        for k in range(1, n + 1):
+            u = ease(k / n)
+            ta = t0 + (k - 1) * (t1 - t0) / n
+            self.key(ta + 0.0005, (t1 - t0) / n, lin=True, camPos=[round(x, 3) for x in cr(pos_pts, u)],
+                     camLook=[round(x, 3) for x in cr(look_pts, u)])
         return self
 
     def widget(self, t0, t1, label, sub="", mode="text", v0=0, v1=0, value=""):
@@ -113,7 +156,8 @@ class Cinema:
         props = dict(DEFAULTS)
         for _, _, kp in self.keys:
             for k in kp:
-                props.setdefault(k, extra.get(k, 0.0))
+                if k != "__lin__":
+                    props.setdefault(k, extra.get(k, 0.0))
         props.update({k: v for k, v in extra.items()})
         for prop, init in props.items():
             if not isinstance(init, list):   # vector props (positions) with no default: start from their first value
@@ -124,7 +168,7 @@ class Cinema:
             for t, dur, props in sorted(self.keys, key=lambda k: k[0]):
                 if prop in props:
                     segs.append([r3(t), r3(t + (0 if isinstance(props[prop], str) and not props[prop].startswith("#") else dur)),
-                                 cur, props[prop]])
+                                 cur, props[prop]] + ([1] if props.get("__lin__") else []))
                     cur = props[prop]
             out[prop] = {"init": init, "segs": segs}
         return out
@@ -279,6 +323,27 @@ window.__timelines["captions"] = tl;
         key = getattr(m, "TITLE_KEY", None)
         if key:
             title = title.replace(esc(key), f'<span class="k">{esc(key)}</span>', 1)
+        if getattr(m, "END_STYLE", "") == "title":   # plain black card with only the title
+            return f'''<template>
+<style>
+{FONTS}
+#root{{position:absolute;inset:0;background:#000;}}
+#ec{{position:absolute;left:90px;width:900px;top:860px;text-align:center;color:#f2f2f2;}}
+#ec-title{{font:400 70px/1.18 "WI Serif";}}
+#ec-title .k{{color:{getattr(m, "KEY_COLOR", "#8fc3ff")};}}
+</style>
+<div id="root" data-composition-id="endcard" data-width="1080" data-height="1920">
+ <div id="ec"><div id="ec-title">{title}</div></div>
+</div>
+<script>
+(function(){{
+const tl = gsap.timeline({{paused:true,defaults:{{lazy:false}}}});
+tl.fromTo("#ec-title",{{opacity:0}},{{opacity:1,duration:.8}},0.2);
+window.__timelines["endcard"] = tl;
+}})();
+</script>
+</template>
+'''
         sub = "<br>".join(esc(x) for x in m.SUB.split("\n"))
         cta = "<br>".join(esc(x) for x in m.CTA.split("\n"))
         avatar = '<img id="ec-av" src="assets/avatar.png" alt="">' if os.path.exists(os.path.join(self.dir, "assets", "avatar.png")) else '<span id="ec-av"></span>'

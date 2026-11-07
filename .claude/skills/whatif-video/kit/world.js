@@ -29,12 +29,16 @@
   const postQuad = new THREE.Mesh(new THREE.PlaneGeometry(2, 2), dofMat); const postScene = new THREE.Scene(); postScene.add(postQuad);
   const copyMat = new THREE.ShaderMaterial({ depthTest: false, depthWrite: false,
     uniforms: { tDiffuse: { value: rtAcc.texture }, exposure: { value: 1 }, contrast: { value: 1 }, saturation: { value: 1 }, warmth: { value: 0 },
-      vignette: { value: 0 }, grain: { value: 0 }, tonemap: { value: 0 }, seed: { value: 0 } },
+      vignette: { value: 0 }, grain: { value: 0 }, tonemap: { value: 0 }, seed: { value: 0 }, bloom: { value: 0 }, px: { value: new THREE.Vector2(1 / W, 1 / H) } },
     vertexShader: "varying vec2 vUv; void main(){ vUv = uv; gl_Position = vec4(position.xy, 0.0, 1.0); }",
-    fragmentShader: `uniform sampler2D tDiffuse; uniform float exposure, contrast, saturation, warmth, vignette, grain, tonemap, seed; varying vec2 vUv;
+    fragmentShader: `uniform sampler2D tDiffuse; uniform float exposure, contrast, saturation, warmth, vignette, grain, tonemap, seed, bloom; uniform vec2 px; varying vec2 vUv;
       vec3 aces(vec3 x){ return clamp((x*(2.51*x+0.03))/(x*(2.43*x+0.59)+0.14), 0.0, 1.0); }
       float hash(vec2 p){ return fract(sin(dot(p, vec2(12.9898, 78.233)) + seed) * 43758.5453); }
-      void main(){ vec3 c = texture2D(tDiffuse, vUv).rgb * exposure;
+      void main(){ vec3 c = texture2D(tDiffuse, vUv).rgb;
+        if (bloom > 0.0) { vec3 bl = vec3(0.0); for (int i = 0; i < 12; i++) { float a = float(i) * 0.5236 + 0.26; vec2 d = vec2(cos(a), sin(a)) * px;
+            bl += max(texture2D(tDiffuse, vUv + d * 6.0).rgb - 0.82, 0.0) + max(texture2D(tDiffuse, vUv + d * 16.0).rgb - 0.82, 0.0) * 0.8 + max(texture2D(tDiffuse, vUv + d * 34.0).rgb - 0.82, 0.0) * 0.6; }
+          c += bl * bloom * 0.12; }
+        c *= exposure;
         c = mix(c, aces(c * 1.15), tonemap);
         float l = dot(c, vec3(0.299, 0.587, 0.114)); c = mix(vec3(l), c, saturation);
         c = (c - 0.5) * contrast + 0.5; c += vec3(0.04, 0.01, -0.03) * warmth;
@@ -66,7 +70,7 @@
     if (!seg) return tr.init;
     const [t0, t1, a, b] = seg;
     if (typeof b === "string" && b[0] !== "#") return b;
-    const k = t1 > t0 ? smooth((t - t0) / (t1 - t0)) : 1;
+    const k = t1 > t0 ? (seg[4] ? clamp01((t - t0) / (t1 - t0)) : smooth((t - t0) / (t1 - t0))) : 1;
     if (typeof b === "string") return new THREE.Color(a).lerp(new THREE.Color(b), k);
     if (Array.isArray(b)) return b.map((x, i) => a[i] + (x - a[i]) * k);
     return a + (b - a) * k;
@@ -328,6 +332,12 @@
     const geo = new THREE.TubeGeometry(new THREE.CatmullRomCurve3(pts), pts.length * 3, 0.035, 6, false);
     const m = new THREE.Mesh(geo, new THREE.MeshBasicMaterial({ color: 0x5ff3ff, transparent: true, opacity: 0, blending: THREE.AdditiveBlending, depthWrite: false })); m.userData.tonga = ri === routes.length - 1; cableGroup.add(m); cables.push(m); });
   const tongaPulse = new THREE.Sprite(new THREE.SpriteMaterial({ map: glowTex, color: 0xff3b30, transparent: true, opacity: 0, depthWrite: false, blending: THREE.AdditiveBlending })); tongaPulse.position.copy(ll(-21.1, -175.2, 10.1)); cableGroup.add(tongaPulse);
+  // Tonga pressure wave: a glowing ring spreading around the globe from the volcano (tracks shock = angle 0..PI, shockI)
+  const shockU = { c: { value: ll(-20.5, -175.4, 1).normalize() }, ang: { value: 0 }, k: { value: 0 } };
+  const shock = new THREE.Mesh(new THREE.SphereGeometry(10.12, 96, 48), new THREE.ShaderMaterial({ uniforms: shockU, transparent: true, depthWrite: false, blending: THREE.AdditiveBlending,
+    vertexShader: "varying vec3 vP; void main(){ vP = normalize(position); gl_Position = projectionMatrix * modelViewMatrix * vec4(position,1.0); }",
+    fragmentShader: "uniform vec3 c; uniform float ang; uniform float k; varying vec3 vP; void main(){ float a = acos(clamp(dot(vP, c), -1.0, 1.0)); float d = abs(a - ang); float ring = exp(-d * d * 900.0) + 0.35 * exp(-d * d * 120.0); float core = exp(-a * a * 2500.0) * 0.8; gl_FragColor = vec4(vec3(1.0, 0.85, 0.6) * (ring + core) * k, 1.0); }" }));
+  earth.add(shock);
   space.add(clouds); const spaceLight = new THREE.DirectionalLight(0xffffff, 1); spaceLight.position.set(-30, 6, 12); space.add(spaceLight);
   space.add(new THREE.Points(starGeo, new THREE.PointsMaterial({ color: 0xffffff, size: 1.8, sizeAttenuation: false })));
 
@@ -348,6 +358,7 @@
   phone.add(new THREE.Mesh(new THREE.BoxGeometry(0.075, 0.012, 0.15), new THREE.MeshLambertMaterial({ color: 0x111111 })));
   const phoneCan = document.createElement("canvas"); phoneCan.width = 264; phoneCan.height = 540; const phoneTex = new THREE.CanvasTexture(phoneCan);
   const screen = new THREE.Mesh(new THREE.PlaneGeometry(0.066, 0.135), new THREE.MeshBasicMaterial({ map: phoneTex })); screen.rotation.x = -Math.PI / 2; screen.position.y = 0.007; phone.add(screen);
+  const WI_PHONE_EXTRA = (t) => { const e = num("eruptAt", t, 999); return t > e ? Math.min(1, (t - e) / 4) : 0; };
   function drawPhone(mode, t) { const g = phoneCan.getContext("2d"), w = 264, h = 540; g.fillStyle = "#0b0b10"; g.fillRect(0, 0, w, h);
     const bar = (txt, c) => { g.fillStyle = c || "#fff"; g.font = "bold 18px Arial"; g.fillText(txt, 16, 26); };
     if (mode === "feed") { bar("9:41      ▮▮▮  LTE"); const off = (t * 120) % 180; for (let i = -1; i < 4; i++) { const y = 50 + i * 180 - off;
@@ -360,6 +371,10 @@
       g.fillStyle = "#9ca3af"; g.font = "18px Arial"; g.fillText("Terminal offline", 60, 310); }
     else if (mode === "notifs") { bar("9:41      ▮▮▮  5G"); for (let i = 0; i < 6; i++) { const y = 60 + i * 76 + ((t * 300) % 76); g.fillStyle = "#1f2937"; g.fillRect(12, y, w - 24, 64);
         g.fillStyle = "#e5e7eb"; g.font = "bold 16px Arial"; g.fillText(["Messages", "News", "Bank", "Mum", "Weather", "Work"][i], 24, y + 26); g.fillStyle = "#9ca3af"; g.font = "14px Arial"; g.fillText("(" + (999 - i * 37) + ") new", 24, y + 48); } }
+    else if (mode === "rec") { const gr = g.createLinearGradient(0, 0, 0, h); gr.addColorStop(0, "#5fb8ff"); gr.addColorStop(0.45, "#bfe6ff"); gr.addColorStop(0.5, "#22c3d6"); gr.addColorStop(1, "#f2d6a2");
+      g.fillStyle = gr; g.fillRect(0, 0, w, h); const ex = WI_PHONE_EXTRA(t); if (ex > 0) { g.fillStyle = "rgba(90,85,80,0.9)"; g.beginPath(); g.ellipse(w * 0.35, h * 0.47 - ex * 160, 30 + ex * 70, ex * 170, 0, 0, 7); g.fill(); }
+      g.fillStyle = "#ff2d2d"; g.beginPath(); g.arc(24, 28, 8, 0, 7); g.fill(); g.fillStyle = "#fff"; g.font = "bold 18px Arial"; g.fillText("REC  00:" + String(Math.floor(t % 60)).padStart(2, "0"), 40, 34);
+      g.strokeStyle = "rgba(255,255,255,0.7)"; g.lineWidth = 2; g.strokeRect(w / 2 - 30, h / 2 - 30, 60, 60); }
     else if (mode === "map") { g.fillStyle = "#e8e2d0"; g.fillRect(0, 0, w, h); g.strokeStyle = "#fff"; g.lineWidth = 14; for (let i = 0; i < 5; i++) { g.beginPath(); g.moveTo(0, 80 + i * 110); g.lineTo(w, 40 + i * 120); g.stroke(); }
       g.fillStyle = "#9ca3af"; g.font = "bold 20px Arial"; g.fillText("Map unavailable", 50, 270); }
     phoneTex.needsUpdate = true; }
@@ -482,7 +497,7 @@
     if (shiver) { handR.position.x += sh(40, 0.006 * shiver); handL.position.x += sh(43, 0.006 * shiver); }
     const item = val("item", t) || "none";
     phone.visible = item === "phone"; cone2.visible = item === "cone";
-    if (phone.visible) { const pm = val("phoneUI", t) || "feed"; if (pm !== lastPhone || pm === "feed" || pm === "notifs") { drawPhone(pm, t); lastPhone = pm; } }
+    if (phone.visible) { const pm = val("phoneUI", t) || "feed"; if (pm !== lastPhone || pm === "feed" || pm === "notifs" || pm === "rec") { drawPhone(pm, t); lastPhone = pm; } }
     torch.intensity = num("torch", t) * 3.0;
     frostLens.material.opacity = num("frostLens", t);
     flash.material.opacity = num("flash", t);
@@ -493,7 +508,7 @@
     if (set === "space") {
       const p = val("spaceCam", t) || [0, 0, 34];
       cam.position.set(p[0], p[1], p[2]); cam.lookAt(0, 0, 0); cam.fov = num("spaceFov", t, 40); cam.updateProjectionMatrix();
-      const erot = val("earthRot", t); earth.rotation.y = erot != null ? erot : 2.2 + t * 0.04; earth.rotation.z = num("earthTilt", t, 0); clouds.rotation.z = earth.rotation.z;
+      const erot = val("earthRot", t); earth.rotation.y = erot != null ? erot : 2.2 + t * 0.04; earth.rotation.z = num("earthTilt", t, 0); clouds.rotation.z = earth.rotation.z; shockU.ang.value = num("shock", t); shockU.k.value = num("shockI", t); shock.visible = shockU.k.value > 0.01;
       const cb = num("cables", t), cc = num("cableCut", t); cableGroup.visible = cb > 0.001; if (cableGroup.visible) cables.forEach((m, i) => { const idx = m.geometry.index.count; m.geometry.setDrawRange(0, Math.floor(idx * Math.min(1, Math.max(0, cb * 1.6 - (i % 5) * 0.12)) / 3) * 3);
         const blink = Math.sin(t * 14) > 0 ? 1 : 0.15; if (m.userData.tonga && cc > 0.01) { m.material.color.setHex(0xff3b30); m.material.opacity = cb * (0.4 + 0.6 * blink); } else { m.material.color.setHex(0x5ff3ff); m.material.opacity = cb * (0.75 + 0.25 * Math.sin(t * 3 + i)); } });
       tongaPulse.material.opacity = cc * (0.5 + 0.5 * Math.sin(t * 7)); tongaPulse.scale.setScalar(0.2 + cc * (0.45 + 0.2 * Math.sin(t * 7))); clouds.rotation.y = earth.rotation.y + t * 0.01;
@@ -589,7 +604,7 @@
       dofMat.uniforms.opacity.value = 1 / (i + 1);
       renderer.setRenderTarget(rtAcc); renderer.autoClear = i === 0; renderer.render(postScene, postCam); renderer.autoClear = true;
     }
-    const cu = copyMat.uniforms; cu.exposure.value = num("exposure", t, 1); cu.contrast.value = num("contrast", t, 1); cu.saturation.value = num("saturation", t, 1);
+    const cu = copyMat.uniforms; cu.bloom.value = num("bloom", t, 0); cu.exposure.value = num("exposure", t, 1); cu.contrast.value = num("contrast", t, 1); cu.saturation.value = num("saturation", t, 1);
     cu.warmth.value = num("warmth", t); cu.vignette.value = num("vignette", t); cu.grain.value = num("grain", t); cu.tonemap.value = num("tonemap", t); cu.seed.value = (Math.floor(t * 30) % 97) * 0.37;
     renderer.setRenderTarget(null); renderer.render(copyScene, postCam);
   }
