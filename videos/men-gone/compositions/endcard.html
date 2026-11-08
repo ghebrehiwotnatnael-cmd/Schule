@@ -1,0 +1,21 @@
+<template>
+<style>
+@font-face{font-family:"WI Serif";src:url("assets/fonts/spectral-400-normal.woff2") format("woff2");font-weight:400}
+@font-face{font-family:"WI Serif";src:url("assets/fonts/spectral-500-normal.woff2") format("woff2");font-weight:500}
+@font-face{font-family:"WI Serif";src:url("assets/fonts/spectral-400-italic.woff2") format("woff2");font-weight:400;font-style:italic}
+#root{position:absolute;inset:0;background:#000;}
+#ec{position:absolute;left:90px;width:900px;top:860px;text-align:center;color:#f2f2f2;}
+#ec-title{font:400 70px/1.18 "WI Serif";}
+#ec-title .k{color:#ffb3c7;}
+</style>
+<div id="root" data-composition-id="endcard" data-width="1080" data-height="1920">
+ <div id="ec"><div id="ec-title">What if all <span class="k">men</span> disappeared?</div></div>
+</div>
+<script>
+(function(){
+const tl = gsap.timeline({paused:true,defaults:{lazy:false}});
+tl.fromTo("#ec-title",{opacity:0},{opacity:1,duration:.8},0.2);
+window.__timelines["endcard"] = tl;
+})();
+</script>
+</template>
