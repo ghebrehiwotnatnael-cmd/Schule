@@ -94,6 +94,9 @@ Models live in `kit/models/` (gitignored, fetch with `python3 kit/tools/fetch_mo
   - **Look**: lots of particles (embers, sparks, dust, snow), strong depth of field, strong glow/bloom, one
     consistent colour mood per video. **Rich, saturated colours, well lit: never dark, never neutral or pale**
     (creator, 2026-11-07).
+  - (creator, 2026-11-08) **Mix camera angles**: besides the flowing POV takes, cut in other perspectives
+    (wide, drone, low angle, over-the-shoulder, close-ups of faces) and show **more examples / cutaways** of what
+    happens in the world (other places, other people), roughly 12-16 shots per video.
   - **Text and ending**: captions of at most ~6 words, a hard closing line that hits the viewer personally, a plain
     black end card with just the title, TikTok caption phrased as a direct question to the viewer.
 

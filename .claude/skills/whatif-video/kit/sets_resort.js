@@ -219,6 +219,8 @@ window.RESORT_MODELS = ["ultimatenature/FBX/PalmTree_1.fbx", "ultimatenature/FBX
       const lookAt = num("lookAt", t, 999), panicAt = num("panicAt", t, 999), fleeAt = num("fleeAt", t, 999), roofAt = num("roofAt", t, 999), stairsAt = num("stairsAt", t, 999);
       const h1 = hash(i), h2 = hash(i + 17.3), h3 = hash(i + 41.9);
       p.hidden = false;
+      { const vM = num("vanishMen", t, 999), vW = num("vanishWomen", t, 999), v = p.male ? vM : vW; p.vanishT = v < 900 ? v + h2 * 1.2 : undefined;
+        p.belly = p.male && h3 < 0.45 && p.kind !== "far" ? num("menBelly", t, 0) : 0; }
       if (p.kind === "roof") { p.hidden = t < roofAt; p.face = h1 < 0.4 ? 5 : h1 < 0.75 ? 4 : 3; return; }
       if (p.kind === "stairs") { const run = t - stairsAt; if (run < 0 || t > roofAt + 6) { p.hidden = true; return; }
         const pos = (p.idx * 0.7 + run * 1.1) % 15.3; const f = Math.min(4, Math.floor(pos / 3.06)), u = (pos - f * 3.06) / 3.06, fl = flights[f];

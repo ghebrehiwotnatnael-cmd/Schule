@@ -384,6 +384,14 @@
   const waffle = new THREE.Mesh(new THREE.ConeGeometry(0.035, 0.12, 10), new THREE.MeshLambertMaterial({ color: 0xc98a3c })); waffle.rotation.x = Math.PI; waffle.position.y = 0.02; cone2.add(waffle);
   const scoop = new THREE.Mesh(new THREE.SphereGeometry(0.04, 12, 10), new THREE.MeshLambertMaterial({ color: 0xffc2d6 })); scoop.position.y = 0.09; cone2.add(scoop);
   cone2.rotation.x = -1.2;
+  // pregnancy test stick (item "test"): two red lines in the window
+  const testStick = new THREE.Group(); handR.add(testStick); testStick.position.set(0, 0.05, -0.05); testStick.rotation.x = -1.25;
+  { const tc = document.createElement("canvas"); tc.width = 64; tc.height = 256; const g = tc.getContext("2d"); g.fillStyle = "#f7f7f7"; g.fillRect(0, 0, 64, 256);
+    g.fillStyle = "#c9d6e3"; g.fillRect(16, 70, 32, 70); g.fillStyle = "#e0245e"; g.fillRect(18, 88, 28, 6); g.fillRect(18, 112, 28, 6); g.fillStyle = "#5b8def"; g.fillRect(0, 190, 64, 66);
+    const tx = new THREE.CanvasTexture(tc); tx.encoding = THREE.sRGBEncoding;
+    const stick = new THREE.Mesh(new THREE.BoxGeometry(0.03, 0.15, 0.01), [new THREE.MeshLambertMaterial({ color: 0xf2f2f2 }), new THREE.MeshLambertMaterial({ color: 0xf2f2f2 }),
+      new THREE.MeshLambertMaterial({ color: 0xf2f2f2 }), new THREE.MeshLambertMaterial({ color: 0xf2f2f2 }), new THREE.MeshBasicMaterial({ map: tx }), new THREE.MeshLambertMaterial({ color: 0xf2f2f2 })]);
+    testStick.add(stick); }
   // lens overlays (frost, flash, puffs) in front of the camera
   const frostLens = new THREE.Mesh(new THREE.PlaneGeometry(0.1152, 0.2048), new THREE.MeshBasicMaterial({ map: frostTex, transparent: true, opacity: 0, depthTest: false, depthWrite: false }));
   frostLens.position.z = -0.21; frostLens.renderOrder = 999; cam.add(frostLens);
@@ -480,6 +488,7 @@
   const SETS = {};
   (window.WI_SET_BUILDERS || []).forEach((b) => { const st = b(WI); SETS[st.name] = st; shadowAll(st.scene); });
   window.WI_SETS = SETS; window.WI_SPACE = space;
+  (window.WI_OVERLAYS || []).forEach((f) => f(WI, SETS));   // add-ons that extend existing sets (extra rooms, blocky crowds)
   function setPose(g, p, side) { g.position.set(p[0] * side, p[1], p[2]); g.rotation.set(p[3], p[4] * side, p[5] * side); }
 
   // ================= draw(t)
@@ -496,7 +505,7 @@
     const shiver = num("shiver", t);
     if (shiver) { handR.position.x += sh(40, 0.006 * shiver); handL.position.x += sh(43, 0.006 * shiver); }
     const item = val("item", t) || "none";
-    phone.visible = item === "phone"; cone2.visible = item === "cone";
+    phone.visible = item === "phone"; cone2.visible = item === "cone"; testStick.visible = item === "test";
     if (phone.visible) { const pm = val("phoneUI", t) || "feed"; if (pm !== lastPhone || pm === "feed" || pm === "notifs" || pm === "rec") { drawPhone(pm, t); lastPhone = pm; } }
     torch.intensity = num("torch", t) * 3.0;
     frostLens.material.opacity = num("frostLens", t);

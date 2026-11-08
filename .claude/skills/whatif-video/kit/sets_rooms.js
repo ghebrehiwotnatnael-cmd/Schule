@@ -92,10 +92,10 @@
     const tv = screen(1.4, 0.8, (g, w, h, k, t) => { if (k < 0.5) { g.fillStyle = "#050607"; g.fillRect(0, 0, w, h); return; }
       const gr = g.createLinearGradient(0, 0, w, h); gr.addColorStop(0, "#0b2a5b"); gr.addColorStop(1, "#071631"); g.fillStyle = gr; g.fillRect(0, 0, w, h);
       g.fillStyle = "#d61f26"; g.fillRect(w * 0.05, h * 0.08, w * 0.16, h * 0.13); g.fillStyle = "#fff"; g.font = `bold ${h * 0.09}px Arial`; g.fillText("LIVE", w * 0.075, h * 0.18);
-      g.fillStyle = "#1e3a8a"; g.fillRect(w * 0.6, h * 0.25, w * 0.32, h * 0.42); g.fillStyle = "#e8b88f"; g.beginPath(); g.arc(w * 0.76, h * 0.42, h * 0.09, 0, 7); g.fill(); g.fillStyle = "#273449"; g.fillRect(w * 0.68, h * 0.52, w * 0.16, h * 0.15);
-      g.fillStyle = "#ffffff"; g.fillRect(0, h * 0.7, w, h * 0.17); g.fillStyle = "#0b1b3a"; g.font = `bold ${h * 0.085}px Arial`; g.fillText("GLOBAL INTERNET OUTAGE", w * 0.04, h * 0.81);
+      g.fillStyle = "#1e3a8a"; g.fillRect(w * 0.6, h * 0.25, w * 0.32, h * 0.42); if (WI.val("tvAnchor", t) === "f") { g.fillStyle = "#5a3520"; g.fillRect(w * 0.76 - h * 0.11, h * 0.36, h * 0.22, h * 0.2); g.beginPath(); g.arc(w * 0.76, h * 0.4, h * 0.11, 0, 7); g.fill(); } g.fillStyle = "#e8b88f"; g.beginPath(); g.arc(w * 0.76, h * 0.42, h * 0.09, 0, 7); g.fill(); g.fillStyle = "#273449"; g.fillRect(w * 0.68, h * 0.52, w * 0.16, h * 0.15);
+      g.fillStyle = "#ffffff"; g.fillRect(0, h * 0.7, w, h * 0.17); g.fillStyle = "#0b1b3a"; g.font = `bold ${h * 0.085}px Arial`; g.fillText(WI.val("tvHeadline", t) || "GLOBAL INTERNET OUTAGE", w * 0.04, h * 0.81);
       g.fillStyle = "#d61f26"; g.fillRect(0, h * 0.87, w, h * 0.13); g.fillStyle = "#fff"; g.font = `${h * 0.07}px Arial`;
-      const msg = "BANKS CLOSED · FLIGHTS GROUNDED · TV AND RADIO STILL ON AIR · STAY TUNED · "; const x0 = w - ((t * 140) % (w * 3)); g.fillText(msg + msg, x0, h * 0.96); });
+      const msg = WI.val("tvTicker", t) || "BANKS CLOSED · FLIGHTS GROUNDED · TV AND RADIO STILL ON AIR · STAY TUNED · "; const x0 = w - ((t * 140) % (w * 3)); g.fillText(msg + msg, x0, h * 0.96); });
     tv.rotation.y = Math.PI; tv.position.set(300, 1.45, 2.905); scene.add(tv);
     const tvGlow = new THREE.PointLight(0x7fa8ff, 0, 5, 2); tvGlow.position.set(300, 1.4, 2.3); scene.add(tvGlow);
     const game = new THREE.Group(); game.position.set(300, 0.765, -0.6); scene.add(game);

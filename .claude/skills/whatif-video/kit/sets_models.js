@@ -30,6 +30,7 @@ window.PEOPLE = ["animatedmen/FBX/Male_Casual.fbx", "animatedwomen/FBX/Female_Ca
       h.position.set(o.x || 0, o.y || 0, o.z || 0); h.rotation.y = o.rot || 0; h.userData.p = Object.assign({ phase: R() * 10, speed: rr(0.9, 1.25) }, o); scene.add(h); return h; };
     // animate a crowd: mode walk/stand/sit/run/clap; walkers loop along their heading over `span` metres
     MK.crowd = function (people, t, o = {}) { const frac = o.frac ?? 1, panic = o.panic || 0;
+      if (WI.num("mkPeople", t, 1) < 0.5) { people.forEach((h) => { h.visible = false; }); return; }
       people.forEach((h, i) => { const p = h.userData.p; h.visible = (i + 0.5) / people.length < frac; if (!h.visible) return;
         let mode = p.mode; if (panic > 0.5 && (mode === "walk" || mode === "stand")) mode = "run";
         if (o.look && mode === "stand") mode = "look";
