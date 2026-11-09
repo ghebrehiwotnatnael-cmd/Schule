@@ -60,7 +60,7 @@ def mix(*ds, **kw):
 def build(v):
     v.title_until(3.2, ICON)
     # ===== SHOT A (0-40): one take, from the stage out to 60 km altitude
-    v.key(0, 0, **mix(DUSK, audience=0.0, heat=0.0, jump=0.0, beams=1.0, artistMode="sing", artistFace=6.0, camFar=4000.0, fogFar=3000.0,
+    v.key(0, 0, **mix(DUSK, audience=0.0, heat=0.0, jump=0.0, beams=1.0, artistMode="micstand", artistFace=6.0, camFar=4000.0, fogFar=3000.0,
                      dof=0.35, focus=3.4, fov=50, shake=0.0, bob=0.0))
     v.hands(0, "hidden", 0, item="none")
     v.key(3.0, 9.0, audience=80000.0)
@@ -86,7 +86,7 @@ def build(v):
     v.key(47.0, 0, **mix(DUSK, audience=8300000000.0, goldDot=0.0, heat=0.6, camFar=4000.0, fogFar=3000.0, camNear=0.05, artistMode="belt", artistFace=6.0,
                          dof=0.3, focus=4.5, fov=52, bloom=0.65))
     v.path(47.0, 56.0, [[-2.2, 3.4, STAGEZ + 9], [-1.0, 3.8, STAGEZ + 5.5], [0.5, 4.0, STAGEZ + 3.6]], [[0, AY + 0.3, STAGEZ], [0, AY + 0.1, STAGEZ], [0, AY, STAGEZ]])
-    v.key(52.0, 0.5, artistMode="sing")
+    v.key(51.0, 0, artistMode="micstand")
     v.bigcount(53.0, 56.0, "THE DROP IN", 3, 0)
     v.key(56.0, 0.1, jump=1.0, shake=0.8, chroma=0.9, artistMode="jump", artistFace=7.0)
     v.key(56.3, 1.2, shake=0.25, chroma=0.0)

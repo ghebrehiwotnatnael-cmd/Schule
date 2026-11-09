@@ -69,13 +69,25 @@ window.CONCERT_MODELS = [];
       const m = new THREE.Mesh(g, new THREE.MeshBasicMaterial({ color: i % 3 ? 0xff2b4a : 0xfff1d6, transparent: true, opacity: 0, blending: THREE.AdditiveBlending, depthWrite: false, side: THREE.DoubleSide }));
       m.position.set(-15 + (i % 5) * 7.5, 22, -SR + 8 + (i < 5 ? 0 : 3)); m.userData.ph = i; m.userData.noShadow = true; scene.add(m); return m; });
     const stageGlow = new THREE.PointLight(0xff2b4a, 0, 80, 2); stageGlow.position.set(0, 12, -SR + 20); scene.add(stageGlow);
+    const keyLight = new THREE.SpotLight(0xffd2b8, 1.1, 40, 0.35, 0.6, 1.5); keyLight.position.set(1.5, 9, -SR + 24); keyLight.target.position.set(0, 4, -SR + 14); scene.add(keyLight); scene.add(keyLight.target);
     // fans on the field, facing the stage
     const fans = []; for (let i = 0; i < 1400; i++) { const a = rr(-1.2, 1.2), d = rr(18, SR - 6); const x = Math.sin(a) * d * 0.95, z = -SR + 26 + d * 0.95 * Math.cos(a) * 0.9;
       if (Math.abs(x) < 3.5 && z < -SR + 46) continue; fans.push({ x, z, y: 0, rot: Math.PI + Math.atan2(x, z + SR - 12) * 0 + rr(-0.25, 0.25) + Math.PI, mode: "cheer", order: R() }); }
     fans.forEach((f) => { f.rot = Math.atan2(0 - f.x, (-SR + 12) - f.z); });
     const fanCrowd = BL.crowd(scene, fans);
-    const artist = BL.crowd(scene, [{ name: "artist", male: true, hair: WI.BLOCKY_COLORS.HAIR[0], mustache: true, glasses: true, tie: true, tieCol: new THREE.Color("#111111"),
-      shirt: new THREE.Color("#c1121f"), longSleeve: true, legs: new THREE.Color("#111111"), skin: WI.BLOCKY_COLORS.SKIN[4], s: 1.1, face: 6 }]);
+    const artist = BL.crowd(scene, [{ name: "artist", male: true, hair: new THREE.Color("#0d0907"), afro: true, mustache: true, glasses: true, tie: true, tieCol: new THREE.Color("#0b0b0d"),
+      shirt: new THREE.Color("#e3122b"), longSleeve: true, legs: new THREE.Color("#121214"), skin: WI.BLOCKY_COLORS.SKIN[4], s: 1.1, face: 6 }]);
+    // glitter on the red blazer + a mic stand
+    const glit = [0, 1, 2].map((k) => { const n = 70, a = new Float32Array(n * 3); for (let i = 0; i < n; i++) { const side = R() < 0.5 ? -1 : 1;
+        a.set([side * rr(0.08, 0.27) * 1.1, 2.4 + rr(0.82, 1.48) * 1.1, -SR + 14 + 0.15 * 1.1], i * 3); }
+      const pts = new THREE.Points(new THREE.BufferGeometry().setAttribute("position", new THREE.BufferAttribute(a, 3)),
+        new THREE.PointsMaterial({ map: glowTex, color: 0xffd0d6, size: 0.07, sizeAttenuation: true, transparent: true, depthWrite: false, blending: THREE.AdditiveBlending }));
+      pts.userData.k = k; pts.userData.noShadow = true; scene.add(pts); return pts; });
+    const micStand = new THREE.Group(); scene.add(micStand); { const metal = std(0x18181c, { metalness: 0.8, roughness: 0.3 });
+      const base = new THREE.Mesh(new THREE.CylinderGeometry(0.28, 0.32, 0.05, 16), metal); base.position.set(-0.75, 2.42, -SR + 14.55); micStand.add(base);
+      const pole = new THREE.Mesh(new THREE.CylinderGeometry(0.018, 0.018, 2.1, 8), metal); pole.position.set(-0.6, 3.45, -SR + 14.5); pole.rotation.z = -0.22; pole.rotation.x = 0.12; micStand.add(pole);
+      const mic = new THREE.Mesh(new THREE.CylinderGeometry(0.045, 0.03, 0.22, 12), metal); mic.position.set(-0.36, 4.42, -SR + 14.62); mic.rotation.z = -1.0; micStand.add(mic);
+      const head = new THREE.Mesh(new THREE.SphereGeometry(0.06, 12, 10), std(0x2a2a30, { metalness: 0.6, roughness: 0.5 })); head.position.set(-0.27, 4.47, -SR + 14.64); micStand.add(head); }
     // body-heat cloud + rain
     const heat = Array.from({ length: 40 }, () => { const sp = new THREE.Sprite(new THREE.SpriteMaterial({ map: cloudTex, color: 0xffffff, transparent: true, depthWrite: false, opacity: 0, fog: false }));
       sp.userData = { a: R() * 6.28, d: R(), h: rr(0.8, 1.2), s: rr(0.8, 1.3) }; scene.add(sp); return sp; });
@@ -98,6 +110,8 @@ window.CONCERT_MODELS = [];
       stageGlow.intensity = bm * (2.5 + Math.sin(t * 6));
       const jmp = num("jump", t);
       fanCrowd.update(t, (p, tt, i) => { p.hidden = p.order > clamp01(N / 6000) || alt > 900; p.mode = jmp > 0.5 ? "jump" : (i % 3 ? "cheer" : "wave"); p.face = i % 4 ? 7 : 0; });
+      glit.forEach((g) => { g.visible = Math.sin(t * 13 + g.userData.k * 2.1) > 0.1; });
+      micStand.visible = (val("artistMode", t) || "sing") === "micstand";
       artist.update(t, (p) => { p.x = 0; p.y = 2.4; p.z = -SR + 14; p.rot = 0; p.mode = val("artistMode", t) || "sing"; const f = num("artistFace", t, 6); p.face = Math.round(f) === 6 && Math.sin(t * 9) < 0 ? 0 : Math.round(f); });
       // heat cloud
       const hk = num("heat", t); heat.forEach((h) => { const u = h.userData; h.visible = hk > 0.01; if (!h.visible) return; const rr2 = Math.max(r, 400);
