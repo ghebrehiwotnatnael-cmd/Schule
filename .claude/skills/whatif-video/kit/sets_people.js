@@ -41,6 +41,7 @@ window.WI_BLOCKY = function (WI) {
   const skinMat = new THREE.MeshStandardMaterial({ color: 0xffffff, roughness: 0.75 });
   const clothMat = new THREE.MeshStandardMaterial({ color: 0xffffff, roughness: 0.85 });
   const darkMat = new THREE.MeshStandardMaterial({ color: 0x111318, roughness: 0.3, metalness: 0.3, emissive: 0x16304a, emissiveIntensity: 0.6 });
+  const glassMat = new THREE.MeshStandardMaterial({ color: 0x050506, roughness: 0.15, metalness: 0.6 });
   const mkFaceMat = () => { const m = new THREE.MeshStandardMaterial({ color: 0xffffff, map: faceTex, roughness: 0.75 });
     m.onBeforeCompile = (sh) => { sh.vertexShader = "attribute float faceIdx;\n" + sh.vertexShader.replace("#include <uv_vertex>",
       `#include <uv_vertex>\n#ifdef USE_UV\n vUv.x = (vUv.x + faceIdx) / ${FACES}.0;\n#endif`); };
@@ -81,7 +82,7 @@ window.WI_BLOCKY = function (WI) {
       head: mk(headGeo, [skinMat, skinMat, skinMat, skinMat, faceMat, skinMat]), hair: mk(G.hair, clothMat), hairBack: mk(G.hairBack, clothMat),
       beard: mk(G.beard, clothMat), skirt: mk(G.skirt, clothMat), belly: mk(G.belly, clothMat), blanket: mk(G.blanket, clothMat),
       babyHead: mk(bhGeo, [skinMat, skinMat, skinMat, skinMat, faceMat, skinMat]), phone: mk(G.phone, darkMat, false),
-      hatTop: mk(G.hatTop, clothMat), hatBrim: mk(G.hatBrim, clothMat), glasses: mk(G.glasses, darkMat, false),
+      hatTop: mk(G.hatTop, clothMat), hatBrim: mk(G.hatBrim, clothMat), glasses: mk(G.glasses, glassMat, false),
       mustache: mk(G.mustache, clothMat, false), tie: mk(G.tie, clothMat, false), afro: mk(G.afro, clothMat) };
     const blanketCols = ["#ffd6e8", "#cfe8ff", "#fff3c4", "#d9f7d6"].map((c) => new THREE.Color(c));
     people.forEach((p, i) => { M.torso.setColorAt(i, p.shirt); M.legL.setColorAt(i, p.legs); M.legR.setColorAt(i, p.legs);
