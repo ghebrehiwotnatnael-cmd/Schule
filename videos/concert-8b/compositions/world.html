@@ -505,11 +505,19 @@ window.CONCERT_MODELS = [];
       shirt: new THREE.Color("#b5121b").convertSRGBToLinear(), longSleeve: true, skirt: false, legs: new THREE.Color("#121214"), skin: new THREE.Color("#5a3826").convertSRGBToLinear(), s: 1.1, face: 6 }]);
     let lastSkin = null, lastJacket = null;
     // glitter on the red blazer + a mic stand
-    const glit = [0, 1, 2].map((k) => { const n = 70, a = new Float32Array(n * 3); for (let i = 0; i < n; i++) { const side = R() < 0.5 ? -1 : 1;
-        a.set([side * rr(0.08, 0.27) * 1.1, 2.4 + rr(0.82, 1.48) * 1.1, -SR + 14 + 0.15 * 1.1], i * 3); }
-      const pts = new THREE.Points(new THREE.BufferGeometry().setAttribute("position", new THREE.BufferAttribute(a, 3)),
-        new THREE.PointsMaterial({ map: glowTex, color: 0xff5a3c, size: 0.05, sizeAttenuation: true, transparent: true, depthWrite: false, blending: THREE.AdditiveBlending }));
-      pts.userData.k = k; pts.userData.noShadow = true; scene.add(pts); return pts; });
+    // sequin glitter that sticks to the blazer (torso + both sleeves), twinkling in 3 alternating sets
+    const parts = [["torso", 0.46, 0.6, 0.26, 0.3, 0], ["armL", 0.135, 0.6, 0.135, -0.28, 0], ["armR", 0.135, 0.6, 0.135, -0.28, 0]];
+    const glit = [0, 1, 2].map((k) => { const loc = [];
+      parts.forEach(([name, w, h, d, cy]) => { const n = name === "torso" ? 90 : 40; for (let i = 0; i < n; i++) { const face = Math.floor(R() * 4);
+          let x = rr(-w / 2, w / 2), y = cy + rr(-h / 2, h / 2), z = rr(-d / 2, d / 2);
+          if (face === 0) z = d / 2 + 0.006; else if (face === 1) z = -d / 2 - 0.006; else if (face === 2) x = w / 2 + 0.006; else x = -w / 2 - 0.006;
+          if (name === "torso" && face === 0 && Math.abs(x) < 0.08) x = Math.sign(x || 1) * rr(0.09, w / 2);
+          loc.push([name, x, y, z]); } });
+      const arr = new Float32Array(loc.length * 3);
+      const pts = new THREE.Points(new THREE.BufferGeometry().setAttribute("position", new THREE.BufferAttribute(arr, 3)),
+        new THREE.PointsMaterial({ map: glowTex, color: k === 1 ? 0xfff1c4 : 0xff7a66, size: 0.055, sizeAttenuation: true, transparent: true, depthWrite: false, blending: THREE.AdditiveBlending }));
+      pts.frustumCulled = false; pts.userData = { k, loc, noShadow: true }; scene.add(pts); return pts; });
+    const gm = new THREE.Matrix4(), gv = new THREE.Vector3();
     const lapels = [-1, 1].map((sd) => { const m = new THREE.Mesh(new THREE.BoxGeometry(0.09, 0.42, 0.02), new THREE.MeshStandardMaterial({ color: new THREE.Color("#8e0a1e").convertSRGBToLinear(), roughness: 0.4, metalness: 0.2 }));
       m.position.set(sd * 0.115 * 1.1, 2.4 + 1.23 * 1.1, -SR + 14 + 0.142 * 1.1); m.rotation.z = sd * 0.32; scene.add(m); return m; });
     const micStand = new THREE.Group(); scene.add(micStand); { const metal = std(0x18181c, { metalness: 0.8, roughness: 0.3 });
@@ -539,11 +547,13 @@ window.CONCERT_MODELS = [];
       stageGlow.intensity = bm * (2.5 + Math.sin(t * 6));
       const jmp = num("jump", t);
       fanCrowd.update(t, (p, tt, i) => { p.hidden = p.order > clamp01(N / 6000) || alt > 900; p.mode = jmp > 0.5 ? "jump" : (i % 3 ? "cheer" : "wave"); p.face = i % 4 ? 7 : 0; });
-      glit.forEach((g) => { g.visible = Math.sin(t * 13 + g.userData.k * 2.1) > 0.1; });
       micStand.visible = (val("artistMode", t) || "sing") === "micstand";
       { const jk = val("artistJacket", t); if (jk && jk !== lastJacket) { lastJacket = jk; const c = new THREE.Color(jk).convertSRGBToLinear(); ["torso", "armL", "armR"].forEach((k) => { artist.meshes[k].setColorAt(0, c); artist.meshes[k].instanceColor.needsUpdate = true; }); } }
       { const sk = val("artistSkin", t); if (sk && sk !== lastSkin) { lastSkin = sk; const c = new THREE.Color(sk).convertSRGBToLinear(); artist.meshes.head.setColorAt(0, c); artist.meshes.head.instanceColor.needsUpdate = true; } }
       artist.update(t, (p) => { p.x = 0; p.y = 2.4; p.z = -SR + 14; p.rot = 0; p.mode = val("artistMode", t) || "sing"; const f = num("artistFace", t, 6); p.face = Math.round(f) === 6 && Math.sin(t * 9) < 0 ? 0 : Math.round(f); });
+      glit.forEach((g) => { g.visible = Math.sin(t * 13 + g.userData.k * 2.1) > -0.2; if (!g.visible) return; const arr = g.geometry.attributes.position.array; let last = null;
+        g.userData.loc.forEach((l, i) => { if (l[0] !== last) { artist.meshes[l[0]].getMatrixAt(0, gm); last = l[0]; } gv.set(l[1], l[2], l[3]).applyMatrix4(gm); arr[i * 3] = gv.x; arr[i * 3 + 1] = gv.y; arr[i * 3 + 2] = gv.z; });
+        g.geometry.attributes.position.needsUpdate = true; });
       // heat cloud
       const hk = num("heat", t); heat.forEach((h) => { const u = h.userData; h.visible = hk > 0.01; if (!h.visible) return; const rr2 = Math.max(r, 400);
         h.position.set(Math.cos(u.a) * rr2 * 0.5 * u.d, Math.min(2500, rr2 * 0.12) * u.h, Math.sin(u.a) * rr2 * 0.5 * u.d); const s = rr2 * 0.32 * u.s; h.scale.set(s, s * 0.5, 1); h.material.opacity = hk * 0.55; });
