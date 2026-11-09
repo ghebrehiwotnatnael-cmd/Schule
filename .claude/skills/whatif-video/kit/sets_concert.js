@@ -76,7 +76,7 @@ window.CONCERT_MODELS = [];
     fans.forEach((f) => { f.rot = Math.atan2(0 - f.x, (-SR + 12) - f.z); });
     const fanCrowd = BL.crowd(scene, fans);
     const artist = BL.crowd(scene, [{ name: "artist", male: true, hair: new THREE.Color("#0d0907"), afro: true, mustache: true, beard: false, glasses: true, tie: true, tieCol: new THREE.Color("#0b0b0d"),
-      shirt: new THREE.Color("#c8102e").convertSRGBToLinear(), longSleeve: true, skirt: false, legs: new THREE.Color("#121214"), skin: new THREE.Color("#5a3826").convertSRGBToLinear(), s: 1.1, face: 6 }]);
+      shirt: new THREE.Color("#b5121b").convertSRGBToLinear(), longSleeve: true, skirt: false, legs: new THREE.Color("#121214"), skin: new THREE.Color("#5a3826").convertSRGBToLinear(), s: 1.1, face: 6 }]);
     let lastSkin = null, lastJacket = null;
     // glitter on the red blazer + a mic stand
     const glit = [0, 1, 2].map((k) => { const n = 70, a = new Float32Array(n * 3); for (let i = 0; i < n; i++) { const side = R() < 0.5 ? -1 : 1;
