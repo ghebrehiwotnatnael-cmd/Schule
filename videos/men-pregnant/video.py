@@ -126,7 +126,7 @@ def build(v):
     v.key(55.0, 0, **mix(ROOM, daylight=0.3, meMPos=[-1.2, 0.66, -0.55], meMRot=0.0, meMMode="lieBed", meMFace=7.0, meMBelly=0.0,
                          docFPos=[0.25, 0, -1.3], docFRot=0.3, docFMode="cradle", docFBaby=1.0, docFFace=0.0, wifePos=[-2.15, 0, -0.9], wifeRot=2.0, wifeMode="cry", wifeFace=5.0,
                          dof=0.3, focus=2.0, fov=48, bob=0.0))
-    v.path(55.0, 61.5, [[0.9, 2.2, 1.0], [0.7, 2.1, 0.7]], [[-0.6, 1.0, -1.0], [-0.7, 1.0, -1.2]])
+    v.path(55.0, 61.5, [[-0.3, 2.0, 1.5], [-0.35, 1.9, 1.15]], [[-0.45, 0.95, -1.2], [-0.45, 1.0, -1.3]])
     v.sfx("music/newborn", 55.3, 0.55)
     talk(v, "docF", 56.2, 2.4, "l3_doc_j2")
     v.key(58.8, 0.8, wifeMode="cheer", wifeFace=7.0)
