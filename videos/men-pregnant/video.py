@@ -124,9 +124,9 @@ def build(v):
     v.path(50.5, 55.0, [[8.4, 1.5, 3], [8.4, 1.5, 5]], [[8.2, 1.2, -4], [8.3, 1.3, -1]])
     # S12 55-61.5 delivery room: it's a girl
     v.key(55.0, 0, **mix(ROOM, daylight=0.3, meMPos=[-1.2, 0.66, -0.55], meMRot=0.0, meMMode="lieBed", meMFace=7.0, meMBelly=0.0,
-                         docFPos=[0.25, 0, -1.3], docFRot=0.3, docFMode="cradle", docFBaby=1.0, docFFace=0.0, wifePos=[-2.15, 0, -0.9], wifeRot=2.0, wifeMode="cry", wifeFace=5.0,
+                         docFPos=[-0.15, 0, -0.35], docFRot=-0.12, docFMode="cradle", docFBaby=1.0, docFFace=0.0, wifePos=[-2.15, 0, -0.9], wifeRot=2.0, wifeMode="cry", wifeFace=5.0,
                          dof=0.3, focus=2.0, fov=48, bob=0.0))
-    v.path(55.0, 61.5, [[-0.3, 2.0, 1.5], [-0.35, 1.9, 1.15]], [[-0.45, 0.95, -1.2], [-0.45, 1.0, -1.3]])
+    v.path(55.0, 61.5, [[-0.35, 1.75, 1.7], [-0.35, 1.7, 1.35]], [[-0.4, 1.2, -0.6], [-0.45, 1.2, -0.8]])
     v.sfx("music/newborn", 55.3, 0.55)
     talk(v, "docF", 56.2, 2.4, "l3_doc_j2")
     v.key(58.8, 0.8, wifeMode="cheer", wifeFace=7.0)
