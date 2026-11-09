@@ -97,6 +97,14 @@ Models live in `kit/models/` (gitignored, fetch with `python3 kit/tools/fetch_mo
   - (creator, 2026-11-08) **Mix camera angles**: besides the flowing POV takes, cut in other perspectives
     (wide, drone, low angle, over-the-shoulder, close-ups of faces) and show **more examples / cutaways** of what
     happens in the world (other places, other people), roughly 12-16 shots per video.
+  - (approved 2026-11-09, after analysing @man_ia_c) **One-take escalation**: ONE location, ONE chain reaction that keeps
+    growing, 2-5 cuts only, the camera stays with "you" and flies out (up to space) and back; the world changes around
+    you instead of cutting. **Live widget** with a physical value that ticks every second + a comparison line
+    ("WAVE HEIGHT 1,086 ft · 0.4 MILES AWAY"), ending in a word (HERE / BACK / forever); a big red centre countdown
+    for tension moments. **Full-screen effects** (cracking glass, shockwaves, wireframe/x-ray, colour distortion).
+    **One music track** that builds to the climax and drops to near silence for the end card. A **recurring main
+    character** for the channel. More **"... for 5 seconds"** physics/chemistry topics. End card: title + 2 small fact
+    lines + "What should we try next? Comment below." First caption sets the scene in second person.
   - **Text and ending**: captions of at most ~6 words, a hard closing line that hits the viewer personally, a plain
     black end card with just the title, TikTok caption phrased as a direct question to the viewer.
 
