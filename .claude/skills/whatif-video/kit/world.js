@@ -56,6 +56,7 @@
       for (let r = 1; r <= 3; r++) { g.lineWidth = 1.1; g.beginPath(); for (let i = 0; i <= 14; i++) { const a = i / 14 * 6.283, rr2 = r * 26 + rnd() * 10; const x = cx + Math.cos(a) * rr2, y = cy + Math.sin(a) * rr2; i ? g.lineTo(x, y) : g.moveTo(x, y); } g.stroke(); }
       g.fillStyle = "rgba(255,255,255,0.85)"; g.beginPath(); g.arc(cx, cy, 4, 0, 7); g.fill(); });
     const tx = new THREE.CanvasTexture(c); return tx; })();
+  window.WI_DBG = { copyMat, dofMat };
   const copyScene = new THREE.Scene(); copyScene.add(new THREE.Mesh(new THREE.PlaneGeometry(2, 2), copyMat));
   function shadowAll(scene) { scene.traverse((o) => { if (o.isMesh && !o.userData.noShadow && !(o.material && o.material.isShaderMaterial) && !(o.material && o.material.transparent)) { o.castShadow = true; o.receiveShadow = true; } }); }
   function fitShadow(light, target, size = 40) {  // keep the shadow frustum around what the camera looks at

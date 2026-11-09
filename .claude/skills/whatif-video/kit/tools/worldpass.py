@@ -1,0 +1,79 @@
+#!/usr/bin/env python3
+"""Fast final render, step 1: render the 3D world of videos/<slug> straight from a Playwright page to build/world.mp4
+(HyperFrames itself evaluates every frame more than once, which is ~2.3x slower for heavy WebGL scenes), then point
+index.html at that video instead of the live world composition.  Step 2 is the normal `npx hyperframes render`,
+which then only composites captions, widget, title, end card and audio over the video.
+
+usage: python3 worldpass.py videos/<slug>        (run cinema_kit.py first; it rewrites index.html)
+"""
+import importlib.util, json, os, re, subprocess, sys, socket, time
+
+KIT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+sys.path.insert(0, KIT)
+import cinema_kit as ck  # noqa: E402
+
+vdir = os.path.abspath(sys.argv[1])
+slug = os.path.basename(vdir)
+spec = importlib.util.spec_from_file_location("video", os.path.join(vdir, "video.py"))
+mod = importlib.util.module_from_spec(spec)
+spec.loader.exec_module(mod)
+v = ck.Cinema(vdir, mod)
+mod.build(v)
+FPS = 30
+dur = v.story_end
+frames = int(os.environ.get("WP_FRAMES") or round(dur * FPS))
+
+def _up():
+    try:
+        socket.create_connection(("127.0.0.1", 8765), 1).close(); return True
+    except OSError:
+        return False
+if not _up():
+    subprocess.Popen([sys.executable, "-m", "http.server", "8765", "--directory", KIT], stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+    for _ in range(50):
+        if _up(): break
+        time.sleep(0.2)
+H = "http://localhost:8765"
+sets = getattr(mod, "SET_FILES", ["sets_common.js", "sets_city.js", "sets_nature.js"])
+js = "\n".join(open(os.path.join(KIT, f)).read() for f in sets) + "\n" + open(os.path.join(KIT, "world.js")).read()
+js = js.replace('"assets/lib/', f'"{H}/lib/')
+os.makedirs(os.path.join(KIT, "_preview"), exist_ok=True)
+page = os.path.join(KIT, "_preview", slug + "_final.html")
+libs = "".join(f'<script src="{H}/lib/{f}"></script>' for f in ["three147.min.js", "fflate.min.js", "FBXLoader.js", "GLTFLoader.js", "RGBELoader.js", "SkeletonUtils.js"])
+open(page, "w").write(f'''<html><body style="margin:0;background:#000"><canvas id="world-canvas" width="1080" height="1920"></canvas>
+{libs}<script>window.WI_MODEL_BASE="{H}/models/";window.WI_HDRI_BASE="{H}/lib/hdri/";window.WI_TRACKS={json.dumps(v.tracks())};</script>
+<script>{js}</script></body></html>''')
+out = os.path.join(vdir, "build", "world.mp4")
+os.makedirs(os.path.dirname(out), exist_ok=True)
+runner = os.path.join(vdir, "build", "worldpass.js")
+open(runner, "w").write(r'''const { chromium } = require('playwright'); const { spawn } = require('child_process');
+(async () => {
+  const [url, out, frames, fps] = [process.argv[2], process.argv[3], +process.argv[4], +process.argv[5]];
+  const b = await chromium.launch({ args: ['--use-gl=swiftshader', '--enable-unsafe-swiftshader'] });
+  const p = await b.newPage({ viewport: { width: 1080, height: 1920 } }); p.setDefaultTimeout(1800000);
+  p.on('pageerror', (e) => console.log('ERR', e.message));
+  await p.goto(url); await p.waitForFunction('window.WI_DRAW'); await p.evaluate(() => window.__hf.buildReady.world);
+  const ff = spawn('ffmpeg', ['-v', 'error', '-y', '-f', 'image2pipe', '-framerate', String(fps), '-c:v', 'mjpeg', '-i', '-', '-c:v', 'libx264', '-preset', 'medium',
+    '-crf', '14', '-pix_fmt', 'yuv420p', '-r', String(fps), out], { stdio: ['pipe', 'inherit', 'inherit'] });
+  const t0 = Date.now();
+  for (let i = 0; i < frames; i++) {
+    const b64 = await p.evaluate((t) => { window.WI_DRAW(t); return document.getElementById('world-canvas').toDataURL('image/jpeg', 0.94).split(',')[1]; }, i / fps);
+    if (!ff.stdin.write(Buffer.from(b64, 'base64'))) await new Promise((r) => ff.stdin.once('drain', r));
+    if (i % 30 === 0) console.log(`frame ${i}/${frames}  ${((Date.now() - t0) / 1000 / (i + 1)).toFixed(2)} s/frame`);
+  }
+  ff.stdin.end(); await new Promise((r) => ff.on('close', r)); await b.close(); console.log('WORLD DONE', out);
+})();
+''')
+r = subprocess.run(["node", runner, f"{H}/_preview/{slug}_final.html", out, str(frames), str(FPS)], cwd=vdir)
+if r.returncode != 0 or not os.path.exists(out):
+    sys.exit("world pass failed")
+# point index.html at the rendered world video
+idx = os.path.join(vdir, "index.html")
+html = open(idx).read()
+new = (f'<video id="world" src="build/world.mp4" data-start="0" data-duration="{dur}" data-track-index="1" muted playsinline '
+       f'style="z-index:1;position:absolute;left:0;top:0;width:1080px;height:1920px;object-fit:cover"></video>')
+html2, n = re.subn(r'<div id="world"[^>]*></div>', new, html)
+if n != 1:
+    sys.exit("could not find the world composition in index.html")
+open(idx, "w").write(html2)
+print("index.html now uses build/world.mp4")

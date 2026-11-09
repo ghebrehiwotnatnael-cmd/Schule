@@ -56,7 +56,10 @@ Models live in `kit/models/` (gitignored, fetch with `python3 kit/tools/fetch_mo
 - Day light: keep `light` ≈ 0.7, `envI` ≈ 0.4, `ambient` ≈ 0.2. Over-lit scenes clip before the grade, so
   lowering `exposure` only greys them.
 - Fast stills: `python3 kit/tools/preview.py videos/<slug> 1.5,13,43 --scale 0.3` → `build/preview/sheet.jpg`.
-- Render of a model video with 4 workers is slow (2-4 h for 64 s on 4 cores); don't run previews alongside if not needed.
+- **Final render = 2 steps** (HyperFrames evaluates heavy WebGL frames ~2.3x too often): `python3 kit/cinema_kit.py videos/<slug>`,
+  then `python3 kit/tools/worldpass.py videos/<slug>` (renders the 3D world to build/world.mp4 at ~2.5 s/frame and points index.html
+  at it), then `npx hyperframes render ...` (only overlays + audio, ~0.3 s/frame). Launch long renders with `setsid nohup` and
+  `HYPERFRAMES_RENDER_DETACHED=1`; background tool jobs are killed after 2 h. Point/spot lights that are off or far away are culled.
 - HeyGen token expired → `npx hyperframes auth refresh`.
 
 ## Working rules (from the creator)
