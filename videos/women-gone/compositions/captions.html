@@ -1,0 +1,57 @@
+<template>
+<style>
+@font-face{font-family:"WI Serif";src:url("assets/fonts/spectral-400-normal.woff2") format("woff2");font-weight:400}
+@font-face{font-family:"WI Serif";src:url("assets/fonts/spectral-500-normal.woff2") format("woff2");font-weight:500}
+@font-face{font-family:"WI Serif";src:url("assets/fonts/spectral-400-italic.woff2") format("woff2");font-weight:400;font-style:italic}
+#root{position:absolute;inset:0;pointer-events:none;}
+.cap{position:absolute;left:0;top:1236px;width:1080px;height:200px;text-align:center;}
+.cap-in{display:inline-block;max-width:930px;font:italic 400 46px/1.25 "WI Serif";color:#fff;
+  text-shadow:0 2px 14px rgba(0,0,0,.7),0 1px 3px rgba(0,0,0,.8);}
+</style>
+<div id="root" data-composition-id="captions" data-width="1080" data-height="1920">
+<div id="cap-0" class="clip cap" data-start="3.4" data-duration="2.2" data-track-index="0"><div class="cap-in">Saturday. 9 AM.</div></div>
+<div id="cap-1" class="clip cap" data-start="5.8" data-duration="1.6" data-track-index="0"><div class="cap-in">Pancakes. Coffee. Her.</div></div>
+<div id="cap-2" class="clip cap" data-start="7.6" data-duration="1.6" data-track-index="0"><div class="cap-in">“Honey, have you seen my—”</div></div>
+<div id="cap-3" class="clip cap" data-start="9.6" data-duration="1.6" data-track-index="0"><div class="cap-in">...and she&#x27;s gone.</div></div>
+<div id="cap-4" class="clip cap" data-start="11.6" data-duration="3.7" data-track-index="0"><div class="cap-in">Every woman on Earth. Gone.</div></div>
+<div id="cap-5" class="clip cap" data-start="15.9" data-duration="4.3" data-track-index="0"><div class="cap-in">4 billion people. In one second.</div></div>
+<div id="cap-6" class="clip cap" data-start="21.2" data-duration="2.7" data-track-index="0"><div class="cap-in">“Bro... my wife is gone too.”</div></div>
+<div id="cap-7" class="clip cap" data-start="25.8" data-duration="4.0" data-track-index="0"><div class="cap-in">Every city. Every beach. Every home.</div></div>
+<div id="cap-8" class="clip cap" data-start="31.0" data-duration="2.7" data-track-index="0"><div class="cap-in">“We&#x27;ve lost almost every nurse.”</div></div>
+<div id="cap-9" class="clip cap" data-start="34.0" data-duration="1.0" data-track-index="0"><div class="cap-in">9 in 10 nurses were women.</div></div>
+<div id="cap-10" class="clip cap" data-start="35.6" data-duration="3.6" data-track-index="0"><div class="cap-in">Most teachers: gone.</div></div>
+<div id="cap-11" class="clip cap" data-start="40.2" data-duration="2.2" data-track-index="0"><div class="cap-in">“Where&#x27;s my mom?”</div></div>
+<div id="cap-12" class="clip cap" data-start="45.0" data-duration="4.2" data-track-index="0"><div class="cap-in">Millions of dads. Alone with babies.</div></div>
+<div id="cap-13" class="clip cap" data-start="50.0" data-duration="3.8" data-track-index="0"><div class="cap-in">No more babies. Ever.</div></div>
+<div id="cap-14" class="clip cap" data-start="54.5" data-duration="4.1" data-track-index="0"><div class="cap-in">Humanity: one generation left.</div></div>
+<div id="cap-15" class="clip cap" data-start="59.6" data-duration="2.4" data-track-index="0"><div class="cap-in">Plot twist: there&#x27;s a backup plan.</div></div>
+<div id="cap-16" class="clip cap" data-start="62.2" data-duration="2.6" data-track-index="0"><div class="cap-in">2017: lambs grew in an artificial womb.</div></div>
+<div id="cap-17" class="clip cap" data-start="65.0" data-duration="2.3" data-track-index="0"><div class="cap-in">Four weeks. Inside a plastic bag.</div></div>
+<div id="cap-18" class="clip cap" data-start="68.0" data-duration="3.8" data-track-index="0"><div class="cap-in">Call your mom today.</div></div>
+</div>
+<script>
+(function(){
+const tl = gsap.timeline({paused:true,defaults:{lazy:false}});
+tl.fromTo("#cap-0 .cap-in",{opacity:0,y:8},{opacity:1,y:0,duration:.28,ease:"power2.out"},3.4);tl.to("#cap-0 .cap-in",{opacity:0,duration:.18},5.41);
+tl.fromTo("#cap-1 .cap-in",{opacity:0,y:8},{opacity:1,y:0,duration:.28,ease:"power2.out"},5.8);tl.to("#cap-1 .cap-in",{opacity:0,duration:.18},7.21);
+tl.fromTo("#cap-2 .cap-in",{opacity:0,y:8},{opacity:1,y:0,duration:.28,ease:"power2.out"},7.6);tl.to("#cap-2 .cap-in",{opacity:0,duration:.18},9.01);
+tl.fromTo("#cap-3 .cap-in",{opacity:0,y:8},{opacity:1,y:0,duration:.28,ease:"power2.out"},9.6);tl.to("#cap-3 .cap-in",{opacity:0,duration:.18},11.01);
+tl.fromTo("#cap-4 .cap-in",{opacity:0,y:8},{opacity:1,y:0,duration:.28,ease:"power2.out"},11.6);tl.to("#cap-4 .cap-in",{opacity:0,duration:.18},15.11);
+tl.fromTo("#cap-5 .cap-in",{opacity:0,y:8},{opacity:1,y:0,duration:.28,ease:"power2.out"},15.9);tl.to("#cap-5 .cap-in",{opacity:0,duration:.18},20.01);
+tl.fromTo("#cap-6 .cap-in",{opacity:0,y:8},{opacity:1,y:0,duration:.28,ease:"power2.out"},21.2);tl.to("#cap-6 .cap-in",{opacity:0,duration:.18},23.71);
+tl.fromTo("#cap-7 .cap-in",{opacity:0,y:8},{opacity:1,y:0,duration:.28,ease:"power2.out"},25.8);tl.to("#cap-7 .cap-in",{opacity:0,duration:.18},29.61);
+tl.fromTo("#cap-8 .cap-in",{opacity:0,y:8},{opacity:1,y:0,duration:.28,ease:"power2.out"},31.0);tl.to("#cap-8 .cap-in",{opacity:0,duration:.18},33.51);
+tl.fromTo("#cap-9 .cap-in",{opacity:0,y:8},{opacity:1,y:0,duration:.28,ease:"power2.out"},34.0);tl.to("#cap-9 .cap-in",{opacity:0,duration:.18},34.81);
+tl.fromTo("#cap-10 .cap-in",{opacity:0,y:8},{opacity:1,y:0,duration:.28,ease:"power2.out"},35.6);tl.to("#cap-10 .cap-in",{opacity:0,duration:.18},39.01);
+tl.fromTo("#cap-11 .cap-in",{opacity:0,y:8},{opacity:1,y:0,duration:.28,ease:"power2.out"},40.2);tl.to("#cap-11 .cap-in",{opacity:0,duration:.18},42.21);
+tl.fromTo("#cap-12 .cap-in",{opacity:0,y:8},{opacity:1,y:0,duration:.28,ease:"power2.out"},45.0);tl.to("#cap-12 .cap-in",{opacity:0,duration:.18},49.01);
+tl.fromTo("#cap-13 .cap-in",{opacity:0,y:8},{opacity:1,y:0,duration:.28,ease:"power2.out"},50.0);tl.to("#cap-13 .cap-in",{opacity:0,duration:.18},53.61);
+tl.fromTo("#cap-14 .cap-in",{opacity:0,y:8},{opacity:1,y:0,duration:.28,ease:"power2.out"},54.5);tl.to("#cap-14 .cap-in",{opacity:0,duration:.18},58.41);
+tl.fromTo("#cap-15 .cap-in",{opacity:0,y:8},{opacity:1,y:0,duration:.28,ease:"power2.out"},59.6);tl.to("#cap-15 .cap-in",{opacity:0,duration:.18},61.81);
+tl.fromTo("#cap-16 .cap-in",{opacity:0,y:8},{opacity:1,y:0,duration:.28,ease:"power2.out"},62.2);tl.to("#cap-16 .cap-in",{opacity:0,duration:.18},64.61);
+tl.fromTo("#cap-17 .cap-in",{opacity:0,y:8},{opacity:1,y:0,duration:.28,ease:"power2.out"},65.0);tl.to("#cap-17 .cap-in",{opacity:0,duration:.18},67.11);
+tl.fromTo("#cap-18 .cap-in",{opacity:0,y:8},{opacity:1,y:0,duration:.28,ease:"power2.out"},68.0);tl.to("#cap-18 .cap-in",{opacity:0,duration:.18},71.61);
+window.__timelines["captions"] = tl;
+})();
+</script>
+</template>

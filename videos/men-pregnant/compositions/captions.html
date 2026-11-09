@@ -1,0 +1,53 @@
+<template>
+<style>
+@font-face{font-family:"WI Serif";src:url("assets/fonts/spectral-400-normal.woff2") format("woff2");font-weight:400}
+@font-face{font-family:"WI Serif";src:url("assets/fonts/spectral-500-normal.woff2") format("woff2");font-weight:500}
+@font-face{font-family:"WI Serif";src:url("assets/fonts/spectral-400-italic.woff2") format("woff2");font-weight:400;font-style:italic}
+#root{position:absolute;inset:0;pointer-events:none;}
+.cap{position:absolute;left:0;top:1236px;width:1080px;height:200px;text-align:center;}
+.cap-in{display:inline-block;max-width:930px;font:italic 400 46px/1.25 "WI Serif";color:#fff;
+  text-shadow:0 2px 14px rgba(0,0,0,.7),0 1px 3px rgba(0,0,0,.8);}
+</style>
+<div id="root" data-composition-id="captions" data-width="1080" data-height="1920">
+<div id="cap-0" class="clip cap" data-start="3.4" data-duration="2.2" data-track-index="0"><div class="cap-in">Tuesday morning.</div></div>
+<div id="cap-1" class="clip cap" data-start="5.8" data-duration="1.6" data-track-index="0"><div class="cap-in">Two lines.</div></div>
+<div id="cap-2" class="clip cap" data-start="7.6" data-duration="3.1" data-track-index="0"><div class="cap-in">“Wait... you&#x27;re pregnant?!”</div></div>
+<div id="cap-3" class="clip cap" data-start="12.4" data-duration="3.8" data-track-index="0"><div class="cap-in">Week 6: morning sickness. Yours.</div></div>
+<div id="cap-4" class="clip cap" data-start="17.0" data-duration="4.2" data-track-index="0"><div class="cap-in">In this world, men carry babies.</div></div>
+<div id="cap-5" class="clip cap" data-start="22.2" data-duration="2.9" data-track-index="0"><div class="cap-in">“Bro, you&#x27;re literally glowing.”</div></div>
+<div id="cap-6" class="clip cap" data-start="27.0" data-duration="3.8" data-track-index="0"><div class="cap-in">Month 5: pickles with ice cream.</div></div>
+<div id="cap-7" class="clip cap" data-start="31.4" data-duration="4.2" data-track-index="0"><div class="cap-in">Month 6: you hear the heartbeat.</div></div>
+<div id="cap-8" class="clip cap" data-start="36.4" data-duration="4.2" data-track-index="0"><div class="cap-in">Dad yoga is a thing now.</div></div>
+<div id="cap-9" class="clip cap" data-start="41.4" data-duration="3.8" data-track-index="0"><div class="cap-in">Month 8: no more flying.</div></div>
+<div id="cap-10" class="clip cap" data-start="45.9" data-duration="4.3" data-track-index="0"><div class="cap-in">Month 9: where are your feet?</div></div>
+<div id="cap-11" class="clip cap" data-start="50.9" data-duration="3.7" data-track-index="0"><div class="cap-in">Then, one evening: it&#x27;s time.</div></div>
+<div id="cap-12" class="clip cap" data-start="56.2" data-duration="2.4" data-track-index="0"><div class="cap-in">“Congratulations. It&#x27;s a girl!”</div></div>
+<div id="cap-13" class="clip cap" data-start="61.8" data-duration="2.5" data-track-index="0"><div class="cap-in">Plot twist: some dads really do this.</div></div>
+<div id="cap-14" class="clip cap" data-start="64.5" data-duration="2.4" data-track-index="0"><div class="cap-in">Male seahorses carry the babies.</div></div>
+<div id="cap-15" class="clip cap" data-start="67.1" data-duration="2.2" data-track-index="0"><div class="cap-in">Up to 2,000 at once.</div></div>
+<div id="cap-16" class="clip cap" data-start="70.0" data-duration="3.8" data-track-index="0"><div class="cap-in">Would you do it for 9 months?</div></div>
+</div>
+<script>
+(function(){
+const tl = gsap.timeline({paused:true,defaults:{lazy:false}});
+tl.fromTo("#cap-0 .cap-in",{opacity:0,y:8},{opacity:1,y:0,duration:.28,ease:"power2.out"},3.4);tl.to("#cap-0 .cap-in",{opacity:0,duration:.18},5.41);
+tl.fromTo("#cap-1 .cap-in",{opacity:0,y:8},{opacity:1,y:0,duration:.28,ease:"power2.out"},5.8);tl.to("#cap-1 .cap-in",{opacity:0,duration:.18},7.21);
+tl.fromTo("#cap-2 .cap-in",{opacity:0,y:8},{opacity:1,y:0,duration:.28,ease:"power2.out"},7.6);tl.to("#cap-2 .cap-in",{opacity:0,duration:.18},10.51);
+tl.fromTo("#cap-3 .cap-in",{opacity:0,y:8},{opacity:1,y:0,duration:.28,ease:"power2.out"},12.4);tl.to("#cap-3 .cap-in",{opacity:0,duration:.18},16.01);
+tl.fromTo("#cap-4 .cap-in",{opacity:0,y:8},{opacity:1,y:0,duration:.28,ease:"power2.out"},17.0);tl.to("#cap-4 .cap-in",{opacity:0,duration:.18},21.01);
+tl.fromTo("#cap-5 .cap-in",{opacity:0,y:8},{opacity:1,y:0,duration:.28,ease:"power2.out"},22.2);tl.to("#cap-5 .cap-in",{opacity:0,duration:.18},24.91);
+tl.fromTo("#cap-6 .cap-in",{opacity:0,y:8},{opacity:1,y:0,duration:.28,ease:"power2.out"},27.0);tl.to("#cap-6 .cap-in",{opacity:0,duration:.18},30.61);
+tl.fromTo("#cap-7 .cap-in",{opacity:0,y:8},{opacity:1,y:0,duration:.28,ease:"power2.out"},31.4);tl.to("#cap-7 .cap-in",{opacity:0,duration:.18},35.41);
+tl.fromTo("#cap-8 .cap-in",{opacity:0,y:8},{opacity:1,y:0,duration:.28,ease:"power2.out"},36.4);tl.to("#cap-8 .cap-in",{opacity:0,duration:.18},40.41);
+tl.fromTo("#cap-9 .cap-in",{opacity:0,y:8},{opacity:1,y:0,duration:.28,ease:"power2.out"},41.4);tl.to("#cap-9 .cap-in",{opacity:0,duration:.18},45.01);
+tl.fromTo("#cap-10 .cap-in",{opacity:0,y:8},{opacity:1,y:0,duration:.28,ease:"power2.out"},45.9);tl.to("#cap-10 .cap-in",{opacity:0,duration:.18},50.01);
+tl.fromTo("#cap-11 .cap-in",{opacity:0,y:8},{opacity:1,y:0,duration:.28,ease:"power2.out"},50.9);tl.to("#cap-11 .cap-in",{opacity:0,duration:.18},54.41);
+tl.fromTo("#cap-12 .cap-in",{opacity:0,y:8},{opacity:1,y:0,duration:.28,ease:"power2.out"},56.2);tl.to("#cap-12 .cap-in",{opacity:0,duration:.18},58.41);
+tl.fromTo("#cap-13 .cap-in",{opacity:0,y:8},{opacity:1,y:0,duration:.28,ease:"power2.out"},61.8);tl.to("#cap-13 .cap-in",{opacity:0,duration:.18},64.11);
+tl.fromTo("#cap-14 .cap-in",{opacity:0,y:8},{opacity:1,y:0,duration:.28,ease:"power2.out"},64.5);tl.to("#cap-14 .cap-in",{opacity:0,duration:.18},66.71);
+tl.fromTo("#cap-15 .cap-in",{opacity:0,y:8},{opacity:1,y:0,duration:.28,ease:"power2.out"},67.1);tl.to("#cap-15 .cap-in",{opacity:0,duration:.18},69.11);
+tl.fromTo("#cap-16 .cap-in",{opacity:0,y:8},{opacity:1,y:0,duration:.28,ease:"power2.out"},70.0);tl.to("#cap-16 .cap-in",{opacity:0,duration:.18},73.61);
+window.__timelines["captions"] = tl;
+})();
+</script>
+</template>

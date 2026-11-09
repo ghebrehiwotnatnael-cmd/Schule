@@ -1,0 +1,55 @@
+<template>
+<style>
+@font-face{font-family:"WI Serif";src:url("assets/fonts/spectral-400-normal.woff2") format("woff2");font-weight:400}
+@font-face{font-family:"WI Serif";src:url("assets/fonts/spectral-500-normal.woff2") format("woff2");font-weight:500}
+@font-face{font-family:"WI Serif";src:url("assets/fonts/spectral-400-italic.woff2") format("woff2");font-weight:400;font-style:italic}
+#root{position:absolute;inset:0;pointer-events:none;}
+.cap{position:absolute;left:0;top:1236px;width:1080px;height:200px;text-align:center;}
+.cap-in{display:inline-block;max-width:930px;font:italic 400 46px/1.25 "WI Serif";color:#fff;
+  text-shadow:0 2px 14px rgba(0,0,0,.7),0 1px 3px rgba(0,0,0,.8);}
+</style>
+<div id="root" data-composition-id="captions" data-width="1080" data-height="1920">
+<div id="cap-0" class="clip cap" data-start="3.6" data-duration="2.4" data-track-index="0"><div class="cap-in">You&#x27;re on a hotel roof in Thailand.</div></div>
+<div id="cap-1" class="clip cap" data-start="6.2" data-duration="2.2" data-track-index="0"><div class="cap-in">In 5 seconds, gravity doubles.</div></div>
+<div id="cap-2" class="clip cap" data-start="9.4" data-duration="3.4" data-track-index="0"><div class="cap-in">“Bro... why is my drink so heavy?!”</div></div>
+<div id="cap-3" class="clip cap" data-start="13.2" data-duration="2.4" data-track-index="0"><div class="cap-in">You now weigh twice as much.</div></div>
+<div id="cap-4" class="clip cap" data-start="16.0" data-duration="1.9" data-track-index="0"><div class="cap-in">“I can&#x27;t get up!”</div></div>
+<div id="cap-5" class="clip cap" data-start="18.4" data-duration="3.2" data-track-index="0"><div class="cap-in">Your heart pumps twice as hard.</div></div>
+<div id="cap-6" class="clip cap" data-start="22.4" data-duration="3.2" data-track-index="0"><div class="cap-in">Palm trees bow. Waves flatten.</div></div>
+<div id="cap-7" class="clip cap" data-start="26.0" data-duration="3.4" data-track-index="0"><div class="cap-in">Everything falls twice as fast.</div></div>
+<div id="cap-8" class="clip cap" data-start="30.4" data-duration="3.4" data-track-index="0"><div class="cap-in">A plane drops 120 meters.</div></div>
+<div id="cap-9" class="clip cap" data-start="34.4" data-duration="3.2" data-track-index="0"><div class="cap-in">Even the clouds sink lower.</div></div>
+<div id="cap-10" class="clip cap" data-start="38.2" data-duration="3.6" data-track-index="0"><div class="cap-in">Air pressure doubles. Ears pop.</div></div>
+<div id="cap-11" class="clip cap" data-start="42.4" data-duration="4.0" data-track-index="0"><div class="cap-in">Higher and higher...</div></div>
+<div id="cap-12" class="clip cap" data-start="47.6" data-duration="3.4" data-track-index="0"><div class="cap-in">The space station drops 100 meters.</div></div>
+<div id="cap-13" class="clip cap" data-start="51.4" data-duration="4.0" data-track-index="0"><div class="cap-in">Then, 5 seconds are over.</div></div>
+<div id="cap-14" class="clip cap" data-start="57.0" data-duration="3.2" data-track-index="0"><div class="cap-in">“Okay... let&#x27;s never do that again.”</div></div>
+<div id="cap-15" class="clip cap" data-start="60.8" data-duration="2.6" data-track-index="0"><div class="cap-in">Plot twist: the Moon moved too.</div></div>
+<div id="cap-16" class="clip cap" data-start="63.6" data-duration="2.8" data-track-index="0"><div class="cap-in">3.4 cm closer. In 5 seconds.</div></div>
+<div id="cap-17" class="clip cap" data-start="66.6" data-duration="3.6" data-track-index="0"><div class="cap-in">Could you even stand up?</div></div>
+</div>
+<script>
+(function(){
+const tl = gsap.timeline({paused:true,defaults:{lazy:false}});
+tl.fromTo("#cap-0 .cap-in",{opacity:0,y:8},{opacity:1,y:0,duration:.28,ease:"power2.out"},3.6);tl.to("#cap-0 .cap-in",{opacity:0,duration:.18},5.81);
+tl.fromTo("#cap-1 .cap-in",{opacity:0,y:8},{opacity:1,y:0,duration:.28,ease:"power2.out"},6.2);tl.to("#cap-1 .cap-in",{opacity:0,duration:.18},8.21);
+tl.fromTo("#cap-2 .cap-in",{opacity:0,y:8},{opacity:1,y:0,duration:.28,ease:"power2.out"},9.4);tl.to("#cap-2 .cap-in",{opacity:0,duration:.18},12.61);
+tl.fromTo("#cap-3 .cap-in",{opacity:0,y:8},{opacity:1,y:0,duration:.28,ease:"power2.out"},13.2);tl.to("#cap-3 .cap-in",{opacity:0,duration:.18},15.41);
+tl.fromTo("#cap-4 .cap-in",{opacity:0,y:8},{opacity:1,y:0,duration:.28,ease:"power2.out"},16.0);tl.to("#cap-4 .cap-in",{opacity:0,duration:.18},17.71);
+tl.fromTo("#cap-5 .cap-in",{opacity:0,y:8},{opacity:1,y:0,duration:.28,ease:"power2.out"},18.4);tl.to("#cap-5 .cap-in",{opacity:0,duration:.18},21.41);
+tl.fromTo("#cap-6 .cap-in",{opacity:0,y:8},{opacity:1,y:0,duration:.28,ease:"power2.out"},22.4);tl.to("#cap-6 .cap-in",{opacity:0,duration:.18},25.41);
+tl.fromTo("#cap-7 .cap-in",{opacity:0,y:8},{opacity:1,y:0,duration:.28,ease:"power2.out"},26.0);tl.to("#cap-7 .cap-in",{opacity:0,duration:.18},29.21);
+tl.fromTo("#cap-8 .cap-in",{opacity:0,y:8},{opacity:1,y:0,duration:.28,ease:"power2.out"},30.4);tl.to("#cap-8 .cap-in",{opacity:0,duration:.18},33.61);
+tl.fromTo("#cap-9 .cap-in",{opacity:0,y:8},{opacity:1,y:0,duration:.28,ease:"power2.out"},34.4);tl.to("#cap-9 .cap-in",{opacity:0,duration:.18},37.41);
+tl.fromTo("#cap-10 .cap-in",{opacity:0,y:8},{opacity:1,y:0,duration:.28,ease:"power2.out"},38.2);tl.to("#cap-10 .cap-in",{opacity:0,duration:.18},41.61);
+tl.fromTo("#cap-11 .cap-in",{opacity:0,y:8},{opacity:1,y:0,duration:.28,ease:"power2.out"},42.4);tl.to("#cap-11 .cap-in",{opacity:0,duration:.18},46.21);
+tl.fromTo("#cap-12 .cap-in",{opacity:0,y:8},{opacity:1,y:0,duration:.28,ease:"power2.out"},47.6);tl.to("#cap-12 .cap-in",{opacity:0,duration:.18},50.81);
+tl.fromTo("#cap-13 .cap-in",{opacity:0,y:8},{opacity:1,y:0,duration:.28,ease:"power2.out"},51.4);tl.to("#cap-13 .cap-in",{opacity:0,duration:.18},55.21);
+tl.fromTo("#cap-14 .cap-in",{opacity:0,y:8},{opacity:1,y:0,duration:.28,ease:"power2.out"},57.0);tl.to("#cap-14 .cap-in",{opacity:0,duration:.18},60.01);
+tl.fromTo("#cap-15 .cap-in",{opacity:0,y:8},{opacity:1,y:0,duration:.28,ease:"power2.out"},60.8);tl.to("#cap-15 .cap-in",{opacity:0,duration:.18},63.21);
+tl.fromTo("#cap-16 .cap-in",{opacity:0,y:8},{opacity:1,y:0,duration:.28,ease:"power2.out"},63.6);tl.to("#cap-16 .cap-in",{opacity:0,duration:.18},66.21);
+tl.fromTo("#cap-17 .cap-in",{opacity:0,y:8},{opacity:1,y:0,duration:.28,ease:"power2.out"},66.6);tl.to("#cap-17 .cap-in",{opacity:0,duration:.18},70.01);
+window.__timelines["captions"] = tl;
+})();
+</script>
+</template>

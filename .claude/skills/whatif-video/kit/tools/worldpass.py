@@ -48,7 +48,7 @@ os.makedirs(os.path.dirname(out), exist_ok=True)
 runner = os.path.join(vdir, "build", "worldpass.js")
 open(runner, "w").write(r'''const { chromium } = require('playwright'); const { spawn } = require('child_process');
 (async () => {
-  const [url, out, frames, fps] = [process.argv[2], process.argv[3], +process.argv[4], +process.argv[5]];
+  const [url, out, frames, fps, start] = [process.argv[2], process.argv[3], +process.argv[4], +process.argv[5], +(process.argv[6] || 0)];
   const b = await chromium.launch({ args: ['--use-gl=swiftshader', '--enable-unsafe-swiftshader'] });
   const p = await b.newPage({ viewport: { width: 1080, height: 1920 } }); p.setDefaultTimeout(1800000);
   p.on('pageerror', (e) => console.log('ERR', e.message));
@@ -57,7 +57,7 @@ open(runner, "w").write(r'''const { chromium } = require('playwright'); const { 
     '-crf', '14', '-pix_fmt', 'yuv420p', '-r', String(fps), out], { stdio: ['pipe', 'inherit', 'inherit'] });
   const t0 = Date.now();
   for (let i = 0; i < frames; i++) {
-    const b64 = await p.evaluate((t) => { window.WI_DRAW(t); return document.getElementById('world-canvas').toDataURL('image/jpeg', 0.94).split(',')[1]; }, i / fps);
+    const b64 = await p.evaluate((t) => { window.WI_DRAW(t); return document.getElementById('world-canvas').toDataURL('image/jpeg', 0.94).split(',')[1]; }, (start + i) / fps);
     if (!ff.stdin.write(Buffer.from(b64, 'base64'))) await new Promise((r) => ff.stdin.once('drain', r));
     if (i % 30 === 0) console.log(`frame ${i}/${frames}  ${((Date.now() - t0) / 1000 / (i + 1)).toFixed(2)} s/frame`);
   }
@@ -67,7 +67,20 @@ open(runner, "w").write(r'''const { chromium } = require('playwright'); const { 
 def _dur(f):
     try: return float(subprocess.run(["ffprobe", "-v", "error", "-show_entries", "format=duration", "-of", "csv=p=0", f], capture_output=True, text=True).stdout.strip())
     except Exception: return 0.0
-if os.environ.get("WP_REUSE") and os.path.exists(out) and abs(_dur(out) - frames / FPS) < 0.1:
+RANGE = os.environ.get("WP_RANGE")   # "t0,t1": re-render only that part and splice it into the existing world.mp4
+if RANGE and os.path.exists(out):
+    t0, t1 = [float(x) for x in RANGE.split(",")]
+    f0, f1 = int(t0 * FPS), int(round(t1 * FPS))
+    seg = os.path.join(vdir, "build", "world_seg.mp4")
+    open(runner, "a").write("")
+    rr = subprocess.run(["node", runner, f"{H}/_preview/{slug}_final.html", seg, str(f1 - f0), str(FPS), str(f0)], cwd=vdir)
+    if rr.returncode != 0: sys.exit("segment pass failed")
+    tmp = os.path.join(vdir, "build", "world_new.mp4")
+    subprocess.run(["ffmpeg", "-v", "error", "-y", "-i", out, "-itsoffset", str(f0 / FPS), "-i", seg, "-filter_complex",
+                    f"[0:v][1:v]overlay=0:0:enable='between(t,{f0 / FPS:.4f},{(f1 - 0.5) / FPS:.4f})'[v]", "-map", "[v]",
+                    "-c:v", "libx264", "-preset", "medium", "-crf", "14", "-pix_fmt", "yuv420p", "-r", str(FPS), tmp], check=True)
+    os.replace(tmp, out); print("spliced", RANGE)
+elif os.environ.get("WP_REUSE") and os.path.exists(out) and abs(_dur(out) - frames / FPS) < 0.1:
     print("reusing existing", out)
 else:
     r = subprocess.run(["node", runner, f"{H}/_preview/{slug}_final.html", out, str(frames), str(FPS)], cwd=vdir)

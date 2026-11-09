@@ -1,0 +1,26 @@
+<template>
+<style>
+@font-face{font-family:"WI Serif";src:url("assets/fonts/spectral-400-normal.woff2") format("woff2");font-weight:400}
+@font-face{font-family:"WI Serif";src:url("assets/fonts/spectral-500-normal.woff2") format("woff2");font-weight:500}
+@font-face{font-family:"WI Serif";src:url("assets/fonts/spectral-400-italic.woff2") format("woff2");font-weight:400;font-style:italic}
+#root{position:absolute;inset:0;background:#000;}
+#ec{position:absolute;left:90px;width:900px;top:780px;text-align:center;color:#f2f2f2;}
+#ec-title{font:400 70px/1.18 "WI Serif";}
+#ec-title .k{color:#9ad0ff;}
+#ec-sub{margin-top:36px;font:500 17px/1.7 "IBM Plex Mono";letter-spacing:3px;color:#8d8d96;}
+#ec-ask{margin-top:70px;font:italic 400 36px "WI Serif";color:#9ad0ff;}
+#ec-ask2{margin-top:16px;font:600 19px "IBM Plex Mono";letter-spacing:4px;color:#d9a74a;}
+</style>
+<div id="root" data-composition-id="endcard" data-width="1080" data-height="1920">
+ <div id="ec"><div id="ec-title">What if <span class="k">gravity</span> doubled for 5 seconds?</div><div id="ec-sub">AT 2 G AN AIRLINER WOULD DROP ABOUT 120 M IN 5 SECONDS<br>THE MOON WOULD FALL 3.4 CM CLOSER, ITS YEARLY DRIFT IS 3.8 CM</div><div id="ec-ask">What should we try next?</div><div id="ec-ask2">COMMENT BELOW ↓</div></div>
+</div>
+<script>
+(function(){
+const tl = gsap.timeline({paused:true,defaults:{lazy:false}});
+tl.fromTo("#ec-title",{opacity:0},{opacity:1,duration:.8},0.2);
+tl.fromTo("#ec-sub",{opacity:0},{opacity:1,duration:.6},0.7);
+tl.fromTo(["#ec-ask","#ec-ask2"],{opacity:0,y:10},{opacity:1,y:0,duration:.6,stagger:.2},1.1);
+window.__timelines["endcard"] = tl;
+})();
+</script>
+</template>

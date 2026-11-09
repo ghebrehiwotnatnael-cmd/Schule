@@ -1,0 +1,62 @@
+<template>
+<style>
+@font-face{font-family:"WI Serif";src:url("assets/fonts/spectral-400-normal.woff2") format("woff2");font-weight:400}
+@font-face{font-family:"WI Serif";src:url("assets/fonts/spectral-500-normal.woff2") format("woff2");font-weight:500}
+@font-face{font-family:"WI Serif";src:url("assets/fonts/spectral-400-italic.woff2") format("woff2");font-weight:400;font-style:italic}
+#root{position:absolute;inset:0;pointer-events:none;}
+#wg{position:absolute;left:64px;top:888px;width:760px;color:#fff;text-shadow:0 1px 10px rgba(0,0,0,.55),0 1px 2px rgba(0,0,0,.6);}
+#wg-label{font:600 27px "Inter";letter-spacing:2.6px;}
+#wg-value{margin-top:2px;font:400 66px/1 "WI Serif";letter-spacing:1px;font-variant-numeric:tabular-nums;}
+#wg-sub{margin-top:18px;font:500 18px "IBM Plex Mono";letter-spacing:3px;opacity:.82;}
+#bc{position:absolute;left:0;right:0;top:300px;text-align:center;color:#ff3b3b;text-shadow:0 0 18px rgba(255,40,40,.45),0 2px 6px rgba(0,0,0,.5);opacity:0;}
+#bc-label{font:700 30px "IBM Plex Mono";letter-spacing:7px;}
+#bc-num{font:500 150px/1 "IBM Plex Mono";margin-top:4px;}
+</style>
+<div id="root" data-composition-id="widget" data-width="1080" data-height="1920">
+  <div id="wg"><div id="wg-label"></div><div id="wg-value"></div><div id="wg-sub"></div></div>
+  <div id="bc"><div id="bc-label"></div><div id="bc-num"></div></div>
+</div>
+<script>
+(function(){
+const S = [{"t0": 0.0, "t1": 9.15, "label": "WOMEN ON EARTH", "sub": "SATURDAY \u00b7 9:00 AM", "mode": "text", "v0": 0, "v1": 0, "value": "4 BILLION"}, {"t0": 9.15, "t1": 30.0, "label": "WOMEN ON EARTH", "sub": "9:01 AM", "mode": "text", "v0": 0, "v1": 0, "value": "0"}, {"t0": 30.0, "t1": 49.5, "label": "WOMEN ON EARTH", "sub": "DAY 1", "mode": "text", "v0": 0, "v1": 0, "value": "0"}, {"t0": 49.5, "t1": 59.0, "label": "BABIES BORN", "sub": "SINCE THAT MORNING", "mode": "text", "v0": 0, "v1": 0, "value": "0"}, {"t0": 59.0, "t1": 67.5, "label": "ARTIFICIAL WOMB", "sub": "PHILADELPHIA \u00b7 2017", "mode": "text", "v0": 0, "v1": 0, "value": "4 WEEKS"}, {"t0": 67.5, "t1": 72.0, "label": "WOMEN ON EARTH", "sub": "", "mode": "text", "v0": 0, "v1": 0, "value": "?"}];
+const el = (id)=>document.getElementById(id);
+const p2 = (n)=>String(Math.floor(n)).padStart(2,"0");
+function fmt(seg, t){
+  const k = seg.t1>seg.t0 ? Math.min(1,Math.max(0,(t-seg.t0)/(seg.t1-seg.t0))) : 1;
+  const v = seg.v0 + (seg.v1-seg.v0)*k;
+  if(seg.mode==="sec"){ const s=Math.max(0,v); const m=Math.floor(s/60); return m+":"+p2(s%60)+"."+String(Math.floor((s%1)*1000)).padStart(3,"0"); }
+  if(seg.mode==="count"){ return Math.round(Math.max(0,v)).toLocaleString("en-US"); }
+  if(seg.mode.indexOf("num")===0){ const pr=seg.mode.split(":"); const dec=+(pr[1]||0); return v.toLocaleString("en-US",{minimumFractionDigits:dec,maximumFractionDigits:dec})+(pr.slice(2).join(":")||""); }
+  if(seg.mode==="pct"){ const r=Math.round(v); return (r>0?"+":"")+r+"%"; }
+  if(seg.mode==="days"){ const d=Math.max(0,v); const dd=Math.floor(d); const h=(d-dd)*24; const mi=(h%1)*60; const se=(mi%1)*60;
+    return dd+"d "+p2(h)+":"+p2(mi)+":"+p2(se); }
+  return seg.value;
+}
+const BCS = [];
+function renderBC(t){
+  let b=null; for(const s of BCS){ if(s.t0<=t && t<s.t1) b=s; }
+  const e=el("bc"); if(!b){ e.style.opacity=0; return; }
+  const k=Math.min(1,Math.max(0,(t-b.t0)/(b.t1-b.t0))); const v=b.n0+(b.n1-b.n0)*k; const n=Math.ceil(v-1e-6);
+  const frac=v-Math.floor(v); e.style.opacity=Math.min(1,(t-b.t0)/0.2,(b.t1-t)/0.2);
+  el("bc-label").textContent=b.label; el("bc-num").textContent=String(n);
+  el("bc-num").style.transform="scale("+(1+0.18*Math.max(0,frac-0.8)*5)+")";
+}
+function render(t){
+  renderBC(t);
+  let seg=null; for(const s of S){ if(s.t0<=t && t<s.t1) seg=s; }
+  const w=el("wg");
+  if(!seg){ w.style.opacity=0; return; }
+  const fadeIn=Math.min(1,(t-seg.t0)/0.25), fadeOut=Math.min(1,(seg.t1-t)/0.25);
+  const prev=S.find(s=>Math.abs(s.t1-seg.t0)<1e-3 && s.label===seg.label);
+  const next=S.find(s=>Math.abs(s.t0-seg.t1)<1e-3 && s.label===seg.label);
+  w.style.opacity = Math.min(prev?1:fadeIn, next?1:fadeOut);
+  el("wg-label").textContent=seg.label; el("wg-sub").textContent=seg.sub; el("wg-value").textContent=fmt(seg,t);
+}
+const tl = gsap.timeline({paused:true,defaults:{lazy:false}});
+const st={t:0};
+tl.to(st,{t:72.0,duration:72.0,ease:"none",onUpdate:()=>render(st.t)},0);
+render(0);
+window.__timelines["widget"] = tl;
+})();
+</script>
+</template>
