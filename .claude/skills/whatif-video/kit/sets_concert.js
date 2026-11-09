@@ -76,14 +76,16 @@ window.CONCERT_MODELS = [];
     fans.forEach((f) => { f.rot = Math.atan2(0 - f.x, (-SR + 12) - f.z); });
     const fanCrowd = BL.crowd(scene, fans);
     const artist = BL.crowd(scene, [{ name: "artist", male: true, hair: new THREE.Color("#0d0907"), afro: true, mustache: true, beard: false, glasses: true, tie: true, tieCol: new THREE.Color("#0b0b0d"),
-      shirt: new THREE.Color("#a10a16"), longSleeve: true, legs: new THREE.Color("#121214"), skin: new THREE.Color("#2c1910"), s: 1.1, face: 6 }]);
-    let lastSkin = null;
+      shirt: new THREE.Color("#c8102e").convertSRGBToLinear(), longSleeve: true, skirt: false, legs: new THREE.Color("#121214"), skin: new THREE.Color("#5a3826").convertSRGBToLinear(), s: 1.1, face: 6 }]);
+    let lastSkin = null, lastJacket = null;
     // glitter on the red blazer + a mic stand
     const glit = [0, 1, 2].map((k) => { const n = 70, a = new Float32Array(n * 3); for (let i = 0; i < n; i++) { const side = R() < 0.5 ? -1 : 1;
         a.set([side * rr(0.08, 0.27) * 1.1, 2.4 + rr(0.82, 1.48) * 1.1, -SR + 14 + 0.15 * 1.1], i * 3); }
       const pts = new THREE.Points(new THREE.BufferGeometry().setAttribute("position", new THREE.BufferAttribute(a, 3)),
         new THREE.PointsMaterial({ map: glowTex, color: 0xff5a3c, size: 0.05, sizeAttenuation: true, transparent: true, depthWrite: false, blending: THREE.AdditiveBlending }));
       pts.userData.k = k; pts.userData.noShadow = true; scene.add(pts); return pts; });
+    const lapels = [-1, 1].map((sd) => { const m = new THREE.Mesh(new THREE.BoxGeometry(0.09, 0.42, 0.02), new THREE.MeshStandardMaterial({ color: new THREE.Color("#8e0a1e").convertSRGBToLinear(), roughness: 0.4, metalness: 0.2 }));
+      m.position.set(sd * 0.115 * 1.1, 2.4 + 1.23 * 1.1, -SR + 14 + 0.142 * 1.1); m.rotation.z = sd * 0.32; scene.add(m); return m; });
     const micStand = new THREE.Group(); scene.add(micStand); { const metal = std(0x18181c, { metalness: 0.8, roughness: 0.3 });
       const base = new THREE.Mesh(new THREE.CylinderGeometry(0.28, 0.32, 0.05, 16), metal); base.position.set(-0.75, 2.42, -SR + 14.55); micStand.add(base);
       const pole = new THREE.Mesh(new THREE.CylinderGeometry(0.018, 0.018, 2.1, 8), metal); pole.position.set(-0.6, 3.45, -SR + 14.5); pole.rotation.z = -0.22; pole.rotation.x = 0.12; micStand.add(pole);
@@ -113,7 +115,8 @@ window.CONCERT_MODELS = [];
       fanCrowd.update(t, (p, tt, i) => { p.hidden = p.order > clamp01(N / 6000) || alt > 900; p.mode = jmp > 0.5 ? "jump" : (i % 3 ? "cheer" : "wave"); p.face = i % 4 ? 7 : 0; });
       glit.forEach((g) => { g.visible = Math.sin(t * 13 + g.userData.k * 2.1) > 0.1; });
       micStand.visible = (val("artistMode", t) || "sing") === "micstand";
-      { const sk = val("artistSkin", t); if (sk && sk !== lastSkin) { lastSkin = sk; const c = new THREE.Color(sk); artist.meshes.head.setColorAt(0, c); artist.meshes.head.instanceColor.needsUpdate = true; } }
+      { const jk = val("artistJacket", t); if (jk && jk !== lastJacket) { lastJacket = jk; const c = new THREE.Color(jk).convertSRGBToLinear(); ["torso", "armL", "armR"].forEach((k) => { artist.meshes[k].setColorAt(0, c); artist.meshes[k].instanceColor.needsUpdate = true; }); } }
+      { const sk = val("artistSkin", t); if (sk && sk !== lastSkin) { lastSkin = sk; const c = new THREE.Color(sk).convertSRGBToLinear(); artist.meshes.head.setColorAt(0, c); artist.meshes.head.instanceColor.needsUpdate = true; } }
       artist.update(t, (p) => { p.x = 0; p.y = 2.4; p.z = -SR + 14; p.rot = 0; p.mode = val("artistMode", t) || "sing"; const f = num("artistFace", t, 6); p.face = Math.round(f) === 6 && Math.sin(t * 9) < 0 ? 0 : Math.round(f); });
       // heat cloud
       const hk = num("heat", t); heat.forEach((h) => { const u = h.userData; h.visible = hk > 0.01; if (!h.visible) return; const rr2 = Math.max(r, 400);
