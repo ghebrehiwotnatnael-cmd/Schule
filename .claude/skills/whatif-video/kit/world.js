@@ -357,6 +357,9 @@
     [[0, 0, 0.12, 0.05], [0, 0, -0.12, 0.045], [0.1, 0, 0, 0.04]].forEach(([x, y, z, r]) => { const m = new THREE.Mesh(new THREE.CylinderGeometry(r, r, 0.22, 12), new THREE.MeshStandardMaterial({ color: 0xe8e8e8, metalness: 0.3, roughness: 0.5 })); m.rotation.x = Math.PI / 2; m.position.set(x, y, z); iss.add(m); }); }
   const issDir = new THREE.Vector3(0.15, 0.32, 1).normalize();
   const issTrail = new THREE.Mesh(new THREE.CylinderGeometry(0.004, 0.004, 1, 6), new THREE.MeshBasicMaterial({ color: 0xff4d4d, transparent: true, opacity: 0.8 })); space.add(issTrail);
+  // golden dot: one huge crowd seen from space (tracks goldDot 0..1, goldLat, goldLon)
+  const goldDot = new THREE.Sprite(new THREE.SpriteMaterial({ map: glowTex, color: 0xffc24a, transparent: true, depthWrite: false, blending: THREE.AdditiveBlending, opacity: 0 })); earth.add(goldDot);
+  const goldCore = new THREE.Mesh(new THREE.SphereGeometry(0.06, 16, 12), new THREE.MeshBasicMaterial({ color: 0xffe08a, transparent: true, opacity: 0 })); earth.add(goldCore);
   space.add(clouds); const spaceLight = new THREE.DirectionalLight(0xffffff, 1); spaceLight.position.set(-30, 6, 12); space.add(spaceLight);
   space.add(new THREE.Points(starGeo, new THREE.PointsMaterial({ color: 0xffffff, size: 1.8, sizeAttenuation: false })));
 
@@ -536,7 +539,7 @@
     if (set === "space") {
       const p = val("spaceCam", t) || [0, 0, 34];
       cam.position.set(p[0], p[1], p[2]); cam.lookAt(0, 0, 0); cam.fov = num("spaceFov", t, 40); cam.updateProjectionMatrix();
-      const erot = val("earthRot", t); earth.rotation.y = erot != null ? erot : 2.2 + t * 0.04; earth.rotation.z = num("earthTilt", t, 0); clouds.rotation.z = earth.rotation.z; iss.visible = num("issOn", t) > 0.5; issTrail.visible = iss.visible && num("issDrop", t) > 0.01; if (iss.visible) { const dr = num("issDrop", t); const hgt = 10.63 - dr * 0.12;
+      const erot = val("earthRot", t); earth.rotation.y = erot != null ? erot : 2.2 + t * 0.04; earth.rotation.z = num("earthTilt", t, 0); clouds.rotation.z = earth.rotation.z; { const gd = num("goldDot", t); goldDot.visible = goldCore.visible = gd > 0.01; if (gd > 0.01) { const gp = ll(num("goldLat", t, 43.65), num("goldLon", t, -79.38), 10.06); goldDot.position.copy(gp); goldCore.position.copy(gp); goldDot.material.opacity = gd * (0.8 + 0.2 * Math.sin(t * 4)); goldDot.scale.setScalar(0.5 + gd * 0.6); goldCore.material.opacity = gd; } } iss.visible = num("issOn", t) > 0.5; issTrail.visible = iss.visible && num("issDrop", t) > 0.01; if (iss.visible) { const dr = num("issDrop", t); const hgt = 10.63 - dr * 0.12;
         iss.position.copy(issDir).multiplyScalar(hgt); iss.lookAt(0, 0, 0); iss.rotateX(Math.PI / 2); iss.rotation.z += t * 0.05; const top = issDir.clone().multiplyScalar(10.63);
         issTrail.position.copy(top.clone().add(iss.position).multiplyScalar(0.5)); issTrail.scale.set(1, Math.max(0.001, dr * 0.12), 1); issTrail.lookAt(0, 0, 0); issTrail.rotateX(Math.PI / 2); } shockU.ang.value = num("shock", t); shockU.k.value = num("shockI", t); shock.visible = shockU.k.value > 0.01;
       const cb = num("cables", t), cc = num("cableCut", t); cableGroup.visible = cb > 0.001; if (cableGroup.visible) cables.forEach((m, i) => { const idx = m.geometry.index.count; m.geometry.setDrawRange(0, Math.floor(idx * Math.min(1, Math.max(0, cb * 1.6 - (i % 5) * 0.12)) / 3) * 3);
@@ -553,7 +556,7 @@
     cam.position.set(p[0] + hx, p[1] + hy, p[2]);
     cam.lookAt(l[0] + hx * 4, l[1] + hy * 4, l[2]);
     cam.rotateZ(num("roll", t));
-    cam.fov = num("fov", t, 52); cam.updateProjectionMatrix();
+    cam.fov = num("fov", t, 52); cam.far = num("camFar", t, 4000); cam.near = num("camNear", t, 0.05); cam.updateProjectionMatrix();
 
     if (SETS[set]) { const sc = SETS[set].update(t, l, p); sc.add(cam); return sc; }
     if (set === "bunker") {
