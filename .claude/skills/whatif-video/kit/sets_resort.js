@@ -45,7 +45,7 @@ window.RESORT_MODELS = ["ultimatenature/FBX/PalmTree_1.fbx", "ultimatenature/FBX
 
     // ---------------------------------------------------------------- sky dressing
     const clouds = []; for (let i = 0; i < 26; i++) { const sp = new THREE.Sprite(new THREE.SpriteMaterial({ map: cloudTex, color: 0xffffff, transparent: true, depthWrite: false, fog: false, opacity: rr(0.7, 1) }));
-      const a = rr(-1.4, 1.4), d = rr(2000, 2900); sp.position.set(Math.sin(a) * d, rr(250, 700), -Math.cos(a) * d * (R() < 0.3 ? -1 : 1)); sp.scale.set(rr(600, 1100), rr(300, 500), 1); scene.add(sp); clouds.push(sp); }
+      const a = rr(-1.4, 1.4), d = rr(2000, 2900); sp.position.set(Math.sin(a) * d, rr(250, 700), -Math.cos(a) * d * (R() < 0.3 ? -1 : 1)); sp.scale.set(rr(600, 1100), rr(300, 500), 1); sp.userData.y = sp.position.y; scene.add(sp); clouds.push(sp); }
 
     // ---------------------------------------------------------------- sand, sea, foam
     const sandGeo = new THREE.PlaneGeometry(2400, 260, 1, 52); sandGeo.rotateX(-Math.PI / 2);
@@ -57,10 +57,10 @@ window.RESORT_MODELS = ["ultimatenature/FBX/PalmTree_1.fbx", "ultimatenature/FBX
     { const p = seaGeo.attributes.position, c = new Float32Array(p.count * 3); const shallow = new THREE.Color("#31e0cf"), mid = new THREE.Color("#12a7d4"), deep = new THREE.Color("#0757b0"), tmp = new THREE.Color();
       for (let i = 0; i < p.count; i++) { const d = -p.getZ(i); const k1 = smooth(d / 90), k2 = smooth((d - 90) / 700); tmp.copy(shallow).lerp(mid, k1).lerp(deep, k2); c.set([tmp.r, tmp.g, tmp.b], i * 3); }
       seaGeo.setAttribute("color", new THREE.BufferAttribute(c, 3)); }
-    const seaU = { uTime: { value: 0 } };
+    const seaU = { uTime: { value: 0 }, uAmp: { value: 1 } };
     const sea = new THREE.Mesh(seaGeo, new THREE.MeshStandardMaterial({ vertexColors: true, roughness: 0.12, metalness: 0.05, transparent: true, opacity: 0.93 }));
-    sea.material.onBeforeCompile = (sh) => { sh.uniforms.uTime = seaU.uTime; sh.vertexShader = "uniform float uTime;\n" + sh.vertexShader.replace("#include <begin_vertex>",
-      "#include <begin_vertex>\n float dd = clamp(-position.z / 40.0, 0.0, 1.0); transformed.y += dd * (sin(position.x*0.045 + uTime*1.2)*0.22 + sin(position.z*0.07 - uTime*1.6)*0.25 + sin((position.x-position.z)*0.19 + uTime*2.3)*0.06);"); };
+    sea.material.onBeforeCompile = (sh) => { sh.uniforms.uTime = seaU.uTime; sh.uniforms.uAmp = seaU.uAmp; sh.vertexShader = "uniform float uTime; uniform float uAmp;\n" + sh.vertexShader.replace("#include <begin_vertex>",
+      "#include <begin_vertex>\n float dd = clamp(-position.z / 40.0, 0.0, 1.0) * uAmp; transformed.y += dd * (sin(position.x*0.045 + uTime*1.2)*0.22 + sin(position.z*0.07 - uTime*1.6)*0.25 + sin((position.x-position.z)*0.19 + uTime*2.3)*0.06);"); };
     sea.userData.noShadow = true; sea.receiveShadow = true; scene.add(sea);
     const foams = [0, 1, 2].map((i) => { const m = new THREE.Mesh(new THREE.PlaneGeometry(2400, 3.2), new THREE.MeshBasicMaterial({ map: foamTex, transparent: true, depthWrite: false, opacity: 0.8 }));
       m.material.map = foamTex.clone(); m.material.map.needsUpdate = true; m.material.map.repeat.set(220, 1); m.rotation.x = -Math.PI / 2; m.userData.noShadow = true; scene.add(m); return m; });
@@ -123,8 +123,9 @@ window.RESORT_MODELS = ["ultimatenature/FBX/PalmTree_1.fbx", "ultimatenature/FBX
     sirenLight.scale.setScalar(3.5); sirenLight.position.set(SIR.x, 10.4, SIR.z); scene.add(sirenLight);
     const sirenLamp = new THREE.PointLight(0xff2a1a, 0, 30, 2); sirenLamp.position.set(SIR.x, 10.2, SIR.z); scene.add(sirenLamp);
     // palms, bushes
+    const palms = [];
     for (let i = 0; i < 70; i++) { const x = rr(-220, 220), z = i < 50 ? rr(46, 60) : rr(66, 95); if (Math.abs(x - 37) < 6 && z > 80) continue; if (z > 64 && x > -45 && x < 34 && z < 82 && Math.abs(x + 8) < 20) continue;
-      const p = WI.model(`ultimatenature/FBX/PalmTree_${1 + (i % 3)}.fbx`, { height: rr(8, 13) }); p.position.set(x, z > 62 ? TERR : 0.3, z); p.rotation.y = R() * 6.28; p.rotation.z = rr(-0.08, 0.08); scene.add(p); }
+      const p = WI.model(`ultimatenature/FBX/PalmTree_${1 + (i % 3)}.fbx`, { height: rr(8, 13) }); p.position.set(x, z > 62 ? TERR : 0.3, z); p.rotation.y = R() * 6.28; p.rotation.z = rr(-0.08, 0.08); p.userData.rz = p.rotation.z; scene.add(p); palms.push(p); }
     for (let i = 0; i < 40; i++) { const b = WI.model(`ultimatenature/FBX/Bush_${1 + (i % 2)}.fbx`, { size: rr(1.6, 3) }); b.position.set(rr(-200, 200), TERR, rr(63, 70)); scene.add(b); }
 
     // ---------------------------------------------------------------- beach props (they float away in the flood)
@@ -191,6 +192,18 @@ window.RESORT_MODELS = ["ultimatenature/FBX/PalmTree_1.fbx", "ultimatenature/FBX
     const ashGeo = new THREE.BufferGeometry().setAttribute("position", new THREE.Float32BufferAttribute(new Float32Array(900 * 3), 3));
     const ash = new THREE.Points(ashGeo, new THREE.PointsMaterial({ color: 0x5b5754, size: 3.5, sizeAttenuation: false, transparent: true, opacity: 0, depthWrite: false }));
     ash.frustumCulled = false; ash.userData.noShadow = true; scene.add(ash); const ashSeed = Array.from({ length: 900 }, () => [R(), R(), R(), R()]);
+
+    // ---------------------------------------------------------------- airliner (tracks planeOn, planeX, planeDrop)
+    const plane = new THREE.Group(); scene.add(plane); { const white = std(0xf4f6f8, { roughness: 0.4, metalness: 0.2 }), blue = std(0x1d4e89);
+      const fus = new THREE.Mesh(new THREE.CylinderGeometry(2.2, 2.2, 40, 16), white); fus.rotation.z = Math.PI / 2; plane.add(fus);
+      const nose = new THREE.Mesh(new THREE.SphereGeometry(2.2, 16, 12), white); nose.position.x = 20; nose.scale.set(1.6, 1, 1); plane.add(nose);
+      const tailC = new THREE.Mesh(new THREE.ConeGeometry(2.2, 8, 16), white); tailC.rotation.z = Math.PI / 2; tailC.position.x = -24; plane.add(tailC);
+      const wing = new THREE.Mesh(new THREE.BoxGeometry(9, 0.5, 44), white); wing.position.set(1, -0.8, 0); wing.rotation.y = 0.25; plane.add(wing);
+      const fin = new THREE.Mesh(new THREE.BoxGeometry(6, 8, 0.5), blue); fin.position.set(-24, 4.5, 0); plane.add(fin);
+      const stab = new THREE.Mesh(new THREE.BoxGeometry(4, 0.4, 14), white); stab.position.set(-24, 0.5, 0); plane.add(stab);
+      [-9, 9].forEach((z) => { const eng = new THREE.Mesh(new THREE.CylinderGeometry(1.1, 1.1, 5, 12), blue); eng.rotation.z = Math.PI / 2; eng.position.set(3, -2.2, z); plane.add(eng); });
+      const stripe = new THREE.Mesh(new THREE.CylinderGeometry(2.23, 2.23, 34, 16, 1, true, -0.4, 0.8), blue); stripe.rotation.z = Math.PI / 2; plane.add(stripe); }
+    plane.visible = false;
 
     // ---------------------------------------------------------------- the crowd
     const ppl = [];
@@ -314,8 +327,20 @@ window.RESORT_MODELS = ["ultimatenature/FBX/PalmTree_1.fbx", "ultimatenature/FBX
       { const ak = num("ash", t); ash.visible = ak > 0.01; ash.material.opacity = ak * 0.85; if (ash.visible) { const a = ashGeo.attributes.position.array; for (let i = 0; i < 900; i++) { const s = ashSeed[i];
         a[i * 3] = pos[0] + (s[0] - 0.5) * 40 + Math.sin(t + s[3] * 9) * 1.5; a[i * 3 + 1] = pos[1] + 14 - (((s[1] * 20 + t * (1.5 + s[3])) % 20)); a[i * 3 + 2] = pos[2] + (s[2] - 0.5) * 40; }
         ashGeo.attributes.position.needsUpdate = true; } }
+      // gravity x2 (track gravity 1..2): palms droop, umbrellas tip, waves flatten, clouds sink, boats sit deeper, the plane drops
+      const gk = clamp01(num("gravity", t, 1) - 1);
+      palms.forEach((p, i) => { p.rotation.z = p.userData.rz + gk * 0.1 * Math.sin(i * 1.7); p.scale.y = p.scale.x * (1 - gk * 0.05); });
+      if (gk > 0.001) props.forEach((pr, i) => { if (pr.boat) { pr.obj.position.y = pr.y - gk * 0.35; } else { pr.obj.rotation.z = gk * (0.35 + 0.35 * Math.sin(pr.ph * 3)); pr.obj.position.y = pr.y - gk * 0.08; } });
+      seaU.uAmp.value = 1 - 0.65 * gk;
+      clouds.forEach((c) => { c.position.y = c.userData.y * (1 - 0.3 * gk); });
+      plane.visible = num("planeOn", t) > 0.5; if (plane.visible) { const dr = num("planeDrop", t); plane.position.set(num("planeX", t, -500), 300 - dr * 140, -520); plane.rotation.set(0, 0.25, -dr * 0.22); }
       // people
-      crowd.update(t, crowdFn);
+      const rmood = val("roofMood", t) || "";
+      crowd.update(t, (p, tt, i) => { crowdFn(p, tt, i); if (p.hidden) return;
+        if (Math.abs(p.x - pos[0]) < 1.0 && Math.abs(p.z - pos[2]) < 1.0 && Math.abs((p.y || 0) - pos[1]) < 3) { p.hidden = true; return; }
+        if (p.kind === "roof" && rmood) { p.mode = ["talk", "idle", "talk", "sit", "idle", "talk"][i % 6]; p.face = i % 3 ? 0 : 7; if (p.mode === "sit") p.y = ROOF; }
+        if (gk > 0.5) { const h = hash(i + 3.3); if (p.mode !== "lie" && p.mode !== "lieBed") { p.mode = h < 0.45 ? "kneel" : h < 0.75 ? "sit" : "heavy"; } p.face = h < 0.5 ? 3 : h < 0.8 ? 4 : 2; }
+        if (rmood === "relief" && gk < 0.5) { const h = hash(i + 5.1); if (p.mode !== "lie") p.mode = h < 0.4 ? "cheer" : h < 0.7 ? "talk" : "idle"; p.face = h < 0.6 ? 7 : 0; } });
       const talk = val("talk", t) || "";
       heroes.update(t, (p) => { const P = val(p.name + "Pos", t); if (!P) { p.hidden = true; return; } p.hidden = false; p.x = P[0]; p.y = P[1]; p.z = P[2];
         p.rot = num(p.name + "Rot", t, 0); p.mode = val(p.name + "Mode", t) || "idle"; const f = num(p.name + "Face", t, 0);

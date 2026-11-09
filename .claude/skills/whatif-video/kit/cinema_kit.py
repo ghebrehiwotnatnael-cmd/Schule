@@ -54,6 +54,7 @@ class Cinema:
         self.voice = getattr(mod, "VOICEOVER", True) and os.path.exists(tp)
         self.T = Timing(tp) if self.voice else None
         self.keys, self.widgets, self.sfx_list, self.no_caption, self.ambient_list = [], [], [], set(), []
+        self.bigcounts = []
         self.caps = list(getattr(mod, "CAPTIONS", []))   # no-voice mode: [(t0, t1, text)]
         self.story_end = r3(self.T.voice_end + 0.6) if self.voice else r3(getattr(mod, "DURATION", 60))
         self.end_card = float(getattr(mod, "END_CARD", 4.0))
@@ -120,6 +121,11 @@ class Cinema:
     def widget(self, t0, t1, label, sub="", mode="text", v0=0, v1=0, value=""):
         """left widget segment: mode 'sec' (m:ss.mmm counting v0->v1 seconds), 'days' (Nd hh:mm:ss, v in days), 'text'"""
         self.widgets.append(dict(t0=r3(t0), t1=r3(t1), label=label, sub=sub, mode=mode, v0=v0, v1=v1, value=value))
+        return self
+
+    def bigcount(self, t0, t1, label, n0, n1):
+        """big red countdown at the top centre (e.g. 'GRAVITY DOUBLES IN' 5 -> 0), whole numbers"""
+        self.bigcounts.append(dict(t0=r3(t0), t1=r3(t1), label=label, n0=n0, n1=n1))
         return self
 
     def sfx(self, name, t, vol=0.5):
@@ -232,6 +238,7 @@ window.__timelines["title"] = tl;
     def widget_html(self):
         D = self.story_end
         segs = json.dumps(self.widgets)
+        bcs = json.dumps(self.bigcounts)
         return f'''<template>
 <style>
 {FONTS}
@@ -240,9 +247,13 @@ window.__timelines["title"] = tl;
 #wg-label{{font:600 27px "Inter";letter-spacing:2.6px;}}
 #wg-value{{margin-top:2px;font:400 66px/1 "WI Serif";letter-spacing:1px;font-variant-numeric:tabular-nums;}}
 #wg-sub{{margin-top:18px;font:500 18px "IBM Plex Mono";letter-spacing:3px;opacity:.82;}}
+#bc{{position:absolute;left:0;right:0;top:300px;text-align:center;color:#ff3b3b;text-shadow:0 0 18px rgba(255,40,40,.45),0 2px 6px rgba(0,0,0,.5);opacity:0;}}
+#bc-label{{font:700 30px "IBM Plex Mono";letter-spacing:7px;}}
+#bc-num{{font:500 150px/1 "IBM Plex Mono";margin-top:4px;}}
 </style>
 <div id="root" data-composition-id="widget" data-width="1080" data-height="1920">
   <div id="wg"><div id="wg-label"></div><div id="wg-value"></div><div id="wg-sub"></div></div>
+  <div id="bc"><div id="bc-label"></div><div id="bc-num"></div></div>
 </div>
 <script>
 (function(){{
@@ -254,12 +265,23 @@ function fmt(seg, t){{
   const v = seg.v0 + (seg.v1-seg.v0)*k;
   if(seg.mode==="sec"){{ const s=Math.max(0,v); const m=Math.floor(s/60); return m+":"+p2(s%60)+"."+String(Math.floor((s%1)*1000)).padStart(3,"0"); }}
   if(seg.mode==="count"){{ return Math.round(Math.max(0,v)).toLocaleString("en-US"); }}
+  if(seg.mode.indexOf("num")===0){{ const pr=seg.mode.split(":"); const dec=+(pr[1]||0); return v.toLocaleString("en-US",{{minimumFractionDigits:dec,maximumFractionDigits:dec}})+(pr.slice(2).join(":")||""); }}
   if(seg.mode==="pct"){{ const r=Math.round(v); return (r>0?"+":"")+r+"%"; }}
   if(seg.mode==="days"){{ const d=Math.max(0,v); const dd=Math.floor(d); const h=(d-dd)*24; const mi=(h%1)*60; const se=(mi%1)*60;
     return dd+"d "+p2(h)+":"+p2(mi)+":"+p2(se); }}
   return seg.value;
 }}
+const BCS = {bcs};
+function renderBC(t){{
+  let b=null; for(const s of BCS){{ if(s.t0<=t && t<s.t1) b=s; }}
+  const e=el("bc"); if(!b){{ e.style.opacity=0; return; }}
+  const k=Math.min(1,Math.max(0,(t-b.t0)/(b.t1-b.t0))); const v=b.n0+(b.n1-b.n0)*k; const n=Math.ceil(v-1e-6);
+  const frac=v-Math.floor(v); e.style.opacity=Math.min(1,(t-b.t0)/0.2,(b.t1-t)/0.2);
+  el("bc-label").textContent=b.label; el("bc-num").textContent=String(n);
+  el("bc-num").style.transform="scale("+(1+0.18*Math.max(0,frac-0.8)*5)+")";
+}}
 function render(t){{
+  renderBC(t);
   let seg=null; for(const s of S){{ if(s.t0<=t && t<s.t1) seg=s; }}
   const w=el("wg");
   if(!seg){{ w.style.opacity=0; return; }}
@@ -328,17 +350,22 @@ window.__timelines["captions"] = tl;
 <style>
 {FONTS}
 #root{{position:absolute;inset:0;background:#000;}}
-#ec{{position:absolute;left:90px;width:900px;top:860px;text-align:center;color:#f2f2f2;}}
+#ec{{position:absolute;left:90px;width:900px;top:780px;text-align:center;color:#f2f2f2;}}
 #ec-title{{font:400 70px/1.18 "WI Serif";}}
 #ec-title .k{{color:{getattr(m, "KEY_COLOR", "#8fc3ff")};}}
+#ec-sub{{margin-top:36px;font:500 17px/1.7 "IBM Plex Mono";letter-spacing:3px;color:#8d8d96;}}
+#ec-ask{{margin-top:70px;font:italic 400 36px "WI Serif";color:{getattr(m, "KEY_COLOR", "#8fc3ff")};}}
+#ec-ask2{{margin-top:16px;font:600 19px "IBM Plex Mono";letter-spacing:4px;color:#d9a74a;}}
 </style>
 <div id="root" data-composition-id="endcard" data-width="1080" data-height="1920">
- <div id="ec"><div id="ec-title">{title}</div></div>
+ <div id="ec"><div id="ec-title">{title}</div><div id="ec-sub">{sub}</div><div id="ec-ask">{esc(getattr(m, "END_ASK", ""))}</div><div id="ec-ask2">{esc(getattr(m, "END_ASK2", ""))}</div></div>
 </div>
 <script>
 (function(){{
 const tl = gsap.timeline({{paused:true,defaults:{{lazy:false}}}});
 tl.fromTo("#ec-title",{{opacity:0}},{{opacity:1,duration:.8}},0.2);
+tl.fromTo("#ec-sub",{{opacity:0}},{{opacity:1,duration:.6}},0.7);
+tl.fromTo(["#ec-ask","#ec-ask2"],{{opacity:0,y:10}},{{opacity:1,y:0,duration:.6,stagger:.2}},1.1);
 window.__timelines["endcard"] = tl;
 }})();
 </script>

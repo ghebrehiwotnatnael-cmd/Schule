@@ -37,7 +37,7 @@ window.WI_BLOCKY = function (WI) {
   const G = { leg: box(0.17, 0.78, 0.18, 0, -0.39), torso: box(0.46, 0.6, 0.26, 0, 0.3), arm: box(0.135, 0.6, 0.135, 0, -0.28),
     head: box(0.38, 0.38, 0.36, 0, 0.19), hair: box(0.41, 0.13, 0.39, 0, 0.42), hairBack: box(0.46, 0.52, 0.24, 0, 0.13, -0.08),
     beard: box(0.3, 0.13, 0.04, 0, 0.065, 0.185), skirt: box(0.54, 0.38, 0.34, 0, -0.17, 0), belly: box(0.4, 0.36, 0.22, 0, 0.21, 0.13),
-    blanket: box(0.4, 0.22, 0.24, 0, 0, 0), babyHead: box(0.17, 0.17, 0.16, 0, 0, 0), phone: box(0.08, 0.15, 0.015, 0, 0, 0) };
+    blanket: box(0.4, 0.22, 0.24, 0, 0, 0), hatTop: box(0.42, 0.15, 0.4, 0, 0.45, 0), hatBrim: box(0.6, 0.035, 0.58, 0, 0.385, 0), glasses: box(0.36, 0.07, 0.03, 0, 0.225, 0.19), babyHead: box(0.17, 0.17, 0.16, 0, 0, 0), phone: box(0.08, 0.15, 0.015, 0, 0, 0) };
   const skinMat = new THREE.MeshStandardMaterial({ color: 0xffffff, roughness: 0.75 });
   const clothMat = new THREE.MeshStandardMaterial({ color: 0xffffff, roughness: 0.85 });
   const darkMat = new THREE.MeshStandardMaterial({ color: 0x111318, roughness: 0.3, metalness: 0.3, emissive: 0x16304a, emissiveIntensity: 0.6 });
@@ -54,6 +54,7 @@ window.WI_BLOCKY = function (WI) {
   const HAIR = ["#1b1310", "#2d1d14", "#4a2e1c", "#7b4b2a", "#c8a165", "#e7cf8a", "#a33b20", "#111111"].map((c) => new THREE.Color(c));
   WI.BLOCKY_COLORS = { SKIN, BRIGHT, HAIR, DARKC };
   const pick = (a) => a[Math.floor(R() * a.length)];
+  const C0 = new THREE.Color(0xffffff);
 
   function randomLook(p) {
     if (p.male === undefined) p.male = R() < 0.5;
@@ -79,13 +80,14 @@ window.WI_BLOCKY = function (WI) {
     const M = { torso: mk(G.torso, clothMat), legL: mk(G.leg, clothMat), legR: mk(G.leg, clothMat), armL: mk(G.arm, skinMat), armR: mk(G.arm, skinMat),
       head: mk(headGeo, [skinMat, skinMat, skinMat, skinMat, faceMat, skinMat]), hair: mk(G.hair, clothMat), hairBack: mk(G.hairBack, clothMat),
       beard: mk(G.beard, clothMat), skirt: mk(G.skirt, clothMat), belly: mk(G.belly, clothMat), blanket: mk(G.blanket, clothMat),
-      babyHead: mk(bhGeo, [skinMat, skinMat, skinMat, skinMat, faceMat, skinMat]), phone: mk(G.phone, darkMat, false) };
+      babyHead: mk(bhGeo, [skinMat, skinMat, skinMat, skinMat, faceMat, skinMat]), phone: mk(G.phone, darkMat, false),
+      hatTop: mk(G.hatTop, clothMat), hatBrim: mk(G.hatBrim, clothMat), glasses: mk(G.glasses, darkMat, false) };
     const blanketCols = ["#ffd6e8", "#cfe8ff", "#fff3c4", "#d9f7d6"].map((c) => new THREE.Color(c));
     people.forEach((p, i) => { M.torso.setColorAt(i, p.shirt); M.legL.setColorAt(i, p.legs); M.legR.setColorAt(i, p.legs);
       const arm = p.armCol || (p.longSleeve ? p.shirt : p.skin); M.armL.setColorAt(i, arm); M.armR.setColorAt(i, arm); M.head.setColorAt(i, p.skin);
       const hc = p.hair || p.skin; M.hair.setColorAt(i, hc); M.hairBack.setColorAt(i, hc); M.beard.setColorAt(i, p.hair || HAIR[0]);
       M.skirt.setColorAt(i, p.skirtCol || p.shirt); M.belly.setColorAt(i, p.shirt); M.blanket.setColorAt(i, blanketCols[i % 4]); M.babyHead.setColorAt(i, SKIN[(i * 3) % 7]);
-      M.phone.setColorAt(i, new THREE.Color(0xffffff)); });
+      M.phone.setColorAt(i, new THREE.Color(0xffffff)); const hc2 = p.hatCol || C0; M.hatTop.setColorAt(i, hc2); M.hatBrim.setColorAt(i, hc2); M.glasses.setColorAt(i, new THREE.Color(0xffffff)); });
     Object.values(M).forEach((m) => { if (m.instanceColor) m.instanceColor.needsUpdate = true; });
     // light bursts where people vanish
     const PP = 8; const poofPos = new Float32Array(n * PP * 3).fill(-9999);
@@ -133,6 +135,8 @@ window.WI_BLOCKY = function (WI) {
           else if (m === "sit") { lL = -1.45; lR = -1.4; bodyY = -0.62; aL = [0.5, 0.15]; aR = [0.5, -0.15]; if (p.baby) { aL = [-1.15, -0.55]; aR = [-1.15, 0.55]; } }
           else if (m === "sitwork") { lL = -1.45; lR = -1.4; bodyY = -0.38; aL = [-1.1, 0.1]; aR = [-1.1 + 0.1 * Math.sin(ph * 9), -0.1]; }
           else if (m === "lie") { pitch = -Math.PI / 2; bodyY = 0.16; aL = [0, 0.25]; aR = [0, -0.25]; }
+          else if (m === "kneel") { lL = 1.35; lR = 1.3; bodyY = -0.5; aL = [-0.7, 0.12]; aR = [-0.7, -0.12]; lean = 0.25; headX = 0.25; }
+          else if (m === "heavy") { bodyY = -0.08; lL = -0.25; lR = -0.2; aL = [0.15, 0.05]; aR = [0.15, -0.05]; lean = 0.38; headX = 0.35; }
           else if (m === "lieBed") { pitch = -Math.PI / 2; bodyY = 0.16; aL = [-0.3, 0.2]; aR = [-0.3, -0.2]; }
           const s = p.s; q.setFromEuler(e.set(pitch, p.rot || 0, 0, "YXZ"));
           const py = (p.y || 0) + (pitch ? bodyY : 0);
@@ -152,7 +156,9 @@ window.WI_BLOCKY = function (WI) {
           put(M.head, i, 0, nkY, nkZ, headX + lean * 0.4, headY, 0); put(M.hair, i, 0, nkY, nkZ, headX + lean * 0.4, headY, 0);
           if (p.longHair && p.hair) put(M.hairBack, i, 0, nkY, nkZ, headX * 0.5 + lean * 0.4, headY, 0); else M.hairBack.setMatrixAt(i, ZERO);
           if (p.beard) put(M.beard, i, 0, nkY, nkZ, headX + lean * 0.4, headY, 0); else M.beard.setMatrixAt(i, ZERO);
-          if (!p.hair) M.hair.setMatrixAt(i, ZERO);
+          if (!p.hair || p.hat) M.hair.setMatrixAt(i, ZERO);
+          if (p.hat) { put(M.hatTop, i, 0, nkY, nkZ, headX + lean * 0.4, headY, 0); put(M.hatBrim, i, 0, nkY, nkZ, headX + lean * 0.4 - 0.08, headY, 0); } else { M.hatTop.setMatrixAt(i, ZERO); M.hatBrim.setMatrixAt(i, ZERO); }
+          if (p.glasses) put(M.glasses, i, 0, nkY, nkZ, headX + lean * 0.4, headY, 0); else M.glasses.setMatrixAt(i, ZERO);
           if (p.baby) { const by = shY - 0.42, bz = 0.3 + shZ; put(M.blanket, i, 0, by, bz, 0.1, 0, 0.15); put(M.babyHead, i, 0.2, by + 0.08, bz + 0.02, -0.4, 0.3, 0.15); bfi[i] = p.babyFace || 0; }
           else { M.blanket.setMatrixAt(i, ZERO); M.babyHead.setMatrixAt(i, ZERO); }
           fi[i] = p.face || 0; }

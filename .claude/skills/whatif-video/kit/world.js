@@ -7,7 +7,7 @@
   const canvas = document.getElementById("world-canvas");
   const renderer = new THREE.WebGLRenderer({ canvas, antialias: true, preserveDrawingBuffer: true });
   renderer.setPixelRatio(1); renderer.setSize(W, H, false);
-  renderer.shadowMap.enabled = true; renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+  renderer.shadowMap.enabled = true; renderer.shadowMap.type = THREE.PCFSoftShadowMap; window.WI_R = renderer;
   // ---- post: depth of field + motion-blur accumulation
   const rtScene = new THREE.WebGLRenderTarget(W, H, { depthTexture: new THREE.DepthTexture(W, H), depthBuffer: true });
   const rtAcc = new THREE.WebGLRenderTarget(W, H);
@@ -29,12 +29,13 @@
   const postQuad = new THREE.Mesh(new THREE.PlaneGeometry(2, 2), dofMat); const postScene = new THREE.Scene(); postScene.add(postQuad);
   const copyMat = new THREE.ShaderMaterial({ depthTest: false, depthWrite: false,
     uniforms: { tDiffuse: { value: rtAcc.texture }, exposure: { value: 1 }, contrast: { value: 1 }, saturation: { value: 1 }, warmth: { value: 0 },
-      vignette: { value: 0 }, grain: { value: 0 }, tonemap: { value: 0 }, seed: { value: 0 }, bloom: { value: 0 }, px: { value: new THREE.Vector2(1 / W, 1 / H) } },
+      vignette: { value: 0 }, grain: { value: 0 }, tonemap: { value: 0 }, seed: { value: 0 }, bloom: { value: 0 }, px: { value: new THREE.Vector2(1 / W, 1 / H) }, chroma: { value: 0 }, crack: { value: 0 }, tCrack: { value: null } },
     vertexShader: "varying vec2 vUv; void main(){ vUv = uv; gl_Position = vec4(position.xy, 0.0, 1.0); }",
-    fragmentShader: `uniform sampler2D tDiffuse; uniform float exposure, contrast, saturation, warmth, vignette, grain, tonemap, seed, bloom; uniform vec2 px; varying vec2 vUv;
+    fragmentShader: `uniform sampler2D tDiffuse; uniform float exposure, contrast, saturation, warmth, vignette, grain, tonemap, seed, bloom, chroma, crack; uniform vec2 px; uniform sampler2D tCrack; varying vec2 vUv;
       vec3 aces(vec3 x){ return clamp((x*(2.51*x+0.03))/(x*(2.43*x+0.59)+0.14), 0.0, 1.0); }
       float hash(vec2 p){ return fract(sin(dot(p, vec2(12.9898, 78.233)) + seed) * 43758.5453); }
       void main(){ vec3 c = texture2D(tDiffuse, vUv).rgb;
+        if (chroma > 0.0) { vec2 dir = (vUv - 0.5) * chroma * 0.02; c.r = texture2D(tDiffuse, vUv + dir).r; c.b = texture2D(tDiffuse, vUv - dir).b; }
         if (bloom > 0.0) { vec3 bl = vec3(0.0); for (int i = 0; i < 12; i++) { float a = float(i) * 0.5236 + 0.26; vec2 d = vec2(cos(a), sin(a)) * px;
             bl += max(texture2D(tDiffuse, vUv + d * 6.0).rgb - 0.82, 0.0) + max(texture2D(tDiffuse, vUv + d * 16.0).rgb - 0.82, 0.0) * 0.8 + max(texture2D(tDiffuse, vUv + d * 34.0).rgb - 0.82, 0.0) * 0.6; }
           c += bl * bloom * 0.12; }
@@ -44,7 +45,17 @@
         c = (c - 0.5) * contrast + 0.5; c += vec3(0.04, 0.01, -0.03) * warmth;
         float d = distance(vUv, vec2(0.5)); c *= 1.0 - vignette * smoothstep(0.35, 0.85, d);
         c += (hash(vUv * 1000.0) - 0.5) * grain;
+        if (crack > 0.0) { vec4 ck = texture2D(tCrack, vUv); c = mix(c, vec3(0.92, 0.96, 1.0), ck.a * crack * 0.85); }
         gl_FragColor = vec4(clamp(c, 0.0, 1.0), 1.0); }` });
+  copyMat.uniforms.tCrack.value = (function () { const c = document.createElement("canvas"); c.width = 540; c.height = 960; const g = c.getContext("2d"); const rnd = mulberry32(77);
+    g.strokeStyle = "rgba(255,255,255,0.9)"; g.lineCap = "round";
+    [[150, 620], [400, 300], [330, 780]].forEach(([cx, cy], k) => { const n = 11 + k * 2;
+      for (let i = 0; i < n; i++) { let a = (i / n) * 6.283 + rnd() * 0.4, x = cx, y = cy; g.lineWidth = 2.2; g.beginPath(); g.moveTo(x, y);
+        for (let j = 0; j < 9; j++) { const L = 18 + rnd() * 42; a += (rnd() - 0.5) * 0.7; x += Math.cos(a) * L; y += Math.sin(a) * L; g.lineTo(x, y); g.lineWidth = Math.max(0.6, 2.2 - j * 0.2); }
+        g.stroke(); }
+      for (let r = 1; r <= 3; r++) { g.lineWidth = 1.1; g.beginPath(); for (let i = 0; i <= 14; i++) { const a = i / 14 * 6.283, rr2 = r * 26 + rnd() * 10; const x = cx + Math.cos(a) * rr2, y = cy + Math.sin(a) * rr2; i ? g.lineTo(x, y) : g.moveTo(x, y); } g.stroke(); }
+      g.fillStyle = "rgba(255,255,255,0.85)"; g.beginPath(); g.arc(cx, cy, 4, 0, 7); g.fill(); });
+    const tx = new THREE.CanvasTexture(c); return tx; })();
   const copyScene = new THREE.Scene(); copyScene.add(new THREE.Mesh(new THREE.PlaneGeometry(2, 2), copyMat));
   function shadowAll(scene) { scene.traverse((o) => { if (o.isMesh && !o.userData.noShadow && !(o.material && o.material.isShaderMaterial) && !(o.material && o.material.transparent)) { o.castShadow = true; o.receiveShadow = true; } }); }
   function fitShadow(light, target, size = 40) {  // keep the shadow frustum around what the camera looks at
@@ -338,6 +349,13 @@
     vertexShader: "varying vec3 vP; void main(){ vP = normalize(position); gl_Position = projectionMatrix * modelViewMatrix * vec4(position,1.0); }",
     fragmentShader: "uniform vec3 c; uniform float ang; uniform float k; varying vec3 vP; void main(){ float a = acos(clamp(dot(vP, c), -1.0, 1.0)); float d = abs(a - ang); float ring = exp(-d * d * 900.0) + 0.35 * exp(-d * d * 120.0); float core = exp(-a * a * 2500.0) * 0.8; gl_FragColor = vec4(vec3(1.0, 0.85, 0.6) * (ring + core) * k, 1.0); }" }));
   earth.add(shock);
+  // ISS (exaggerated size) that drops with doubled gravity: tracks issOn, issDrop (0..1)
+  const iss = new THREE.Group(); space.add(iss); { const gold = new THREE.MeshStandardMaterial({ color: 0xd9c08a, metalness: 0.7, roughness: 0.35 }), pv = new THREE.MeshStandardMaterial({ color: 0x1b3a7a, metalness: 0.4, roughness: 0.3, emissive: 0x0a1a40, emissiveIntensity: 0.4 });
+    const truss = new THREE.Mesh(new THREE.BoxGeometry(0.9, 0.035, 0.035), gold); iss.add(truss);
+    [-0.4, -0.25, 0.25, 0.4].forEach((x) => [-1, 1].forEach((sd) => { const pn = new THREE.Mesh(new THREE.BoxGeometry(0.1, 0.004, 0.3), pv); pn.position.set(x, 0, sd * 0.17); iss.add(pn); }));
+    [[0, 0, 0.12, 0.05], [0, 0, -0.12, 0.045], [0.1, 0, 0, 0.04]].forEach(([x, y, z, r]) => { const m = new THREE.Mesh(new THREE.CylinderGeometry(r, r, 0.22, 12), new THREE.MeshStandardMaterial({ color: 0xe8e8e8, metalness: 0.3, roughness: 0.5 })); m.rotation.x = Math.PI / 2; m.position.set(x, y, z); iss.add(m); }); }
+  const issDir = new THREE.Vector3(0.15, 0.32, 1).normalize();
+  const issTrail = new THREE.Mesh(new THREE.CylinderGeometry(0.004, 0.004, 1, 6), new THREE.MeshBasicMaterial({ color: 0xff4d4d, transparent: true, opacity: 0.8 })); space.add(issTrail);
   space.add(clouds); const spaceLight = new THREE.DirectionalLight(0xffffff, 1); spaceLight.position.set(-30, 6, 12); space.add(spaceLight);
   space.add(new THREE.Points(starGeo, new THREE.PointsMaterial({ color: 0xffffff, size: 1.8, sizeAttenuation: false })));
 
@@ -517,7 +535,9 @@
     if (set === "space") {
       const p = val("spaceCam", t) || [0, 0, 34];
       cam.position.set(p[0], p[1], p[2]); cam.lookAt(0, 0, 0); cam.fov = num("spaceFov", t, 40); cam.updateProjectionMatrix();
-      const erot = val("earthRot", t); earth.rotation.y = erot != null ? erot : 2.2 + t * 0.04; earth.rotation.z = num("earthTilt", t, 0); clouds.rotation.z = earth.rotation.z; shockU.ang.value = num("shock", t); shockU.k.value = num("shockI", t); shock.visible = shockU.k.value > 0.01;
+      const erot = val("earthRot", t); earth.rotation.y = erot != null ? erot : 2.2 + t * 0.04; earth.rotation.z = num("earthTilt", t, 0); clouds.rotation.z = earth.rotation.z; iss.visible = num("issOn", t) > 0.5; issTrail.visible = iss.visible && num("issDrop", t) > 0.01; if (iss.visible) { const dr = num("issDrop", t); const hgt = 10.63 - dr * 0.12;
+        iss.position.copy(issDir).multiplyScalar(hgt); iss.lookAt(0, 0, 0); iss.rotateX(Math.PI / 2); iss.rotation.z += t * 0.05; const top = issDir.clone().multiplyScalar(10.63);
+        issTrail.position.copy(top.clone().add(iss.position).multiplyScalar(0.5)); issTrail.scale.set(1, Math.max(0.001, dr * 0.12), 1); issTrail.lookAt(0, 0, 0); issTrail.rotateX(Math.PI / 2); } shockU.ang.value = num("shock", t); shockU.k.value = num("shockI", t); shock.visible = shockU.k.value > 0.01;
       const cb = num("cables", t), cc = num("cableCut", t); cableGroup.visible = cb > 0.001; if (cableGroup.visible) cables.forEach((m, i) => { const idx = m.geometry.index.count; m.geometry.setDrawRange(0, Math.floor(idx * Math.min(1, Math.max(0, cb * 1.6 - (i % 5) * 0.12)) / 3) * 3);
         const blink = Math.sin(t * 14) > 0 ? 1 : 0.15; if (m.userData.tonga && cc > 0.01) { m.material.color.setHex(0xff3b30); m.material.opacity = cb * (0.4 + 0.6 * blink); } else { m.material.color.setHex(0x5ff3ff); m.material.opacity = cb * (0.75 + 0.25 * Math.sin(t * 3 + i)); } });
       tongaPulse.material.opacity = cc * (0.5 + 0.5 * Math.sin(t * 7)); tongaPulse.scale.setScalar(0.2 + cc * (0.45 + 0.2 * Math.sin(t * 7))); clouds.rotation.y = earth.rotation.y + t * 0.01;
@@ -604,16 +624,22 @@
     fitShadow(sunLight, new THREE.Vector3(l[0] * 0.15 + p[0] * 0.85, 0, l[2] * 0.15 + p[2] * 0.85), 45);
     park.add(cam); return park;
   }
+  // performance: point/spot lights that are off or far from the camera are removed from the shaders entirely
+  const lightCache = new Map(); const camW = new THREE.Vector3(), lp = new THREE.Vector3();
+  function cullLights(sc) { let list = lightCache.get(sc); if (!list) { list = []; sc.traverse((o) => { if (o.isPointLight || o.isSpotLight) list.push(o); }); lightCache.set(sc, list); }
+    cam.getWorldPosition(camW);
+    for (const l of list) { if (l === torch) continue; l.getWorldPosition(lp); const reach = (l.distance || 60) + 30; l.visible = l.intensity > 0.001 && lp.distanceTo(camW) < reach; } }
   function draw(t) {
     const mb = num("mblur", t), n = mb > 0 ? 4 : 1, shutter = (1 / 30) * mb; windU.value = t * (1 + num("wind", t) * 3);
     dofMat.uniforms.amount.value = num("dof", t); dofMat.uniforms.focus.value = num("focus", t, 5);
     for (let i = 0; i < n; i++) {
       const sc = update(t - (shutter * i) / n);
+      cullLights(sc);
       renderer.setRenderTarget(rtScene); renderer.render(sc, cam);
       dofMat.uniforms.opacity.value = 1 / (i + 1);
       renderer.setRenderTarget(rtAcc); renderer.autoClear = i === 0; renderer.render(postScene, postCam); renderer.autoClear = true;
     }
-    const cu = copyMat.uniforms; cu.bloom.value = num("bloom", t, 0); cu.exposure.value = num("exposure", t, 1); cu.contrast.value = num("contrast", t, 1); cu.saturation.value = num("saturation", t, 1);
+    const cu = copyMat.uniforms; cu.bloom.value = num("bloom", t, 0); cu.chroma.value = num("chroma", t, 0); cu.crack.value = num("crack", t, 0); cu.exposure.value = num("exposure", t, 1); cu.contrast.value = num("contrast", t, 1); cu.saturation.value = num("saturation", t, 1);
     cu.warmth.value = num("warmth", t); cu.vignette.value = num("vignette", t); cu.grain.value = num("grain", t); cu.tonemap.value = num("tonemap", t); cu.seed.value = (Math.floor(t * 30) % 97) * 0.37;
     renderer.setRenderTarget(null); renderer.render(copyScene, postCam);
   }

@@ -36,7 +36,9 @@ window.WI_OVERLAYS.push(function (WI, SETS) {
       { name: "docF", male: false, longHair: true, hair: H[7], shirt: C("#ffffff"), longSleeve: true, legs: C("#8ecae6"), skin: S[4], s: 0.95 },
       { name: "boy", male: true, beard: false, hair: H[3], shirt: C("#06d6a0"), legs: C("#1d3557"), skin: S[0], s: 0.62 },
       { name: "meF", male: false, longHair: true, hair: H[1], shirt: C("#06d6a0"), legs: C("#22223b"), skin: S[1], skirt: false, s: 0.95 },
-      { name: "meM", male: true, beard: true, hair: H[2], shirt: C("#118ab2"), legs: C("#2b2d42"), skin: S[2], s: 1.03 }];
+      { name: "meM", male: true, beard: true, hair: H[2], shirt: C("#118ab2"), legs: C("#2b2d42"), skin: S[2], s: 1.03 },
+      { name: "kai", male: true, beard: false, hair: H[0], hat: true, hatCol: C("#ffd23f"), glasses: true, shirt: C("#ff6b35"), legs: C("#1b998b"), skin: S[3], s: 1.03 },
+      { name: "poolGirl", male: false, longHair: true, hair: H[6], shirt: C("#f15bb5"), legs: C("#f15bb5"), skin: S[1], s: 0.95 }];
     const api = BL.crowd(scene, cast);
     api.tick = (t) => { const talk = val("talk", t) || ""; api.update(t, (p) => { const P = val(p.name + "Pos", t); if (!P || P[1] < -20) { p.hidden = true; return; }
       p.hidden = false; p.x = P[0]; p.y = P[1]; p.z = P[2]; p.rot = num(p.name + "Rot", t, 0); p.mode = val(p.name + "Mode", t) || "idle";

@@ -118,7 +118,7 @@ def build(v):
     v.key(49.5, 0, meMPos=OFF, himPos=OFF, dadBabies=0.0, nurseryBabies=0.0, dof=0.35, focus=3.0, fov=50, exposure=0.9, bloom=0.2, daylight=0.0)
     v.path(49.5, 54.0, [[483.8, 1.6, 2.6], [482.4, 1.45, 1.6]], [[476.4, 0.75, -2], [476.8, 0.8, -2.2]])
     # S12 54-59 drone over the quiet street at dusk
-    v.key(54.0, 0, **mix(DUSK, GRADE, set="street", streetMood="calm", traffic=0.0, crashAt=17.0, dof=0.0, fov=55, mblur=0.3))
+    v.key(54.0, 0, **mix(DUSK, GRADE, set="street", streetMood="calm", traffic=0.0, crashAt=17.0, dof=0.0, fov=55, mblur=0.0))
     v.path(54.0, 59.0, [[0, 16, 10], [2, 24, -2], [3, 30, -14]], [[0, 0, -30], [0, 0, -50], [0, 0, -70]])
     # S13 59-67.5 twist: the artificial womb
     v.key(59.0, 0, **mix(ROOM, biobag=1.0, mice=0.0, dof=0.45, focus=2.6, fov=50, mblur=0.0, daylight=0.0, exposure=0.95, bloom=0.25))

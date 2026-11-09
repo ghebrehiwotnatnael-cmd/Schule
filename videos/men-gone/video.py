@@ -89,7 +89,7 @@ def build(v):
     talk(v, "her", 13.3, 1.3, "l1_her")
     v.key(15.5, 1.0, herMode="phone", herFace=2.0, herRot=3.1416)
     # S4 18-22.5 drone over the street: wrecks and smoke
-    v.key(18.0, 0, dof=0.0, fov=55, bob=0.0, mblur=0.3, herPos=OFF)
+    v.key(18.0, 0, dof=0.0, fov=55, bob=0.0, mblur=0.0, herPos=OFF)
     v.path(18.0, 22.5, [[0, 18, 8], [2, 26, -4], [3, 32, -16]], [[0, 0, -30], [0, 0, -50], [0, 0, -70]])
     # S5 22.5-27 a Thai beach at the same second
     v.key(22.5, 0, set="resort", env="day", envI=0.5, skyTop="#2a78e4", skyHorizon="#9fd8ff", skyBottom="#3f8fbf", fogFar=4200, light=0.75, ambient=0.26,
