@@ -64,15 +64,23 @@ open(runner, "w").write(r'''const { chromium } = require('playwright'); const { 
   ff.stdin.end(); await new Promise((r) => ff.on('close', r)); await b.close(); console.log('WORLD DONE', out);
 })();
 ''')
-r = subprocess.run(["node", runner, f"{H}/_preview/{slug}_final.html", out, str(frames), str(FPS)], cwd=vdir)
-if r.returncode != 0 or not os.path.exists(out):
-    sys.exit("world pass failed")
+def _dur(f):
+    try: return float(subprocess.run(["ffprobe", "-v", "error", "-show_entries", "format=duration", "-of", "csv=p=0", f], capture_output=True, text=True).stdout.strip())
+    except Exception: return 0.0
+if os.environ.get("WP_REUSE") and os.path.exists(out) and abs(_dur(out) - frames / FPS) < 0.1:
+    print("reusing existing", out)
+else:
+    r = subprocess.run(["node", runner, f"{H}/_preview/{slug}_final.html", out, str(frames), str(FPS)], cwd=vdir)
+    if r.returncode != 0 or not os.path.exists(out):
+        sys.exit("world pass failed")
 # point index.html at the rendered world video
 idx = os.path.join(vdir, "index.html")
 html = open(idx).read()
 new = (f'<video id="world" src="build/world.mp4" data-start="0" data-duration="{dur}" data-track-index="1" muted playsinline '
        f'style="z-index:1;position:absolute;left:0;top:0;width:1080px;height:1920px;object-fit:cover"></video>')
 html2, n = re.subn(r'<div id="world"[^>]*></div>', new, html)
+if n == 0 and 'id="world" src="build/world.mp4"' in html:
+    html2, n = re.subn(r'<video id="world"[^>]*></video>', new, html)
 if n != 1:
     sys.exit("could not find the world composition in index.html")
 open(idx, "w").write(html2)

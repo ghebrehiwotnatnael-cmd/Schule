@@ -345,6 +345,7 @@ window.__timelines["captions"] = tl;
         key = getattr(m, "TITLE_KEY", None)
         if key:
             title = title.replace(esc(key), f'<span class="k">{esc(key)}</span>', 1)
+        sub = "<br>".join(esc(x) for x in m.SUB.split("\n"))
         if getattr(m, "END_STYLE", "") == "title":   # plain black card with only the title
             return f'''<template>
 <style>
