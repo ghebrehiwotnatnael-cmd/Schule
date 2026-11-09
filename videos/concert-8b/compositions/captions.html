@@ -1,0 +1,53 @@
+<template>
+<style>
+@font-face{font-family:"WI Serif";src:url("assets/fonts/spectral-400-normal.woff2") format("woff2");font-weight:400}
+@font-face{font-family:"WI Serif";src:url("assets/fonts/spectral-500-normal.woff2") format("woff2");font-weight:500}
+@font-face{font-family:"WI Serif";src:url("assets/fonts/spectral-400-italic.woff2") format("woff2");font-weight:400;font-style:italic}
+#root{position:absolute;inset:0;pointer-events:none;}
+.cap{position:absolute;left:0;top:1236px;width:1080px;height:200px;text-align:center;}
+.cap-in{display:inline-block;max-width:930px;font:italic 400 46px/1.25 "WI Serif";color:#fff;
+  text-shadow:0 2px 14px rgba(0,0,0,.7),0 1px 3px rgba(0,0,0,.8);}
+</style>
+<div id="root" data-composition-id="captions" data-width="1080" data-height="1920">
+<div id="cap-0" class="clip cap" data-start="3.6" data-duration="2.4" data-track-index="0"><div class="cap-in">Toronto. One show. Doors open.</div></div>
+<div id="cap-1" class="clip cap" data-start="6.2" data-duration="3.2" data-track-index="0"><div class="cap-in">The stadium fills: 80,000 fans.</div></div>
+<div id="cap-2" class="clip cap" data-start="10.4" data-duration="3.0" data-track-index="0"><div class="cap-in">Full. But they keep coming.</div></div>
+<div id="cap-3" class="clip cap" data-start="14.0" data-duration="3.4" data-track-index="0"><div class="cap-in">3.5 million people in the streets.</div></div>
+<div id="cap-4" class="clip cap" data-start="18.0" data-duration="3.4" data-track-index="0"><div class="cap-in">Every street. Every park.</div></div>
+<div id="cap-5" class="clip cap" data-start="22.0" data-duration="3.4" data-track-index="0"><div class="cap-in">100 million. Biggest crowd ever.</div></div>
+<div id="cap-6" class="clip cap" data-start="26.0" data-duration="3.4" data-track-index="0"><div class="cap-in">Their body heat builds a cloud.</div></div>
+<div id="cap-7" class="clip cap" data-start="30.0" data-duration="3.4" data-track-index="0"><div class="cap-in">1.5 billion. Past the horizon.</div></div>
+<div id="cap-8" class="clip cap" data-start="34.0" data-duration="3.2" data-track-index="0"><div class="cap-in">8.3 billion. Every human on Earth.</div></div>
+<div id="cap-9" class="clip cap" data-start="37.4" data-duration="2.4" data-track-index="0"><div class="cap-in">51 km wide. Smaller than Luxembourg.</div></div>
+<div id="cap-10" class="clip cap" data-start="40.6" data-duration="3.0" data-track-index="0"><div class="cap-in">From space: one golden dot.</div></div>
+<div id="cap-11" class="clip cap" data-start="44.0" data-duration="2.6" data-track-index="0"><div class="cap-in">All of humanity. In one place.</div></div>
+<div id="cap-12" class="clip cap" data-start="47.6" data-duration="3.4" data-track-index="0"><div class="cap-in">The last row hears him 75 s late.</div></div>
+<div id="cap-13" class="clip cap" data-start="51.4" data-duration="3.2" data-track-index="0"><div class="cap-in">830 gigawatts of body heat.</div></div>
+<div id="cap-14" class="clip cap" data-start="56.2" data-duration="2.4" data-track-index="0"><div class="cap-in">Then the drop. Everyone jumps.</div></div>
+<div id="cap-15" class="clip cap" data-start="59.0" data-duration="3.4" data-track-index="0"><div class="cap-in">Like a magnitude-5 earthquake.</div></div>
+<div id="cap-16" class="clip cap" data-start="63.0" data-duration="3.0" data-track-index="0"><div class="cap-in">8 billion people. One concert. Would you go?</div></div>
+</div>
+<script>
+(function(){
+const tl = gsap.timeline({paused:true,defaults:{lazy:false}});
+tl.fromTo("#cap-0 .cap-in",{opacity:0,y:8},{opacity:1,y:0,duration:.28,ease:"power2.out"},3.6);tl.to("#cap-0 .cap-in",{opacity:0,duration:.18},5.81);
+tl.fromTo("#cap-1 .cap-in",{opacity:0,y:8},{opacity:1,y:0,duration:.28,ease:"power2.out"},6.2);tl.to("#cap-1 .cap-in",{opacity:0,duration:.18},9.21);
+tl.fromTo("#cap-2 .cap-in",{opacity:0,y:8},{opacity:1,y:0,duration:.28,ease:"power2.out"},10.4);tl.to("#cap-2 .cap-in",{opacity:0,duration:.18},13.21);
+tl.fromTo("#cap-3 .cap-in",{opacity:0,y:8},{opacity:1,y:0,duration:.28,ease:"power2.out"},14.0);tl.to("#cap-3 .cap-in",{opacity:0,duration:.18},17.21);
+tl.fromTo("#cap-4 .cap-in",{opacity:0,y:8},{opacity:1,y:0,duration:.28,ease:"power2.out"},18.0);tl.to("#cap-4 .cap-in",{opacity:0,duration:.18},21.21);
+tl.fromTo("#cap-5 .cap-in",{opacity:0,y:8},{opacity:1,y:0,duration:.28,ease:"power2.out"},22.0);tl.to("#cap-5 .cap-in",{opacity:0,duration:.18},25.21);
+tl.fromTo("#cap-6 .cap-in",{opacity:0,y:8},{opacity:1,y:0,duration:.28,ease:"power2.out"},26.0);tl.to("#cap-6 .cap-in",{opacity:0,duration:.18},29.21);
+tl.fromTo("#cap-7 .cap-in",{opacity:0,y:8},{opacity:1,y:0,duration:.28,ease:"power2.out"},30.0);tl.to("#cap-7 .cap-in",{opacity:0,duration:.18},33.21);
+tl.fromTo("#cap-8 .cap-in",{opacity:0,y:8},{opacity:1,y:0,duration:.28,ease:"power2.out"},34.0);tl.to("#cap-8 .cap-in",{opacity:0,duration:.18},37.01);
+tl.fromTo("#cap-9 .cap-in",{opacity:0,y:8},{opacity:1,y:0,duration:.28,ease:"power2.out"},37.4);tl.to("#cap-9 .cap-in",{opacity:0,duration:.18},39.61);
+tl.fromTo("#cap-10 .cap-in",{opacity:0,y:8},{opacity:1,y:0,duration:.28,ease:"power2.out"},40.6);tl.to("#cap-10 .cap-in",{opacity:0,duration:.18},43.41);
+tl.fromTo("#cap-11 .cap-in",{opacity:0,y:8},{opacity:1,y:0,duration:.28,ease:"power2.out"},44.0);tl.to("#cap-11 .cap-in",{opacity:0,duration:.18},46.41);
+tl.fromTo("#cap-12 .cap-in",{opacity:0,y:8},{opacity:1,y:0,duration:.28,ease:"power2.out"},47.6);tl.to("#cap-12 .cap-in",{opacity:0,duration:.18},50.81);
+tl.fromTo("#cap-13 .cap-in",{opacity:0,y:8},{opacity:1,y:0,duration:.28,ease:"power2.out"},51.4);tl.to("#cap-13 .cap-in",{opacity:0,duration:.18},54.41);
+tl.fromTo("#cap-14 .cap-in",{opacity:0,y:8},{opacity:1,y:0,duration:.28,ease:"power2.out"},56.2);tl.to("#cap-14 .cap-in",{opacity:0,duration:.18},58.41);
+tl.fromTo("#cap-15 .cap-in",{opacity:0,y:8},{opacity:1,y:0,duration:.28,ease:"power2.out"},59.0);tl.to("#cap-15 .cap-in",{opacity:0,duration:.18},62.21);
+tl.fromTo("#cap-16 .cap-in",{opacity:0,y:8},{opacity:1,y:0,duration:.28,ease:"power2.out"},63.0);tl.to("#cap-16 .cap-in",{opacity:0,duration:.18},65.81);
+window.__timelines["captions"] = tl;
+})();
+</script>
+</template>

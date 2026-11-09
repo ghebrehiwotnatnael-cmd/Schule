@@ -1,0 +1,28 @@
+<template>
+<style>
+@font-face{font-family:"WI Serif";src:url("assets/fonts/spectral-400-normal.woff2") format("woff2");font-weight:400}
+@font-face{font-family:"WI Serif";src:url("assets/fonts/spectral-500-normal.woff2") format("woff2");font-weight:500}
+@font-face{font-family:"WI Serif";src:url("assets/fonts/spectral-400-italic.woff2") format("woff2");font-weight:400;font-style:italic}
+#root{position:absolute;inset:0;pointer-events:none;}
+#ti-icon{position:absolute;left:340px;top:150px;width:400px;height:400px;}
+#ti-text{position:absolute;left:60px;width:960px;top:520px;text-align:center;font:400 70px/1.18 "WI Serif";color:#fff;
+  text-shadow:0 2px 18px rgba(0,0,0,.55),0 1px 3px rgba(0,0,0,.6);}
+#ti-text .k{color:#ff4d5e;}
+</style>
+<div id="root" data-composition-id="title" data-width="1080" data-height="1920">
+  <svg id="ti-icon" viewBox="-200 -200 400 400" data-layout-allow-overflow><defs><radialGradient id="bg"><stop offset="0" stop-color="#ffd0d6" stop-opacity=".9"/><stop offset="1" stop-color="#ff4d5e" stop-opacity="0"/></radialGradient></defs>
+<circle r="170" fill="url(#bg)"/><rect x="-26" y="-110" width="52" height="96" rx="26" fill="#fff"/><path d="M-50 -30 Q-50 40 0 40 Q50 40 50 -30" stroke="#fff" stroke-width="14" fill="none"/>
+<path d="M0 40 L0 100 M-36 100 L36 100" stroke="#fff" stroke-width="14" stroke-linecap="round"/></svg>
+  <div id="ti-text">What if <span class="k">8 billion</span> people came to The Weeknd&#x27;s concert?</div>
+</div>
+<script>
+(function(){
+const tl = gsap.timeline({paused:true,defaults:{lazy:false}});
+tl.fromTo("#ti-icon",{opacity:0,scale:.6},{opacity:1,scale:1,duration:.8,ease:"power3.out"},0.05);
+tl.fromTo("#ti-text",{opacity:0,y:18},{opacity:1,y:0,duration:.7,ease:"power2.out"},0.15);
+tl.to("#ti-text",{opacity:0,y:-10,duration:.5,ease:"power2.in"},2.7);
+tl.to("#ti-icon",{opacity:0,scale:.85,duration:.5},2.7);
+window.__timelines["title"] = tl;
+})();
+</script>
+</template>
