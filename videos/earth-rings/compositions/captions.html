@@ -1,0 +1,53 @@
+<template>
+<style>
+@font-face{font-family:"WI Serif";src:url("assets/fonts/spectral-400-normal.woff2") format("woff2");font-weight:400}
+@font-face{font-family:"WI Serif";src:url("assets/fonts/spectral-500-normal.woff2") format("woff2");font-weight:500}
+@font-face{font-family:"WI Serif";src:url("assets/fonts/spectral-400-italic.woff2") format("woff2");font-weight:400;font-style:italic}
+#root{position:absolute;inset:0;pointer-events:none;}
+.cap{position:absolute;left:0;top:1236px;width:1080px;height:200px;text-align:center;}
+.cap-in{display:inline-block;max-width:930px;font:italic 400 46px/1.25 "WI Serif";color:#fff;
+  text-shadow:0 2px 14px rgba(0,0,0,.7),0 1px 3px rgba(0,0,0,.8);}
+</style>
+<div id="root" data-composition-id="captions" data-width="1080" data-height="1920">
+<div id="cap-0" class="clip cap" data-start="3.4" data-duration="2.4" data-track-index="0"><div class="cap-in">Thailand. You look up.</div></div>
+<div id="cap-1" class="clip cap" data-start="6.0" data-duration="2.8" data-track-index="0"><div class="cap-in">A giant ring across the sky.</div></div>
+<div id="cap-2" class="clip cap" data-start="9.2" data-duration="2.8" data-track-index="0"><div class="cap-in">Earth has rings. Like Saturn.</div></div>
+<div id="cap-3" class="clip cap" data-start="12.4" data-duration="2.6" data-track-index="0"><div class="cap-in">Ice and rock. 7,000 km wide.</div></div>
+<div id="cap-4" class="clip cap" data-start="15.4" data-duration="2.8" data-track-index="0"><div class="cap-in">Then its shadow falls on you.</div></div>
+<div id="cap-5" class="clip cap" data-start="18.6" data-duration="2.8" data-track-index="0"><div class="cap-in">Winters get even colder.</div></div>
+<div id="cap-6" class="clip cap" data-start="22.0" data-duration="2.6" data-track-index="0"><div class="cap-in">Night falls...</div></div>
+<div id="cap-7" class="clip cap" data-start="25.0" data-duration="3.4" data-track-index="0"><div class="cap-in">...but it never gets truly dark.</div></div>
+<div id="cap-8" class="clip cap" data-start="28.8" data-duration="3.0" data-track-index="0"><div class="cap-in">The ring glows all night long.</div></div>
+<div id="cap-9" class="clip cap" data-start="32.2" data-duration="3.4" data-track-index="0"><div class="cap-in">Brighter than any full moon.</div></div>
+<div id="cap-10" class="clip cap" data-start="36.4" data-duration="2.8" data-track-index="0"><div class="cap-in">From space: Earth wears a ring.</div></div>
+<div id="cap-11" class="clip cap" data-start="39.6" data-duration="3.0" data-track-index="0"><div class="cap-in">Satellites? They&#x27;d get shredded.</div></div>
+<div id="cap-12" class="clip cap" data-start="43.0" data-duration="4.4" data-track-index="0"><div class="cap-in">Billions of chunks of ice.</div></div>
+<div id="cap-13" class="clip cap" data-start="48.4" data-duration="2.6" data-track-index="0"><div class="cap-in">Plot twist: it really happened.</div></div>
+<div id="cap-14" class="clip cap" data-start="51.4" data-duration="3.2" data-track-index="0"><div class="cap-in">466 million years ago.</div></div>
+<div id="cap-15" class="clip cap" data-start="55.0" data-duration="3.0" data-track-index="0"><div class="cap-in">21 craters near the old equator.</div></div>
+<div id="cap-16" class="clip cap" data-start="58.4" data-duration="3.6" data-track-index="0"><div class="cap-in">Would you want them back?</div></div>
+</div>
+<script>
+(function(){
+const tl = gsap.timeline({paused:true,defaults:{lazy:false}});
+tl.fromTo("#cap-0 .cap-in",{opacity:0,y:8},{opacity:1,y:0,duration:.28,ease:"power2.out"},3.4);tl.to("#cap-0 .cap-in",{opacity:0,duration:.18},5.61);
+tl.fromTo("#cap-1 .cap-in",{opacity:0,y:8},{opacity:1,y:0,duration:.28,ease:"power2.out"},6.0);tl.to("#cap-1 .cap-in",{opacity:0,duration:.18},8.61);
+tl.fromTo("#cap-2 .cap-in",{opacity:0,y:8},{opacity:1,y:0,duration:.28,ease:"power2.out"},9.2);tl.to("#cap-2 .cap-in",{opacity:0,duration:.18},11.81);
+tl.fromTo("#cap-3 .cap-in",{opacity:0,y:8},{opacity:1,y:0,duration:.28,ease:"power2.out"},12.4);tl.to("#cap-3 .cap-in",{opacity:0,duration:.18},14.81);
+tl.fromTo("#cap-4 .cap-in",{opacity:0,y:8},{opacity:1,y:0,duration:.28,ease:"power2.out"},15.4);tl.to("#cap-4 .cap-in",{opacity:0,duration:.18},18.01);
+tl.fromTo("#cap-5 .cap-in",{opacity:0,y:8},{opacity:1,y:0,duration:.28,ease:"power2.out"},18.6);tl.to("#cap-5 .cap-in",{opacity:0,duration:.18},21.21);
+tl.fromTo("#cap-6 .cap-in",{opacity:0,y:8},{opacity:1,y:0,duration:.28,ease:"power2.out"},22.0);tl.to("#cap-6 .cap-in",{opacity:0,duration:.18},24.41);
+tl.fromTo("#cap-7 .cap-in",{opacity:0,y:8},{opacity:1,y:0,duration:.28,ease:"power2.out"},25.0);tl.to("#cap-7 .cap-in",{opacity:0,duration:.18},28.21);
+tl.fromTo("#cap-8 .cap-in",{opacity:0,y:8},{opacity:1,y:0,duration:.28,ease:"power2.out"},28.8);tl.to("#cap-8 .cap-in",{opacity:0,duration:.18},31.61);
+tl.fromTo("#cap-9 .cap-in",{opacity:0,y:8},{opacity:1,y:0,duration:.28,ease:"power2.out"},32.2);tl.to("#cap-9 .cap-in",{opacity:0,duration:.18},35.41);
+tl.fromTo("#cap-10 .cap-in",{opacity:0,y:8},{opacity:1,y:0,duration:.28,ease:"power2.out"},36.4);tl.to("#cap-10 .cap-in",{opacity:0,duration:.18},39.01);
+tl.fromTo("#cap-11 .cap-in",{opacity:0,y:8},{opacity:1,y:0,duration:.28,ease:"power2.out"},39.6);tl.to("#cap-11 .cap-in",{opacity:0,duration:.18},42.41);
+tl.fromTo("#cap-12 .cap-in",{opacity:0,y:8},{opacity:1,y:0,duration:.28,ease:"power2.out"},43.0);tl.to("#cap-12 .cap-in",{opacity:0,duration:.18},47.21);
+tl.fromTo("#cap-13 .cap-in",{opacity:0,y:8},{opacity:1,y:0,duration:.28,ease:"power2.out"},48.4);tl.to("#cap-13 .cap-in",{opacity:0,duration:.18},50.81);
+tl.fromTo("#cap-14 .cap-in",{opacity:0,y:8},{opacity:1,y:0,duration:.28,ease:"power2.out"},51.4);tl.to("#cap-14 .cap-in",{opacity:0,duration:.18},54.41);
+tl.fromTo("#cap-15 .cap-in",{opacity:0,y:8},{opacity:1,y:0,duration:.28,ease:"power2.out"},55.0);tl.to("#cap-15 .cap-in",{opacity:0,duration:.18},57.81);
+tl.fromTo("#cap-16 .cap-in",{opacity:0,y:8},{opacity:1,y:0,duration:.28,ease:"power2.out"},58.4);tl.to("#cap-16 .cap-in",{opacity:0,duration:.18},61.81);
+window.__timelines["captions"] = tl;
+})();
+</script>
+</template>
