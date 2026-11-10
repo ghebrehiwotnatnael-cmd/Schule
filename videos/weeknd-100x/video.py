@@ -18,7 +18,7 @@ MODELS = "all"
 SET_FILES = ["sets_common.js", "sets_models.js", "sets_people.js", "sets_giant.js"]
 WORLD_DEFAULTS = {"starScale": 1.0, "starMode": "sing", "starFace": 7.0, "starTalk": "on", "starFill": 1.0, "crowdRun": 0.0, "crowdCheer": 0.6,
                   "crowdJump": 0.2, "crowdFilm": 0.3, "stepAt": -99.0, "nearMood": "cheer", "windowsLit": 0.35, "screens": 1.0,
-                  "chroma": 0.0, "crack": 0.0, "shake": 0.0, "bob": 0.0, "camNear": 0.05}
+                  "chroma": 0.0, "crack": 0.0, "shake": 0.0, "bob": 0.0, "camNear": 0.05, "boards": 1.0}
 
 CAPTIONS = [
     (3.4, 5.6, "Toronto. You're in the front row."),
@@ -117,6 +117,7 @@ def build(v):
     v.key(36.0, 0, starMode="idle", starTalk="on", starFace=7.0)
     v.path(36.0, 43.0, [[200, 205, -360], [110, 190, -170], [30, FACE, -112]], [[-80, 180, 250], [0, FACE + 10, 6], [0, FACE, 6]])
     v.key(36.5, 6.0, shake=0.12)
+    v.key(42.95, 0, boards=0.0)
     v.key(43.0, 0, camPos=[4, 1.7, -112], camLook=[0, FACE, 6], fov=64, dof=0.25, focus=8.0, shake=0.3, camNear=0.05)
     v.key(43.01, 5.0, camPos=[3.5, 1.7, -110], camLook=[0, FACE - 4, 6])
     v.key(46.5, 1.5, shake=0.0)

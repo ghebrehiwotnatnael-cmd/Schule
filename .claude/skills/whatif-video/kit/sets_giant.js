@@ -123,13 +123,13 @@
       [-6, 6].forEach((x) => { const bar = new THREE.Mesh(new THREE.BoxGeometry(0.3, 0.3, 7.6), truss); bar.position.set(x, 8, 6); stage.add(bar); }); }
     const screenTex = (txt, c1, c2) => canvasTex(512, 256, (g, w, h) => { const gr = g.createLinearGradient(0, 0, w, h); gr.addColorStop(0, c1); gr.addColorStop(1, c2); g.fillStyle = gr; g.fillRect(0, 0, w, h);
       g.fillStyle = "rgba(255,255,255,0.08)"; for (let y = 0; y < h; y += 4) g.fillRect(0, y, w, 1); g.fillStyle = "#fff"; g.font = "bold 74px Arial"; g.textAlign = "center"; g.textBaseline = "middle"; g.fillText(txt, w / 2, h / 2); });
-    const screens = [];
+    const screens = [], boards = [];
     [["TORONTO", "#ff8a00", "#e91e63", [-SQ - 4, 38, -10], Math.PI / 2, [46, 23]], ["FREE SHOW", "#00c6ff", "#7c4dff", [SQ + 4, 44, -20], -Math.PI / 2, [50, 25]],
      ["8 PM", "#ff4d5e", "#ffb000", [10, 40, -SQ - 4], 0, [40, 20]], ["LIVE TONIGHT", "#ff1f4b", "#7b1fa2", [0, 36, SQ + 4], Math.PI, [64, 32]]].forEach(([t, a, b2, p, ry, sz]) => {
-      const m = new THREE.Mesh(new THREE.PlaneGeometry(sz[0], sz[1]), new THREE.MeshBasicMaterial({ map: screenTex(t, a, b2), toneMapped: false })); m.position.set(p[0], p[1], p[2]); m.rotation.y = ry; scene.add(m); screens.push(m);
-      const fr = new THREE.Mesh(new THREE.BoxGeometry(sz[0] + 2, sz[1] + 2, 0.8), MK.std(C("#4a4a55"), { roughness: 0.6, metalness: 0.2 })); fr.position.set(p[0], p[1], p[2]); fr.rotation.y = ry; fr.translateZ(-0.5); scene.add(fr);
+      const m = new THREE.Mesh(new THREE.PlaneGeometry(sz[0], sz[1]), new THREE.MeshBasicMaterial({ map: screenTex(t, a, b2), toneMapped: false })); m.position.set(p[0], p[1], p[2]); m.rotation.y = ry; scene.add(m); screens.push(m); boards.push(m);
+      const fr = new THREE.Mesh(new THREE.BoxGeometry(sz[0] + 2, sz[1] + 2, 0.8), MK.std(C("#4a4a55"), { roughness: 0.6, metalness: 0.2 })); fr.position.set(p[0], p[1], p[2]); fr.rotation.y = ry; fr.translateZ(-0.5); scene.add(fr); boards.push(fr);
       [-0.35, 0.35].forEach((k) => { const pole = new THREE.Mesh(new THREE.BoxGeometry(1.6, p[1] - sz[1] / 2, 1.6), MK.std(C("#5b5b66"), { metalness: 0.3, roughness: 0.5 })); pole.geometry.translate(0, (p[1] - sz[1] / 2) / 2, 0);
-        pole.position.set(p[0], 0, p[2]); pole.rotation.y = ry; pole.translateX(k * sz[0]); pole.translateZ(-1.2); scene.add(pole); }); });
+        pole.position.set(p[0], 0, p[2]); pole.rotation.y = ry; pole.translateX(k * sz[0]); pole.translateZ(-1.2); scene.add(pole); boards.push(pole); }); });
     // TORONTO letters (colourful, 3 m tall)
     const sign = new THREE.Group(); scene.add(sign); { const cols = ["#ff1744", "#ff9100", "#ffea00", "#00e676", "#00b0ff", "#d500f9", "#ff4081"];
       const tx = (ch, c) => canvasTex(128, 160, (g, w, h) => { g.clearRect(0, 0, w, h); g.fillStyle = c; g.font = "bold 150px Arial Black, Arial"; g.textAlign = "center"; g.textBaseline = "middle"; g.fillText(ch, w / 2, h / 2 + 6); });
@@ -225,7 +225,7 @@
       // birds scatter on footsteps
       const bk = clamp01(st / 4); birds.material.opacity = st > 0 && st < 6 ? 0.9 * (1 - st / 6) : 0; if (birds.material.opacity > 0) { const a = birds.geometry.attributes.position.array;
         for (let i = 0; i < a.length; i += 3) { a[i] = sp[0] + birdBase[i] * (1 + bk); a[i + 1] = birdBase[i + 1] * 0.4 + st * 12; a[i + 2] = sp[2] + birdBase[i + 2] * (1 + bk); } birds.geometry.attributes.position.needsUpdate = true; }
-      stage.visible = sScale < 3;
+      stage.visible = sScale < 3; { const bv = num("boards", t, 1) > 0.5; boards.forEach((b) => { b.visible = bv; }); }
       return scene; } };
   });
 })();
