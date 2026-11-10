@@ -38,13 +38,38 @@ window.WI_OVERLAYS.push(function (WI, SETS) {
       { name: "meF", male: false, longHair: true, hair: H[1], shirt: C("#06d6a0"), legs: C("#22223b"), skin: S[1], skirt: false, s: 0.95 },
       { name: "meM", male: true, beard: true, hair: H[2], shirt: C("#118ab2"), legs: C("#2b2d42"), skin: S[2], s: 1.03 },
       { name: "kai", male: true, beard: false, hair: H[0], hat: true, hatCol: C("#ffd23f"), glasses: true, shirt: C("#ff6b35"), legs: C("#1b998b"), skin: S[3], s: 1.03 },
-      { name: "poolGirl", male: false, longHair: true, hair: H[6], shirt: C("#f15bb5"), legs: C("#f15bb5"), skin: S[1], s: 0.95 }];
+      { name: "poolGirl", male: false, longHair: true, hair: H[6], shirt: C("#f15bb5"), legs: C("#f15bb5"), skin: S[1], s: 0.95 },
+      // the channel's recurring star (replaces Kai from Nov 2026): afro, mustache, black sunglasses, glitter red blazer, black shirt + tie
+      { name: "weeknd", male: true, beard: false, hair: C("#0d0907"), afro: true, mustache: true, glasses: true, tie: true, tieCol: C("#0b0b0d"),
+        shirt: C("#b5121b").convertSRGBToLinear(), longSleeve: true, skirt: false, legs: C("#121214"), skin: C("#5a3826").convertSRGBToLinear(), s: 1.08 }];
     const api = BL.crowd(scene, cast);
+    // glitter sequins + dark red lapels that follow the star's blazer
+    const WK = cast.findIndex((c) => c.name === "weeknd"); const gm = new THREE.Matrix4(), gv = new THREE.Vector3(), gq = new THREE.Quaternion(), gs = new THREE.Vector3();
+    const parts = [["torso", 0.46, 0.6, 0.26, 0.3], ["armL", 0.135, 0.6, 0.135, -0.28], ["armR", 0.135, 0.6, 0.135, -0.28]];
+    const glit = [0, 1, 2].map((k) => { const loc = [];
+      parts.forEach(([name, w, h, d, cy]) => { const n = name === "torso" ? 90 : 40; for (let i = 0; i < n; i++) { const face = Math.floor(WI.R() * 4);
+          let x = WI.rr(-w / 2, w / 2), y = cy + WI.rr(-h / 2, h / 2), z = WI.rr(-d / 2, d / 2);
+          if (face === 0) z = d / 2 + 0.006; else if (face === 1) z = -d / 2 - 0.006; else if (face === 2) x = w / 2 + 0.006; else x = -w / 2 - 0.006;
+          if (name === "torso" && face === 0 && Math.abs(x) < 0.08) x = Math.sign(x || 1) * WI.rr(0.09, w / 2);
+          loc.push([name, x, y, z]); } });
+      const pts = new THREE.Points(new THREE.BufferGeometry().setAttribute("position", new THREE.BufferAttribute(new Float32Array(loc.length * 3), 3)),
+        new THREE.PointsMaterial({ map: WI.glowTex, color: k === 1 ? 0xfff1c4 : 0xff7a66, size: 0.055, sizeAttenuation: true, transparent: true, depthWrite: false, blending: THREE.AdditiveBlending }));
+      pts.frustumCulled = false; pts.userData = { k, loc, noShadow: true }; scene.add(pts); return pts; });
+    const lapMat = new THREE.MeshStandardMaterial({ color: C("#8e0a1e").convertSRGBToLinear(), roughness: 0.4, metalness: 0.2 });
+    const lapels = [-1, 1].map((sd) => { const g = new THREE.Group(); const m = new THREE.Mesh(new THREE.BoxGeometry(0.09, 0.42, 0.02), lapMat);
+      m.position.set(sd * 0.115, 0.36, 0.142); m.rotation.z = sd * 0.32; g.add(m); g.matrixAutoUpdate = false; scene.add(g); return g; });
+    const fill = new THREE.PointLight(0xffe2cc, 0, 3.2, 2); scene.add(fill);   // soft face light so the dark skin still reads when backlit
+    function blazer(t) { api.meshes.torso.getMatrixAt(WK, gm); gm.decompose(gv, gq, gs); const on = gs.x > 0.05;
+      fill.intensity = on ? 1.4 * WI.num("starFill", t, 1) : 0; if (on) { fill.position.copy(new THREE.Vector3(0, 0.75, 0.9).applyMatrix4(gm)); }
+      lapels.forEach((l) => { l.visible = on; if (on) l.matrix.copy(gm); });
+      glit.forEach((g) => { g.visible = on && Math.sin(t * 13 + g.userData.k * 2.1) > -0.2; if (!g.visible) return; const arr = g.geometry.attributes.position.array; let last = null;
+        g.userData.loc.forEach((l, i) => { if (l[0] !== last) { api.meshes[l[0]].getMatrixAt(WK, gm); last = l[0]; } gv.set(l[1], l[2], l[3]).applyMatrix4(gm); arr[i * 3] = gv.x; arr[i * 3 + 1] = gv.y; arr[i * 3 + 2] = gv.z; });
+        g.geometry.attributes.position.needsUpdate = true; }); }
     api.tick = (t) => { const talk = val("talk", t) || ""; api.update(t, (p) => { const P = val(p.name + "Pos", t); if (!P || P[1] < -20) { p.hidden = true; return; }
       p.hidden = false; p.x = P[0]; p.y = P[1]; p.z = P[2]; p.rot = num(p.name + "Rot", t, 0); p.mode = val(p.name + "Mode", t) || "idle";
       const f = num(p.name + "Face", t, 0); p.belly = num(p.name + "Belly", t, 0); p.baby = num(p.name + "Baby", t, 0) > 0.5; p.babyFace = Math.sin(t * 4) > -0.4 ? 5 : 4;
       const vt = num(p.name + "Vanish", t, 999); p.vanishT = vt < 900 ? vt : undefined;
-      p.face = talk === p.name && Math.sin(t * 23) > -0.2 ? (f === 4 || f === 3 || f === 5 ? 4 : 6) : Math.round(f); }); };
+      p.face = talk === p.name && Math.sin(t * 23) > -0.2 ? (f === 4 || f === 3 || f === 5 ? 4 : 6) : Math.round(f); }); blazer(t); };
     return api;
   }
   const pplLook = (o) => Object.assign({ vd: hash(o._i || 0) * 1.2, preg: hash((o._i || 0) + 5.5) < 0.45, dad: hash((o._i || 0) + 9.1) < 0.5 }, o);

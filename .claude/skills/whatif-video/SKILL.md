@@ -108,6 +108,12 @@ Models live in `kit/models/` (gitignored, fetch with `python3 kit/tools/fetch_mo
     **One music track** that builds to the climax and drops to near silence for the end card. A **recurring main
     character** for the channel. More **"... for 5 seconds"** physics/chemistry topics. End card: title + 2 small fact
     lines + "What should we try next? Comment below." First caption sets the scene in second person.
+  - (creator, 2026-11-10) **The recurring main character is now "The Weeknd" (forever, replaces Kai)**: the blocky
+    star built for the concert video: afro, mustache, big black sunglasses, glitter red blazer (#b5121b, sequins +
+    dark red lapels), black shirt + black tie, dark trousers, skin #5a3826. He is "your" close friend in the story
+    (next to you, reacting, cheering, pointing; no voice unless the creator approves lines). In the resort/rooms/street
+    sets he is the cast member `weeknd` (tracks `weekndPos`, `weekndRot`, `weekndMode`, `weekndFace`, `starFill` face
+    light); in the concert set he is the `artist`. Keep "fan-made, not affiliated with The Weeknd" in the description.
   - **Text and ending**: captions of at most ~6 words, a hard closing line that hits the viewer personally, a plain
     black end card with just the title, TikTok caption phrased as a direct question to the viewer.
 

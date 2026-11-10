@@ -10,4 +10,4 @@ What should we try next? 👇
 
 ---
 Facts: sunlight needs ~499 s (8 min 19 s) to travel 150 million km · Mercury ~3 min 13 s, Venus ~6 min 1 s · a black hole with the Sun's mass has a Schwarzschild radius of ~3 km (≈6 km wide) · same mass = same gravity at Earth's distance, so the orbit stays the same (changes in gravity also travel at light speed) · the 5 seconds of darkness arrive 8 min 20 s after the collapse.
-Music: royalty-free (HeyGen) · SFX: ElevenLabs Sound Effects · Animation: low-poly 3D, rendered from code.
+Fan-made "what if" animation, not affiliated with The Weeknd. Music: royalty-free (HeyGen) · SFX: ElevenLabs Sound Effects · Animation: low-poly 3D, rendered from code.

@@ -1,4 +1,4 @@
-"""What if Earth had rings like Saturn?  One-take escalation (2 cuts): Thai beach with Kai, a giant ring arch in the sky,
+"""What if Earth had rings like Saturn?  One-take escalation (2 cuts): Thai beach with The Weeknd (the channel star), a giant ring arch in the sky,
 the ring's shadow, a bright night, drone up into the sky -> Earth with its ring from space -> back to the beach at sunset (twist:
 Earth probably had a ring 466 million years ago).  No voice lines, one music track, live widget."""
 TITLE = "What if Earth had rings like Saturn?"
@@ -18,7 +18,7 @@ SET_FILES = ["sets_common.js", "sets_models.js", "sets_people.js", "sets_resort.
 WORLD_DEFAULTS = {"eruptAt": 999.0, "erupt2At": 999.0, "lookAt": 999.0, "panicAt": 999.0, "fleeAt": 999.0, "stairsAt": 999.0,
                   "roofAt": 999.0, "siren": 0.0, "waveOn": 0.0, "floodZ": -999.0, "floodY": -5.0, "ash": 0.0,
                   "gravity": 1.0, "planeOn": 0.0, "chroma": 0.0, "crack": 0.0, "talk": "",
-                  "friendPos": [0, -60, 0], "womanPos": [0, -60, 0], "staffPos": [0, -60, 0], "kaiPos": [0, -60, 0], "poolGirlPos": [0, -60, 0],
+                  "friendPos": [0, -60, 0], "womanPos": [0, -60, 0], "staffPos": [0, -60, 0], "kaiPos": [0, -60, 0], "weekndPos": [0, -60, 0], "poolGirlPos": [0, -60, 0],
                   "issOn": 0.0, "issDrop": 0.0, "cables": 0.0, "laser": 0.0, "spaceMoon": 0.0, "shockI": 0.0, "goldDot": 0.0, "bloom": 0.55,
                   "cloudColor": "#ffffff", "ringSky": 0.0, "ringShadow": 0.0, "ringLat": 20.0, "stars": 0.0, "sunDisc": 0.0, "earthRing": 0.0, "ringRocks": 0.0}
 
@@ -69,21 +69,21 @@ def build(v):
     v.title_until(3.2, ICON)
     # ================= SHOT A (0-36): one take on the beach, the arch, its shadow, night, drone up into the sky
     v.key(0, 0, **mix(DAY, ringSky=1.0, ringShadow=0.0, dof=0.25, focus=4.0, fov=58, bob=0.12, shake=0.0,
-                     kaiPos=[1.0, SAND, 4.5], kaiRot=3.1416, kaiMode="idle", kaiFace=0.0))
+                     weekndPos=[1.0, SAND, 4.5], weekndRot=3.1416, weekndMode="idle", weekndFace=0.0))
     v.hands(0, "hidden", 0, item="none")
     v.path(0, 9.0, [[0, E, 8.0], [0.2, E, 7.7], [0.3, E, 7.4]], [[300, 25, -500], [600, 200, -400], [200, 330, -600], [0, 300, -600]])
-    v.key(4.0, 1.0, kaiMode="point", kaiFace=4.0)
+    v.key(4.0, 1.0, weekndMode="point", weekndFace=4.0)
     v.key(9.0, 0, dof=0.3, focus=3.0, bob=0.0)
     v.path(9.0, 16.0, [[0.3, E, 7.4], [2.0, 1.2, 7.6], [2.6, 0.75, 7.9]], [[0, 300, -600], [-30, 30, -60]])
-    v.key(9.5, 0.8, kaiRot=3.6, kaiMode="point", kaiFace=4.0)
-    v.key(13.6, 0.7, kaiRot=0.44, kaiMode="cheer", kaiFace=7.0)
+    v.key(9.5, 0.8, weekndRot=3.6, weekndMode="point", weekndFace=4.0)
+    v.key(13.6, 0.7, weekndRot=0.44, weekndMode="cheer", weekndFace=7.0)
     # 15-21: the ring's shadow sweeps over the beach (light and sky dim, cooler)
     v.key(15.2, 3.0, light=0.38, ambient=0.2, skyTop="#2357b0", skyHorizon="#7fb2e0", lightColor="#dfe8ff", ringShadow=0.25, warmth=0.0)
-    v.key(16.2, 0.6, kaiMode="idle", kaiFace=3.0)
+    v.key(16.2, 0.6, weekndMode="idle", weekndFace=3.0)
     v.path(16.0, 22.0, [[2.6, 0.75, 7.9], [2.2, 3.5, 10.0], [1.0, 8.0, 14.0]], [[-30, 30, -60], [500, 330, -900]])
     # 22-30 time-lapse into the night, the arch keeps shining; 22-36 drone up over the resort
     v.key(22.0, 6.0, **mix(NIGHT, ringShadow=0.6))
-    v.key(22.0, 0, dof=0.0, fov=60, kaiMode="cheer", kaiFace=7.0)
+    v.key(22.0, 0, dof=0.0, fov=60, weekndMode="cheer", weekndFace=7.0)
     v.path(22.0, 36.0, [[1.0, 8.0, 14.0], [-2, 24, 30], [-8, 80, 52], [-16, 200, 80], [-24, 380, 110]],
            [[500, 330, -900], [700, 420, -1000], [500, 520, -1200], [-200, 560, -1300], [-600, 520, -1200]])
     # ================= SHOT B (36-48): Earth with its ring from space, then right into the ring
@@ -91,13 +91,13 @@ def build(v):
           spaceCam=[-6, 22, 62], earthRing=1.0, ringRocks=1.0, dof=0.0, bloom=0.6, shake=0.0)
     v.key(36.01, 7.0, spaceCam=[-34, 9, 38], earthRot=1.75)
     v.key(43.0, 5.0, spaceCam=[-0.5, 1.2, 26.5], earthRot=1.9, spaceFov=55)
-    # ================= SHOT C (48-62): back on the beach at sunset, Kai, the golden arch
+    # ================= SHOT C (48-62): back on the beach at sunset, The Weeknd, the golden arch
     v.key(48.0, 0, **mix(DUSK, ringSky=1.0, ringShadow=0.15, earthRing=0.0, dof=0.3, focus=2.6, fov=56, bob=0.08,
-                         kaiPos=[1.0, SAND, 4.8], kaiRot=0.5, kaiMode="talk", kaiFace=7.0))
+                         weekndPos=[1.0, SAND, 4.8], weekndRot=0.5, weekndMode="talk", weekndFace=7.0))
     v.path(48.0, 53.0, [[3.2, E, 7.4], [2.9, E, 7.7]], [[1.0, 1.9, 4.8], [0.9, 2.0, 4.7]])
     v.path(53.0, 62.0, [[2.9, E, 7.7], [2.0, E, 8.6], [0.8, E, 9.8]], [[0.9, 2.0, 4.7], [400, 330, -700]])
-    v.key(52.0, 0.8, kaiRot=3.1416, kaiMode="point", kaiFace=4.0)
-    v.key(58.0, 0.8, kaiRot=0.4, kaiMode="cheer", kaiFace=7.0)
+    v.key(52.0, 0.8, weekndRot=3.1416, weekndMode="point", weekndFace=4.0)
+    v.key(58.0, 0.8, weekndRot=0.4, weekndMode="cheer", weekndFace=7.0)
 
     # widget
     v.widget(0, 12.4, "RING WIDTH", "STARTS 1,300 KM ABOVE YOU", "text", value="7,000 KM")

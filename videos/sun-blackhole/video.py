@@ -1,4 +1,4 @@
-"""What if the Sun turned into a black hole for 5 seconds?  Noon on a Thai beach with Kai, countdown, nothing happens;
+"""What if the Sun turned into a black hole for 5 seconds?  Noon on a Thai beach with The Weeknd (the channel star), countdown, nothing happens;
 cut to space: the Sun collapses; ride the edge of the last sunlight past Mercury and Venus to Earth (8 min 20 s, compressed);
 back on the beach: 5 seconds of night at noon, then the Sun is back.  Twist: you always see the Sun as it was 8 minutes ago.
 No voice lines, one music build, live widget, red centre countdowns."""
@@ -19,7 +19,7 @@ SET_FILES = ["sets_common.js", "sets_models.js", "sets_people.js", "sets_resort.
 WORLD_DEFAULTS = {"eruptAt": 999.0, "erupt2At": 999.0, "lookAt": 999.0, "panicAt": 999.0, "fleeAt": 999.0, "stairsAt": 999.0,
                   "roofAt": 999.0, "roofMood": "", "siren": 0.0, "waveOn": 0.0, "floodZ": -999.0, "floodY": -5.0, "ash": 0.0,
                   "gravity": 1.0, "planeOn": 0.0, "chroma": 0.0, "crack": 0.0, "talk": "",
-                  "friendPos": [0, -60, 0], "womanPos": [0, -60, 0], "staffPos": [0, -60, 0], "kaiPos": [0, -60, 0], "poolGirlPos": [0, -60, 0],
+                  "friendPos": [0, -60, 0], "womanPos": [0, -60, 0], "staffPos": [0, -60, 0], "kaiPos": [0, -60, 0], "weekndPos": [0, -60, 0], "poolGirlPos": [0, -60, 0],
                   "issOn": 0.0, "issDrop": 0.0, "cables": 0.0, "laser": 0.0, "spaceMoon": 0.0, "shockI": 0.0, "goldDot": 0.0, "bloom": 0.55,
                   "cloudColor": "#ffffff", "ringSky": 0.0, "ringShadow": 0.0, "stars": 0.0, "sunDisc": 0.0, "earthRing": 0.0, "ringRocks": 0.0,
                   "sunOn": 1.0, "bh": 0.0, "front": 0.0, "shell": 0.0, "dust": 0.0}
@@ -73,13 +73,13 @@ def mix(*ds, **kw):
 def build(v):
     v.title_until(3.2, ICON)
     # ================= SHOT A (0-15): noon on the beach, countdown, nothing happens
-    v.key(0, 0, **mix(DAY, dof=0.2, focus=4.0, fov=58, bob=0.1, shake=0.0, kaiPos=KAI, kaiRot=2.82, kaiMode="idle", kaiFace=0.0))
+    v.key(0, 0, **mix(DAY, dof=0.2, focus=4.0, fov=58, bob=0.1, shake=0.0, weekndPos=KAI, weekndRot=2.82, weekndMode="idle", weekndFace=0.0))
     v.hands(0, "hidden", 0, item="none")
     v.path(0, 6.0, [[0, E, 8.2], [0.3, E, 7.4]], [[0, 12, -200], [SUNP[0] * 0.4, SUNP[1] * 0.4, SUNP[2] * 0.4]])
     v.key(6.0, 5.0, fov=48)
     v.key(11.0, 0, shake=0.35, chroma=0.5)
     v.key(11.1, 1.0, shake=0.0, chroma=0.0)
-    v.key(11.4, 0.6, kaiRot=0.3, kaiMode="talk", kaiFace=0.0)
+    v.key(11.4, 0.6, weekndRot=0.3, weekndMode="talk", weekndFace=0.0)
     v.path(11.0, 13.6, [[0.3, E, 7.4], [0.6, E, 7.9]], [[SUNP[0] * 0.4, SUNP[1] * 0.4, SUNP[2] * 0.4], [1.0, 1.9, 4.5]])
     v.key(11.0, 2.0, fov=56, dof=0.3, focus=3.2)
     v.bigcount(6.0, 11.0, "SUN BECOMES A BLACK HOLE IN", 5, 0)
@@ -106,16 +106,16 @@ def build(v):
     v.key(34.0, 2.0, camLook=[1000, 0, 0])
     v.key(37.0, 1.0, camPos=[950, 8, 24])
     # ================= SHOT D (38-55): back on the beach; the darkness arrives, 5 s of night at noon, the Sun returns
-    v.key(38.0, 0, **mix(DAY, set="resort", dof=0.25, focus=2.4, fov=60, bob=0.0, shake=0.0, kaiPos=KAI, kaiRot=2.82, kaiMode="point", kaiFace=0.0))
+    v.key(38.0, 0, **mix(DAY, set="resort", dof=0.25, focus=2.4, fov=60, bob=0.0, shake=0.0, weekndPos=KAI, weekndRot=2.82, weekndMode="point", weekndFace=0.0))
     v.path(38.0, 45.0, [[0.4, 0.55, 6.6], [0.5, 0.6, 6.9]], [[25, 60.5, -68.6], [20, 50, -70]])
     v.key(40.0, 0.12, **DARK)
     v.key(40.0, 0, panicAt=40.2, shake=0.4)
     v.key(40.2, 1.5, shake=0.08)
-    v.key(40.3, 0.5, kaiRot=0.4, kaiMode="panic", kaiFace=4.0)
+    v.key(40.3, 0.5, weekndRot=0.4, weekndMode="panic", weekndFace=4.0)
     v.bigcount(40.0, 45.0, "SUNLIGHT RETURNS IN", 5, 0)
     v.key(45.0, 0.15, **mix(DAY, bloom=1.4, exposure=1.25, chroma=0.7, shake=0.3, roofMood="relief"))
     v.key(45.3, 1.4, bloom=0.6, exposure=1.02, chroma=0.0, shake=0.0)
-    v.key(45.4, 0.6, kaiMode="cheer", kaiFace=7.0)
+    v.key(45.4, 0.6, weekndMode="cheer", weekndFace=7.0)
     v.path(45.0, 55.0, [[0.5, 0.6, 6.9], [1.4, 2.6, 11], [3.0, 8.0, 20]], [[20, 50, -70], [0, 3, -60]])
     v.key(46.0, 3.0, dof=0.0, fov=58)
     # ================= twist (55-64): back up to the Sun
