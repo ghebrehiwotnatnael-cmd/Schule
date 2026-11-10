@@ -83,8 +83,23 @@ if RANGE and os.path.exists(out):
 elif os.environ.get("WP_REUSE") and os.path.exists(out) and abs(_dur(out) - frames / FPS) < 0.1:
     print("reusing existing", out)
 else:
-    r = subprocess.run(["node", runner, f"{H}/_preview/{slug}_final.html", out, str(frames), str(FPS)], cwd=vdir)
-    if r.returncode != 0 or not os.path.exists(out):
+    # resumable: render in chunks (build/world_parts/part_<start>.mp4), skip finished chunks, then join them losslessly
+    CH = int(os.environ.get("WP_CHUNK") or 240)
+    pdir = os.path.join(vdir, "build", "world_parts"); os.makedirs(pdir, exist_ok=True)
+    parts = []
+    for f0 in range(0, frames, CH):
+        n = min(CH, frames - f0); part = os.path.join(pdir, f"part_{f0:05d}.mp4"); parts.append(part)
+        if os.path.exists(part) and abs(_dur(part) - n / FPS) < 0.05:
+            continue
+        tmp = part + ".tmp.mp4"
+        r = subprocess.run(["node", runner, f"{H}/_preview/{slug}_final.html", tmp, str(n), str(FPS), str(f0)], cwd=vdir)
+        if r.returncode != 0 or not os.path.exists(tmp):
+            sys.exit("world pass failed at frame %d" % f0)
+        os.replace(tmp, part)
+    lst = os.path.join(pdir, "list.txt")
+    open(lst, "w").write("".join(f"file '{os.path.basename(x)}'\n" for x in parts))
+    subprocess.run(["ffmpeg", "-v", "error", "-y", "-f", "concat", "-safe", "0", "-i", lst, "-c", "copy", out], check=True)
+    if not os.path.exists(out):
         sys.exit("world pass failed")
 # point index.html at the rendered world video
 idx = os.path.join(vdir, "index.html")
