@@ -64,11 +64,14 @@ window.WI_SPACE_TICK = window.WI_SPACE_TICK || [];
       const glow1 = new THREE.Sprite(new THREE.SpriteMaterial({ map: glowTex, color: 0xffe9a8, transparent: true, depthWrite: false, fog: false, blending: THREE.AdditiveBlending }));
       const glow2 = new THREE.Sprite(new THREE.SpriteMaterial({ map: glowTex, color: 0xffb35c, transparent: true, depthWrite: false, fog: false, blending: THREE.AdditiveBlending }));
       glow1.scale.set(160, 160, 1); glow2.scale.set(520, 520, 1); sun.add(glow2, glow1, core);
+      const cloudSprites = []; sc.traverse((o) => { if (o.isSprite && o.scale.x >= 500 && o.material.map && o.material.blending === THREE.NormalBlending) cloudSprites.push(o); });
+      const cTint = new THREE.Color();
       let lastLat = 8;
       const orig = RS.update.bind(RS);
       RS.update = function (t, look, p) { const out = orig(t, look, p);
         hold.position.set(p[0], p[1], p[2]);
         const lat = num("ringLat", t, 8); if (Math.abs(lat - lastLat) > 0.01) { buildArch(lat); ag.attributes.position.array.set(pos); ag.attributes.position.needsUpdate = true; ag.attributes.uv.array.set(uv); ag.attributes.uv.needsUpdate = true; lastLat = lat; }
+        cTint.copy(WI.col("cloudColor", t)); cloudSprites.forEach((c) => c.material.color.copy(cTint));
         const rk = num("ringSky", t); arch.visible = rk > 0.005; ringU.k.value = rk; ringU.shadow.value = num("ringShadow", t); ringU.day.value = 1 - num("stars", t);
         starMat.opacity = num("stars", t); stars.visible = starMat.opacity > 0.005; stars.rotation.y = t * 0.004;
         const sd = num("sunDisc", t); sun.visible = sd > 0.005;
@@ -153,30 +156,35 @@ window.WI_SPACE_TICK = window.WI_SPACE_TICK || [];
     bh.add(arc);
     const bhGlow = new THREE.Sprite(new THREE.SpriteMaterial({ map: glowTex, color: 0xff8a3a, transparent: true, depthWrite: false, blending: THREE.AdditiveBlending, opacity: 0 })); bhGlow.scale.setScalar(160); bh.add(bhGlow);
     // planets: lit only while the darkness front has not reached them
-    const planetMat = (map, tint) => new THREE.ShaderMaterial({ uniforms: { map: { value: map }, tint: { value: new THREE.Color(tint) }, lit: { value: 1 }, glow: { value: 0 } },
+    const blackTex = canvasTex(4, 4, (g) => { g.fillStyle = "#000"; g.fillRect(0, 0, 4, 4); });
+    const planetMat = (map, tint, night) => new THREE.ShaderMaterial({ uniforms: { map: { value: map }, night: { value: night || blackTex }, tint: { value: new THREE.Color(tint) }, lit: { value: 1 }, glow: { value: 0 } },
       vertexShader: "varying vec2 vUv; varying vec3 vN; varying vec3 vW; void main(){ vUv = uv; vN = normalize(mat3(modelMatrix) * normal); vW = (modelMatrix * vec4(position,1.0)).xyz; gl_Position = projectionMatrix * modelViewMatrix * vec4(position,1.0); }",
-      fragmentShader: `uniform sampler2D map; uniform vec3 tint; uniform float lit; uniform float glow; varying vec2 vUv; varying vec3 vN; varying vec3 vW;
+      fragmentShader: `uniform sampler2D map; uniform sampler2D night; uniform vec3 tint; uniform float lit; uniform float glow; varying vec2 vUv; varying vec3 vN; varying vec3 vW;
         void main(){ vec3 c = texture2D(map, vUv).rgb * tint; float l = clamp(dot(normalize(vN), normalize(-vW)), 0.0, 1.0);
-          vec3 col = c * (0.035 + 1.25 * l * lit); float rim = pow(1.0 - abs(dot(normalize(vN), normalize(cameraPosition - vW))), 3.0); col += glow * vec3(0.3, 0.55, 1.0) * rim * (0.2 + 0.8 * lit);
+          vec3 col = c * (0.035 + 1.25 * l * lit) + texture2D(night, vUv).rgb * 1.5 * (1.0 - l * lit); float rim = pow(1.0 - abs(dot(normalize(vN), normalize(cameraPosition - vW))), 3.0); col += glow * vec3(0.3, 0.55, 1.0) * rim * (0.2 + 0.8 * lit);
           gl_FragColor = vec4(col, 1.0); }` });
     const merTex = canvasTex(256, 128, (g, w, h) => { g.fillStyle = "#9a948c"; g.fillRect(0, 0, w, h); for (let i = 0; i < 500; i++) { g.strokeStyle = `rgba(${R() < 0.5 ? "60,56,52" : "200,196,190"},${rr(0.2, 0.6)})`; g.beginPath(); g.arc(R() * w, R() * h, rr(1, 8), 0, 7); g.stroke(); } });
     const venTex = canvasTex(256, 128, (g, w, h) => { for (let y = 0; y < h; y++) { const k = 0.5 + 0.5 * Math.sin(y * 0.13 + Math.sin(y * 0.05) * 2); g.fillStyle = `rgb(${(232 + 18 * k) | 0},${(190 + 30 * k) | 0},${(120 + 40 * k) | 0})`; g.fillRect(0, y, w, 1); }
       for (let i = 0; i < 160; i++) { g.fillStyle = `rgba(255,240,200,${rr(0.05, 0.2)})`; g.beginPath(); g.ellipse(R() * w, R() * h, rr(10, 50), rr(2, 6), 0, 0, 7); g.fill(); } });
-    const earthTex = WI.loadTex("assets/lib/earth_atmos_2048.jpg"), moonTex = WI.loadTex("assets/lib/moon_1024.jpg");
+    const earthNight = WI.loadTex("assets/lib/earth_lights_2048.png"), earthTex = WI.loadTex("assets/lib/earth_atmos_2048.jpg"), moonTex = WI.loadTex("assets/lib/moon_1024.jpg");
     const PL = [["mercury", merTex, 0xffffff, 10, [387, -4, 40], 0], ["venus", venTex, 0xffffff, 20, [723, 10, -62], 0], ["earth", earthTex, 0xffffff, 22, [1000, 0, 0], 1], ["moon", moonTex, 0xffffff, 6, [1000, 8, 58], 0]]
-      .map(([n, tx, tint, r, p, gl]) => { const m = new THREE.Mesh(new THREE.SphereGeometry(r, 64, 32), planetMat(tx, tint)); m.position.set(p[0], p[1], p[2]); m.material.uniforms.glow.value = gl; scene.add(m);
+      .map(([n, tx, tint, r, p, gl]) => { const m = new THREE.Mesh(new THREE.SphereGeometry(r, 64, 32), planetMat(tx, tint, n === "earth" ? earthNight : null)); m.position.set(p[0], p[1], p[2]); m.material.uniforms.glow.value = gl; scene.add(m);
         return { n, m, d: Math.hypot(p[0], p[1], p[2]), r }; });
     // the edge of the last sunlight: a huge glowing bubble around the Sun
     const shellU = { k: { value: 0 } };
     const shell = new THREE.Mesh(new THREE.SphereGeometry(1, 96, 48), new THREE.ShaderMaterial({ uniforms: shellU, transparent: true, depthWrite: false, side: THREE.DoubleSide, blending: THREE.AdditiveBlending,
       vertexShader: "varying vec3 vN; varying vec3 vW; void main(){ vN = normalize(mat3(modelMatrix) * normal); vW = (modelMatrix * vec4(position,1.0)).xyz; gl_Position = projectionMatrix * modelViewMatrix * vec4(position,1.0); }",
       fragmentShader: `uniform float k; varying vec3 vN; varying vec3 vW; void main(){ float f = 1.0 - abs(dot(normalize(vN), normalize(cameraPosition - vW)));
-        float a = pow(f, 4.0) * 0.9 + 0.04; gl_FragColor = vec4(vec3(1.0, 0.82, 0.45) * a * k, 1.0); }` }));
+        float a = pow(f, 3.0) * 0.55 + 0.03; gl_FragColor = vec4(vec3(1.0, 0.9, 0.62) * a * k, 1.0); }` }));
     scene.add(shell);
     // dust that streams past the camera (sense of speed), lit only ahead of the front
     const ND = 3000, dpos = new Float32Array(ND * 3); for (let i = 0; i < ND; i++) { dpos[i * 3] = rr(-50, 1150); dpos[i * 3 + 1] = rr(-90, 90); dpos[i * 3 + 2] = rr(-120, 120); }
     const dg = new THREE.BufferGeometry(); dg.setAttribute("position", new THREE.BufferAttribute(dpos, 3));
-    const dust = new THREE.Points(dg, new THREE.PointsMaterial({ color: 0xfff0d0, size: 0.9, transparent: true, opacity: 0, depthWrite: false, blending: THREE.AdditiveBlending })); scene.add(dust);
+    const dustU = { front: { value: 0 }, k: { value: 0 } };
+    const dust = new THREE.Points(dg, new THREE.ShaderMaterial({ uniforms: dustU, transparent: true, depthWrite: false, blending: THREE.AdditiveBlending,
+      vertexShader: "uniform float front; varying float vLit; void main(){ vLit = smoothstep(front - 4.0, front + 4.0, length(position)); vec4 mv = modelViewMatrix * vec4(position,1.0); gl_PointSize = clamp(320.0 / -mv.z, 2.0, 12.0); gl_Position = projectionMatrix * mv; }",
+      fragmentShader: "uniform float k; varying float vLit; void main(){ vec2 c = gl_PointCoord - 0.5; float d = 1.0 - smoothstep(0.2, 0.5, length(c)); vec3 col = mix(vec3(0.18, 0.22, 0.4), vec3(1.0, 0.85, 0.55), vLit); gl_FragColor = vec4(col * d * k * (0.35 + 0.65 * vLit), 1.0); }" }));
+    scene.add(dust);
     return { name: "solar", scene, update(t, look, pos) {
       hold.position.set(pos[0], pos[1], pos[2]);
       const so = num("sunOn", t, 1), b = num("bh", t), fr = num("front", t, 0);
@@ -186,7 +194,7 @@ window.WI_SPACE_TICK = window.WI_SPACE_TICK || [];
       if (bh.visible) { arc.lookAt(WI.cam.position); halo.lookAt(WI.cam.position); }
       PL.forEach((p) => { p.m.material.uniforms.lit.value = fr > 0 ? 1 - WI.smooth((fr - (p.d - p.r * 1.2)) / (p.r * 2.4)) : 1; p.m.rotation.y = t * 0.05; });
       const sk = num("shell", t); shell.visible = sk > 0.005 && fr > 1; shell.scale.setScalar(Math.max(1, fr)); shellU.k.value = sk;
-      dust.material.opacity = num("dust", t) * 0.8; dust.visible = dust.material.opacity > 0.01;
+      dustU.k.value = num("dust", t); dustU.front.value = fr; dust.visible = dustU.k.value > 0.01;
       return scene; } };
   });
 })();

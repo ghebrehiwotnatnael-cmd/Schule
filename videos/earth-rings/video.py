@@ -20,7 +20,7 @@ WORLD_DEFAULTS = {"eruptAt": 999.0, "erupt2At": 999.0, "lookAt": 999.0, "panicAt
                   "gravity": 1.0, "planeOn": 0.0, "chroma": 0.0, "crack": 0.0, "talk": "",
                   "friendPos": [0, -60, 0], "womanPos": [0, -60, 0], "staffPos": [0, -60, 0], "kaiPos": [0, -60, 0], "poolGirlPos": [0, -60, 0],
                   "issOn": 0.0, "issDrop": 0.0, "cables": 0.0, "laser": 0.0, "spaceMoon": 0.0, "shockI": 0.0, "goldDot": 0.0, "bloom": 0.55,
-                  "ringSky": 0.0, "ringShadow": 0.0, "ringLat": 20.0, "stars": 0.0, "sunDisc": 0.0, "earthRing": 0.0, "ringRocks": 0.0}
+                  "cloudColor": "#ffffff", "ringSky": 0.0, "ringShadow": 0.0, "ringLat": 20.0, "stars": 0.0, "sunDisc": 0.0, "earthRing": 0.0, "ringRocks": 0.0}
 
 CAPTIONS = [
     (3.4, 5.8, "Thailand. You look up."),
@@ -48,10 +48,10 @@ DAY = dict(set="resort", env="day", envI=0.5, skyTop="#2a78e4", skyHorizon="#9fd
            light=0.75, ambient=0.26, ambientColor="#e6f2ff", lightColor="#fff1d6", sunDir=[0.35, 0.7, 0.45],
            tonemap=1.0, exposure=1.02, contrast=1.12, saturation=1.3, warmth=0.06, vignette=0.26, grain=0.02, bloom=0.55)
 NIGHT = dict(env="night", envI=0.45, skyTop="#0a1450", skyHorizon="#3552a8", skyBottom="#0c1d48", light=0.32, ambient=0.34,
-             ambientColor="#a9bcff", lightColor="#c9d8ff", sunDir=[-0.1, 0.8, -0.6], exposure=1.08, saturation=1.35, warmth=-0.02, stars=1.0, bloom=0.7)
+             ambientColor="#a9bcff", lightColor="#c9d8ff", sunDir=[-0.1, 0.8, -0.6], exposure=1.08, saturation=1.35, warmth=-0.02, stars=1.0, bloom=0.7, cloudColor="#6f7fc0")
 DUSK = dict(set="resort", env="dusk", envI=0.55, skyTop="#3b3f9a", skyHorizon="#ff9a5e", skyBottom="#5a3a6a", fogFar=4200,
             light=0.8, ambient=0.3, ambientColor="#ffd9c7", lightColor="#ffb27a", sunDir=[-0.3, 0.12, -1.0],
-            tonemap=1.0, exposure=1.03, contrast=1.12, saturation=1.32, warmth=0.1, vignette=0.28, grain=0.02, bloom=0.65, stars=0.0)
+            tonemap=1.0, exposure=1.03, contrast=1.12, saturation=1.32, warmth=0.1, vignette=0.28, grain=0.02, bloom=0.65, stars=0.0, cloudColor="#ffd2c0")
 ICON = '''<defs><radialGradient id="bg"><stop offset="0" stop-color="#fff1d0" stop-opacity=".9"/><stop offset="1" stop-color="#ffd58a" stop-opacity="0"/></radialGradient></defs>
 <circle r="170" fill="url(#bg)"/><circle r="62" fill="#5aa0ff"/><path d="M-62 0 a62 62 0 0 0 124 0" fill="#2f6fd6"/>
 <ellipse rx="140" ry="34" fill="none" stroke="#fff" stroke-width="14" transform="rotate(-18)"/><path d="M-62 -6 a62 62 0 0 1 124 0" fill="#5aa0ff" transform="rotate(-18)"/>'''
