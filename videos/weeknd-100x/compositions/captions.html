@@ -1,0 +1,57 @@
+<template>
+<style>
+@font-face{font-family:"WI Serif";src:url("assets/fonts/spectral-400-normal.woff2") format("woff2");font-weight:400}
+@font-face{font-family:"WI Serif";src:url("assets/fonts/spectral-500-normal.woff2") format("woff2");font-weight:500}
+@font-face{font-family:"WI Serif";src:url("assets/fonts/spectral-400-italic.woff2") format("woff2");font-weight:400;font-style:italic}
+#root{position:absolute;inset:0;pointer-events:none;}
+.cap{position:absolute;left:0;top:1236px;width:1080px;height:200px;text-align:center;}
+.cap-in{display:inline-block;max-width:930px;font:italic 400 46px/1.25 "WI Serif";color:#fff;
+  text-shadow:0 2px 14px rgba(0,0,0,.7),0 1px 3px rgba(0,0,0,.8);}
+</style>
+<div id="root" data-composition-id="captions" data-width="1080" data-height="1920">
+<div id="cap-0" class="clip cap" data-start="3.4" data-duration="2.2" data-track-index="0"><div class="cap-in">Toronto. You&#x27;re in the front row.</div></div>
+<div id="cap-1" class="clip cap" data-start="5.8" data-duration="2.4" data-track-index="0"><div class="cap-in">Then he starts to grow.</div></div>
+<div id="cap-2" class="clip cap" data-start="8.6" data-duration="2.4" data-track-index="0"><div class="cap-in">2x. 5x. The crowd steps back.</div></div>
+<div id="cap-3" class="clip cap" data-start="11.4" data-duration="2.8" data-track-index="0"><div class="cap-in">10x: six floors tall.</div></div>
+<div id="cap-4" class="clip cap" data-start="14.6" data-duration="3.0" data-track-index="0"><div class="cap-in">He weighs 70 tonnes now.</div></div>
+<div id="cap-5" class="clip cap" data-start="18.0" data-duration="2.8" data-track-index="0"><div class="cap-in">As much as the biggest dinosaur.</div></div>
+<div id="cap-6" class="clip cap" data-start="21.2" data-duration="2.2" data-track-index="0"><div class="cap-in">And he doesn&#x27;t stop.</div></div>
+<div id="cap-7" class="clip cap" data-start="23.6" data-duration="3.0" data-track-index="0"><div class="cap-in">50x: every step a small quake.</div></div>
+<div id="cap-8" class="clip cap" data-start="26.8" data-duration="3.0" data-track-index="0"><div class="cap-in">100x: 185 metres tall.</div></div>
+<div id="cap-9" class="clip cap" data-start="30.2" data-duration="2.8" data-track-index="0"><div class="cap-in">Heavier than the Titanic.</div></div>
+<div id="cap-10" class="clip cap" data-start="33.4" data-duration="2.4" data-track-index="0"><div class="cap-in">A third of the CN Tower.</div></div>
+<div id="cap-11" class="clip cap" data-start="36.4" data-duration="3.0" data-track-index="0"><div class="cap-in">He sings. You hear nothing.</div></div>
+<div id="cap-12" class="clip cap" data-start="39.8" data-duration="3.0" data-track-index="0"><div class="cap-in">His voice is now infrasound.</div></div>
+<div id="cap-13" class="clip cap" data-start="43.2" data-duration="3.4" data-track-index="0"><div class="cap-in">You feel it in your chest.</div></div>
+<div id="cap-14" class="clip cap" data-start="48.2" data-duration="2.8" data-track-index="0"><div class="cap-in">His heart can&#x27;t reach his brain.</div></div>
+<div id="cap-15" class="clip cap" data-start="51.4" data-duration="2.8" data-track-index="0"><div class="cap-in">Blood must climb 40 metres.</div></div>
+<div id="cap-16" class="clip cap" data-start="54.6" data-duration="2.6" data-track-index="0"><div class="cap-in">He blacks out.</div></div>
+<div id="cap-17" class="clip cap" data-start="57.8" data-duration="3.0" data-track-index="0"><div class="cap-in">Plot twist: giants can&#x27;t exist.</div></div>
+<div id="cap-18" class="clip cap" data-start="61.0" data-duration="3.0" data-track-index="0"><div class="cap-in">Would you still go to his show?</div></div>
+</div>
+<script>
+(function(){
+const tl = gsap.timeline({paused:true,defaults:{lazy:false}});
+tl.fromTo("#cap-0 .cap-in",{opacity:0,y:8},{opacity:1,y:0,duration:.28,ease:"power2.out"},3.4);tl.to("#cap-0 .cap-in",{opacity:0,duration:.18},5.41);
+tl.fromTo("#cap-1 .cap-in",{opacity:0,y:8},{opacity:1,y:0,duration:.28,ease:"power2.out"},5.8);tl.to("#cap-1 .cap-in",{opacity:0,duration:.18},8.01);
+tl.fromTo("#cap-2 .cap-in",{opacity:0,y:8},{opacity:1,y:0,duration:.28,ease:"power2.out"},8.6);tl.to("#cap-2 .cap-in",{opacity:0,duration:.18},10.81);
+tl.fromTo("#cap-3 .cap-in",{opacity:0,y:8},{opacity:1,y:0,duration:.28,ease:"power2.out"},11.4);tl.to("#cap-3 .cap-in",{opacity:0,duration:.18},14.01);
+tl.fromTo("#cap-4 .cap-in",{opacity:0,y:8},{opacity:1,y:0,duration:.28,ease:"power2.out"},14.6);tl.to("#cap-4 .cap-in",{opacity:0,duration:.18},17.41);
+tl.fromTo("#cap-5 .cap-in",{opacity:0,y:8},{opacity:1,y:0,duration:.28,ease:"power2.out"},18.0);tl.to("#cap-5 .cap-in",{opacity:0,duration:.18},20.61);
+tl.fromTo("#cap-6 .cap-in",{opacity:0,y:8},{opacity:1,y:0,duration:.28,ease:"power2.out"},21.2);tl.to("#cap-6 .cap-in",{opacity:0,duration:.18},23.21);
+tl.fromTo("#cap-7 .cap-in",{opacity:0,y:8},{opacity:1,y:0,duration:.28,ease:"power2.out"},23.6);tl.to("#cap-7 .cap-in",{opacity:0,duration:.18},26.41);
+tl.fromTo("#cap-8 .cap-in",{opacity:0,y:8},{opacity:1,y:0,duration:.28,ease:"power2.out"},26.8);tl.to("#cap-8 .cap-in",{opacity:0,duration:.18},29.61);
+tl.fromTo("#cap-9 .cap-in",{opacity:0,y:8},{opacity:1,y:0,duration:.28,ease:"power2.out"},30.2);tl.to("#cap-9 .cap-in",{opacity:0,duration:.18},32.81);
+tl.fromTo("#cap-10 .cap-in",{opacity:0,y:8},{opacity:1,y:0,duration:.28,ease:"power2.out"},33.4);tl.to("#cap-10 .cap-in",{opacity:0,duration:.18},35.61);
+tl.fromTo("#cap-11 .cap-in",{opacity:0,y:8},{opacity:1,y:0,duration:.28,ease:"power2.out"},36.4);tl.to("#cap-11 .cap-in",{opacity:0,duration:.18},39.21);
+tl.fromTo("#cap-12 .cap-in",{opacity:0,y:8},{opacity:1,y:0,duration:.28,ease:"power2.out"},39.8);tl.to("#cap-12 .cap-in",{opacity:0,duration:.18},42.61);
+tl.fromTo("#cap-13 .cap-in",{opacity:0,y:8},{opacity:1,y:0,duration:.28,ease:"power2.out"},43.2);tl.to("#cap-13 .cap-in",{opacity:0,duration:.18},46.41);
+tl.fromTo("#cap-14 .cap-in",{opacity:0,y:8},{opacity:1,y:0,duration:.28,ease:"power2.out"},48.2);tl.to("#cap-14 .cap-in",{opacity:0,duration:.18},50.81);
+tl.fromTo("#cap-15 .cap-in",{opacity:0,y:8},{opacity:1,y:0,duration:.28,ease:"power2.out"},51.4);tl.to("#cap-15 .cap-in",{opacity:0,duration:.18},54.01);
+tl.fromTo("#cap-16 .cap-in",{opacity:0,y:8},{opacity:1,y:0,duration:.28,ease:"power2.out"},54.6);tl.to("#cap-16 .cap-in",{opacity:0,duration:.18},57.01);
+tl.fromTo("#cap-17 .cap-in",{opacity:0,y:8},{opacity:1,y:0,duration:.28,ease:"power2.out"},57.8);tl.to("#cap-17 .cap-in",{opacity:0,duration:.18},60.61);
+tl.fromTo("#cap-18 .cap-in",{opacity:0,y:8},{opacity:1,y:0,duration:.28,ease:"power2.out"},61.0);tl.to("#cap-18 .cap-in",{opacity:0,duration:.18},63.81);
+window.__timelines["captions"] = tl;
+})();
+</script>
+</template>

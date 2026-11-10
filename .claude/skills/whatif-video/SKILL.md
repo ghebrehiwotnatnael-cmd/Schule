@@ -114,6 +114,15 @@ Models live in `kit/models/` (gitignored, fetch with `python3 kit/tools/fetch_mo
     (next to you, reacting, cheering, pointing; no voice unless the creator approves lines). In the resort/rooms/street
     sets he is the cast member `weeknd` (tracks `weekndPos`, `weekndRot`, `weekndMode`, `weekndFace`, `starFill` face
     light); in the concert set he is the `artist`. Keep "fan-made, not affiliated with The Weeknd" in the description.
+  - (approved 2026-11-10, after the concert video: "people were not rendered perfectly") **Quality pass for every video**:
+    - **Real 3D crowds to the horizon**: full blocky people near, simplified people in the middle, lit person impostors
+      far away; hide the LOD steps with haze + DOF. Never flat pattern textures for crowds, never bare boxes as houses.
+    - **Lively crowds**: every person moves differently (own phase, speed, mix of jump/wave/phone light/run), no
+      synchronised motion; more facial expression on the main character.
+    - **Sharper image**: MSAA 4x on the scene target + 1.5x supersampling in the world pass (lanczos down to 1080x1920);
+      check previews at full size before the final render.
+    - **Attention span**: spectacular first frame, a new escalation beat every 3-4 s (number jumps, effect, camera
+      punch-in/whip, speed ramp), a sound hit on every beat, the widget never stands still, the end loops into the start.
   - **Text and ending**: captions of at most ~6 words, a hard closing line that hits the viewer personally, a plain
     black end card with just the title, TikTok caption phrased as a direct question to the viewer.
 

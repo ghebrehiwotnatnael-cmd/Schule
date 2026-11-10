@@ -6,11 +6,13 @@
   const TR = window.WI_TRACKS || {};
   const canvas = document.getElementById("world-canvas");
   const renderer = new THREE.WebGLRenderer({ canvas, antialias: true, preserveDrawingBuffer: true });
-  renderer.setPixelRatio(1); renderer.setSize(W, H, false);
+  // supersampling (window.WI_SS, e.g. 1.5: render bigger, the world pass scales down with lanczos) + MSAA on the scene target
+  const SS = window.WI_SS || 1, RW = Math.round(W * SS), RH = Math.round(H * SS), MSAA = window.WI_MSAA != null ? window.WI_MSAA : 0;
+  renderer.setPixelRatio(1); renderer.setSize(RW, RH, false);
   renderer.shadowMap.enabled = true; renderer.shadowMap.type = THREE.PCFSoftShadowMap; window.WI_R = renderer;
   // ---- post: depth of field + motion-blur accumulation
-  const rtScene = new THREE.WebGLRenderTarget(W, H, { depthTexture: new THREE.DepthTexture(W, H), depthBuffer: true });
-  const rtAcc = new THREE.WebGLRenderTarget(W, H);
+  const rtScene = new THREE.WebGLRenderTarget(RW, RH, { depthTexture: new THREE.DepthTexture(RW, RH), depthBuffer: true, samples: MSAA });
+  const rtAcc = new THREE.WebGLRenderTarget(RW, RH);
   const postCam = new THREE.OrthographicCamera(-1, 1, 1, -1, 0, 1);
   const dofMat = new THREE.ShaderMaterial({ transparent: true, depthTest: false, depthWrite: false,
     uniforms: { tColor: { value: rtScene.texture }, tDepth: { value: rtScene.depthTexture }, focus: { value: 5 }, amount: { value: 0 },

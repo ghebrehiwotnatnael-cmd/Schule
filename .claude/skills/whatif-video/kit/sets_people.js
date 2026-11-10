@@ -177,5 +177,60 @@ window.WI_BLOCKY = function (WI) {
       } };
     return api;
   }
-  return { crowd, faceTex, randomLook };
+  // ---- mass(scene, list, opts): tens of thousands of real 3D people in ONE instanced mesh, animated on the GPU.
+  //   list items: { x, y, z, rot, s, mode (0 idle, 1 cheer, 2 film/phone, 3 jump, 4 walk) }.  Colours are picked like randomLook.
+  //   api.u: uTime, uCheer / uJump / uFilm (0..1 share of people switched to that mode), uRun (metres run along their facing), uHide (centre xz + radius)
+  function mass(scene, list, opts = {}) {
+    const n = list.length; const parts = [];
+    const add = (geo, part) => { const g = geo.clone().toNonIndexed(); const c = g.attributes.position.count; g.setAttribute("part", new THREE.Float32BufferAttribute(new Float32Array(c).fill(part), 1)); parts.push(g); };
+    const gL = G.leg.clone(); gL.translate(-0.1, 0.8, 0); add(gL, 0); const gR = G.leg.clone(); gR.translate(0.1, 0.8, 0); add(gR, 0.5);
+    const gT = G.torso.clone(); gT.translate(0, 0.8, 0); add(gT, 1);
+    const gH = G.head.clone(); gH.translate(0, 1.41, 0); add(gH, 2); const gHr = G.hair.clone(); gHr.translate(0, 1.41, 0); add(gHr, 4);
+    const gAL = G.arm.clone(); gAL.translate(-0.3, 1.36, 0); add(gAL, 3); const gAR = G.arm.clone(); gAR.translate(0.3, 1.36, 0); add(gAR, 3.5);
+    // merge
+    let total = 0; parts.forEach((g) => total += g.attributes.position.count);
+    const P = new Float32Array(total * 3), N = new Float32Array(total * 3), PT = new Float32Array(total); let o = 0;
+    parts.forEach((g) => { P.set(g.attributes.position.array, o * 3); N.set(g.attributes.normal.array, o * 3); PT.set(g.attributes.part.array, o); o += g.attributes.position.count; });
+    const geo = new THREE.InstancedBufferGeometry(); geo.setAttribute("position", new THREE.BufferAttribute(P, 3)); geo.setAttribute("normal", new THREE.BufferAttribute(N, 3)); geo.setAttribute("part", new THREE.BufferAttribute(PT, 1));
+    const cS = new Float32Array(n * 3), cL = new Float32Array(n * 3), cK = new Float32Array(n * 3), cH = new Float32Array(n * 3), aM = new Float32Array(n * 4);
+    const mesh = new THREE.InstancedMesh(geo, null, n);
+    const M4 = new THREE.Matrix4(), Q = new THREE.Quaternion(), V = new THREE.Vector3(), S = new THREE.Vector3(), Y = new THREE.Vector3(0, 1, 0);
+    const conv = (c) => opts.linear ? c.clone().convertSRGBToLinear() : c;
+    list.forEach((p, i) => { const sh = conv(p.shirt || pick(BRIGHT)), lg = conv(p.legs || (R() < 0.6 ? pick(DARKC) : pick(BRIGHT))), sk = conv(p.skin || pick(SKIN)), hr = conv(p.hair || pick(HAIR));
+      cS.set([sh.r, sh.g, sh.b], i * 3); cL.set([lg.r, lg.g, lg.b], i * 3); cK.set([sk.r, sk.g, sk.b], i * 3); cH.set([hr.r, hr.g, hr.b], i * 3);
+      aM.set([p.mode || 0, R() * 50, rr(0.8, 1.3), R()], i * 4);
+      const s = p.s || rr(0.9, 1.08); Q.setFromAxisAngle(Y, p.rot || 0); M4.compose(V.set(p.x, p.y || 0, p.z), Q, S.set(s, s, s)); mesh.setMatrixAt(i, M4); });
+    geo.setAttribute("cShirt", new THREE.InstancedBufferAttribute(cS, 3)); geo.setAttribute("cLegs", new THREE.InstancedBufferAttribute(cL, 3));
+    geo.setAttribute("cSkin", new THREE.InstancedBufferAttribute(cK, 3)); geo.setAttribute("cHair", new THREE.InstancedBufferAttribute(cH, 3)); geo.setAttribute("aMode", new THREE.InstancedBufferAttribute(aM, 4));
+    const u = { uTime: { value: 0 }, uCheer: { value: 0 }, uJump: { value: 0 }, uFilm: { value: 0 }, uRun: { value: 0 }, uHide: { value: new THREE.Vector3(0, 0, -1) }, uScale: { value: 1 } };
+    const mat = new THREE.MeshLambertMaterial({ color: 0xffffff });
+    mat.onBeforeCompile = (sh) => { Object.assign(sh.uniforms, u);
+      sh.vertexShader = `attribute float part; attribute vec3 cShirt; attribute vec3 cLegs; attribute vec3 cSkin; attribute vec3 cHair; attribute vec4 aMode;
+        uniform float uTime; uniform float uCheer; uniform float uJump; uniform float uFilm; uniform float uRun; uniform vec3 uHide; varying vec3 vMC;
+        vec3 rotX(vec3 p, vec3 pv, float a){ p -= pv; float c = cos(a), s = sin(a); return vec3(p.x, p.y * c - p.z * s, p.y * s + p.z * c) + pv; }
+        vec3 rotZ(vec3 p, vec3 pv, float a){ p -= pv; float c = cos(a), s = sin(a); return vec3(p.x * c - p.y * s, p.x * s + p.y * c, p.z) + pv; }
+        ` + sh.vertexShader.replace("#include <begin_vertex>", `#include <begin_vertex>
+        float md = aMode.x; float r = aMode.w; float ph = aMode.y + uTime * aMode.z;
+        if (r < uFilm) md = 2.0; if (r < uCheer) md = 1.0; if (r < uJump) md = 3.0; if (uRun > 0.0) md = 5.0;
+        float side = fract(part) > 0.25 ? 1.0 : -1.0; float pk = floor(part);
+        float bodyY = 0.0;
+        if (pk == 3.0) { vec3 sp = vec3(0.3 * side, 1.36, 0.0);
+          if (md == 1.0) transformed = rotZ(transformed, sp, side * (2.6 + 0.25 * sin(ph * 7.0)));
+          else if (md == 2.0) { if (side > 0.0) transformed = rotX(transformed, sp, -1.4); else transformed = rotX(transformed, sp, 0.05 * sin(ph)); }
+          else if (md == 3.0) transformed = rotZ(transformed, sp, side * 2.7);
+          else if (md == 4.0 || md == 5.0) transformed = rotX(transformed, sp, sin(ph * (md == 5.0 ? 11.0 : 6.0)) * side * (md == 5.0 ? 1.0 : 0.4));
+          else transformed = rotX(transformed, sp, 0.06 * sin(ph * 1.3 + side)); }
+        if (pk == 0.0 && (md == 4.0 || md == 5.0)) transformed = rotX(transformed, vec3(0.0, 0.8, 0.0), sin(ph * (md == 5.0 ? 11.0 : 6.0)) * side * (md == 5.0 ? 0.9 : 0.45));
+        if (md == 1.0) bodyY = max(0.0, sin(ph * 7.0)) * 0.1;
+        if (md == 3.0) bodyY = max(0.0, sin(ph * 6.0)) * 0.45;
+        if (md == 5.0) { bodyY = abs(cos(ph * 11.0)) * 0.08; transformed.x = -transformed.x; transformed.z = -transformed.z - uRun * aMode.z; }
+        transformed.y += bodyY;
+        vec4 wc = instanceMatrix * vec4(0.0, 0.0, 0.0, 1.0); if (uHide.z > 0.0 && distance(wc.xz, uHide.xy) < uHide.z) transformed *= 0.0;
+        vMC = pk == 0.0 ? cLegs : pk == 1.0 ? cShirt : pk == 4.0 ? cHair : cSkin;`);
+      sh.fragmentShader = "varying vec3 vMC;\n" + sh.fragmentShader.replace("vec4 diffuseColor = vec4( diffuse, opacity );", "vec4 diffuseColor = vec4( diffuse * vMC, opacity );"); };
+    mat.customProgramCacheKey = () => "wi-mass";
+    mesh.material = mat; mesh.frustumCulled = false; mesh.castShadow = !!opts.shadow; mesh.receiveShadow = true; mesh.userData.noShadow = !opts.shadow; scene.add(mesh);
+    return { mesh, u, n };
+  }
+  return { crowd, faceTex, randomLook, mass };
 };

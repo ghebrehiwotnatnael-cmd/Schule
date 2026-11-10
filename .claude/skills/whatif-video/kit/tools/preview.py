@@ -9,6 +9,7 @@ import importlib.util, json, os, subprocess, sys
 KIT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 sys.path.insert(0, KIT)
 import cinema_kit as ck  # noqa: E402
+SS_DEFAULT = 1.0
 
 vdir = os.path.abspath(sys.argv[1])
 times = [float(x) for x in sys.argv[2].split(",")]
@@ -36,8 +37,8 @@ js = js.replace('"assets/lib/', f'"{H}/lib/')
 os.makedirs(os.path.join(KIT, "_preview"), exist_ok=True)
 page = os.path.join(KIT, "_preview", os.path.basename(vdir) + ".html")
 libs = "".join(f'<script src="{H}/lib/{f}"></script>' for f in ["three147.min.js", "fflate.min.js", "FBXLoader.js", "GLTFLoader.js", "RGBELoader.js", "SkeletonUtils.js"])
-open(page, "w").write(f'''<html><body style="margin:0;background:#000"><canvas id="world-canvas" width="1080" height="1920"></canvas>
-{libs}<script>window.WI_MODEL_BASE="{H}/models/";window.WI_HDRI_BASE="{H}/lib/hdri/";window.WI_TRACKS={json.dumps(v.tracks())};</script>
+open(page, "w").write(f'''<html><body style="margin:0;background:#000"><canvas id="world-canvas" width="1080" height="1920" style="width:1080px;height:1920px"></canvas>
+{libs}<script>window.WI_SS={float(os.environ.get("WI_SS") or SS_DEFAULT)};window.WI_MSAA={int(os.environ.get("WI_MSAA") or 4)};window.WI_MODEL_BASE="{H}/models/";window.WI_HDRI_BASE="{H}/lib/hdri/";window.WI_TRACKS={json.dumps(v.tracks())};</script>
 <script>{js}</script></body></html>''')
 page_url = f"{H}/_preview/" + os.path.basename(vdir) + ".html"
 runner = os.path.join(out, "shot.js")

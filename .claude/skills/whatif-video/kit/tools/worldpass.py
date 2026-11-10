@@ -11,6 +11,7 @@ import importlib.util, json, os, re, subprocess, sys, socket, time
 KIT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 sys.path.insert(0, KIT)
 import cinema_kit as ck  # noqa: E402
+SS_DEFAULT = 1.5
 
 vdir = os.path.abspath(sys.argv[1])
 slug = os.path.basename(vdir)
@@ -40,8 +41,8 @@ js = js.replace('"assets/lib/', f'"{H}/lib/')
 os.makedirs(os.path.join(KIT, "_preview"), exist_ok=True)
 page = os.path.join(KIT, "_preview", slug + "_final.html")
 libs = "".join(f'<script src="{H}/lib/{f}"></script>' for f in ["three147.min.js", "fflate.min.js", "FBXLoader.js", "GLTFLoader.js", "RGBELoader.js", "SkeletonUtils.js"])
-open(page, "w").write(f'''<html><body style="margin:0;background:#000"><canvas id="world-canvas" width="1080" height="1920"></canvas>
-{libs}<script>window.WI_MODEL_BASE="{H}/models/";window.WI_HDRI_BASE="{H}/lib/hdri/";window.WI_TRACKS={json.dumps(v.tracks())};</script>
+open(page, "w").write(f'''<html><body style="margin:0;background:#000"><canvas id="world-canvas" width="1080" height="1920" style="width:1080px;height:1920px"></canvas>
+{libs}<script>window.WI_SS={float(os.environ.get("WI_SS") or SS_DEFAULT)};window.WI_MSAA={int(os.environ.get("WI_MSAA") or 4)};window.WI_MODEL_BASE="{H}/models/";window.WI_HDRI_BASE="{H}/lib/hdri/";window.WI_TRACKS={json.dumps(v.tracks())};</script>
 <script>{js}</script></body></html>''')
 out = os.path.join(vdir, "build", "world.mp4")
 os.makedirs(os.path.dirname(out), exist_ok=True)
@@ -54,7 +55,7 @@ open(runner, "w").write(r'''const { chromium } = require('playwright'); const { 
   p.on('pageerror', (e) => console.log('ERR', e.message));
   await p.goto(url); await p.waitForFunction('window.WI_DRAW'); await p.evaluate(() => window.__hf.buildReady.world);
   const ff = spawn('ffmpeg', ['-v', 'error', '-y', '-f', 'image2pipe', '-framerate', String(fps), '-c:v', 'mjpeg', '-i', '-', '-c:v', 'libx264', '-preset', 'medium',
-    '-crf', '14', '-pix_fmt', 'yuv420p', '-r', String(fps), out], { stdio: ['pipe', 'inherit', 'inherit'] });
+    '-crf', '14', '-vf', 'scale=1080:1920:flags=lanczos', '-pix_fmt', 'yuv420p', '-r', String(fps), out], { stdio: ['pipe', 'inherit', 'inherit'] });
   const t0 = Date.now();
   for (let i = 0; i < frames; i++) {
     const b64 = await p.evaluate((t) => { window.WI_DRAW(t); return document.getElementById('world-canvas').toDataURL('image/jpeg', 0.94).split(',')[1]; }, (start + i) / fps);
