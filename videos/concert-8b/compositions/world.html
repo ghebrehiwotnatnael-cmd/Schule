@@ -1113,6 +1113,7 @@ window.CONCERT_MODELS = [];
       const mv = num("spaceMoon", t); moonSp.visible = mv > 0.01; moonSp.scale.setScalar(Math.max(0.01, mv)); const mpos = val("spaceMoonPos", t) || [-28, 6, -30]; moonSp.position.set(mpos[0], mpos[1], mpos[2]); moonSp.rotation.y = t * 0.02;
       const lz = num("laser", t); laser.visible = lz > 0.01; if (laser.visible) { const a = new THREE.Vector3(mpos[0], mpos[1], mpos[2]).normalize().multiplyScalar(10.05), b2 = moonSp.position;
         const mid = a.clone().add(b2).multiplyScalar(0.5); laser.position.copy(mid); laser.scale.set(1, a.distanceTo(b2), 1); laser.lookAt(b2); laser.rotateX(Math.PI / 2); laser.material.opacity = lz * (0.6 + 0.4 * Math.sin(t * 20)); }
+      (window.WI_SPACE_TICK || []).forEach((f) => f(t));
       space.add(cam); return space;
     }
     const p = val("camPos", t) || [0, 1.65, 6], l = val("camLook", t) || [0, 6, -60];
