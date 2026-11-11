@@ -274,15 +274,16 @@
     // tourists on the deck + your friend
     const tourists = []; for (let i = 0; i < 44; i++) { const a = R() * 6.283, r = rr(8, TW / 2 - 1); tourists.push({ x: Math.cos(a) * r, y: deckY, z: Math.sin(a) * r, rot: Math.atan2(Math.cos(a), Math.sin(a)), mode: R() < 0.5 ? "film" : R() < 0.5 ? "point" : "idle", face: R() < 0.5 ? 0 : 7 }); }
     const tour = BL.crowd(scene, tourists);
-    const starP = { name: "star", male: true, beard: false, hair: new THREE.Color("#0d0907"), afro: true, mustache: true, glasses: true, tie: true, tieCol: new THREE.Color("#0b0b0d"),
+    const starP = { name: "star", male: true, beard: false, hair: new THREE.Color(0.075, 0.05, 0.036), afro: true, mustache: true, glasses: true, tie: true, tieCol: new THREE.Color("#0b0b0d"),
       shirt: C("#b5121b"), longSleeve: true, skirt: false, legs: new THREE.Color("#121214"), skin: C("#5a3826"), s: 1.08, face: 7, x: 0, y: deckY, z: 0, mode: "selfie" };
     const youP = { name: "you", male: true, beard: false, hair: new THREE.Color("#2d1d14"), shirt: C("#2f6db5"), longSleeve: true, legs: C("#2b2d42"), skin: C("#d39a6e"), s: 1.0, face: 0, x: 0, y: deckY, z: 0, mode: "idle" };
     const star = BL.crowd(scene, [starP, youP]);
     const tm = new THREE.Matrix4(), tv = new THREE.Vector3();
     const glitLoc = Array.from({ length: 200 }, (_, i) => { const nm = i < 120 ? "torso" : i < 160 ? "armL" : "armR"; const w = nm === "torso" ? 0.46 : 0.135, d = nm === "torso" ? 0.26 : 0.135, cy = nm === "torso" ? 0.3 : -0.28;
       const f = i % 3; return [nm, f === 2 ? (R() < 0.5 ? -1 : 1) * (w / 2 + 0.006) : rr(-w / 2, w / 2), cy + rr(-0.3, 0.3), f === 0 ? d / 2 + 0.006 : f === 1 ? -d / 2 - 0.006 : rr(-d / 2, d / 2)]; });
-    const starGlit = add(new THREE.Points(new THREE.BufferGeometry().setAttribute("position", new THREE.BufferAttribute(new Float32Array(200 * 3), 3)),
-      new THREE.PointsMaterial({ map: glowTex, color: 0xffd6c8, size: 0.05, transparent: true, depthWrite: false, blending: THREE.AdditiveBlending }))); starGlit.frustumCulled = false;
+    const starGlit = add(new THREE.Points(new THREE.BufferGeometry().setAttribute("position", new THREE.BufferAttribute(new Float32Array(200 * 3), 3)).setAttribute("color", new THREE.BufferAttribute(new Float32Array(200 * 3), 3)),
+      new THREE.PointsMaterial({ map: glowTex, color: 0xffd6c8, vertexColors: true, size: 0.05, transparent: true, depthWrite: false, blending: THREE.AdditiveBlending }))); starGlit.frustumCulled = false;
+    const glitPh = glitLoc.map(() => [rr(0, 6.283), rr(5, 11)]);   // each sequin twinkles on its own phase/speed (no global blink)
     const lapMat = new THREE.MeshStandardMaterial({ color: C("#8e0a1e"), roughness: 0.4, metalness: 0.2 });
     const lapels = [-1, 1].map((sd) => { const g = new THREE.Group(); const m = new THREE.Mesh(new THREE.BoxGeometry(0.09, 0.42, 0.02), lapMat); m.position.set(sd * 0.115, 0.36, 0.142); m.rotation.z = sd * 0.32; g.add(m); g.matrixAutoUpdate = false; scene.add(g); return g; });
     const starFill = new THREE.PointLight(0xffe2cc, 1.1, 3.2, 2); add(starFill);
@@ -331,7 +332,8 @@
       const yp = val("youPos", t);
       star.update(t, (p, tt, i) => { if (i === 1) { if (!yp) { p.hidden = true; return; } p.hidden = false; p.x = yp[0]; p.y = yp[1]; p.z = yp[2]; p.rot = num("youRot", t, 0); p.mode = val("youMode", t) || "idle"; p.face = Math.round(num("youFace", t, 0)); return; }
         if (!sp) { p.hidden = true; return; } p.hidden = false; p.x = sp[0]; p.y = sp[1]; p.z = sp[2]; p.rot = num("starRot", t, 0); p.mode = val("starMode", t) || "selfie"; p.face = Math.round(num("starFace", t, 7)); });
-      starGlit.visible = !!sp && Math.sin(t * 13) > -0.3; if (sp) { const a = starGlit.geometry.attributes.position.array; let last = null;
+      starGlit.visible = !!sp; if (sp) { const a = starGlit.geometry.attributes.position.array; let last = null; const ca = starGlit.geometry.attributes.color.array;
+        glitPh.forEach(([ph, sp2], i) => { const b = 0.35 + 0.65 * Math.pow(Math.max(0, Math.sin(t * sp2 + ph)), 3); ca[i * 3] = ca[i * 3 + 1] = ca[i * 3 + 2] = b; }); starGlit.geometry.attributes.color.needsUpdate = true;
         glitLoc.forEach((l, i) => { if (l[0] !== last) { star.meshes[l[0]].getMatrixAt(0, tm); last = l[0]; } tv.set(l[1], l[2], l[3]).applyMatrix4(tm); a[i * 3] = tv.x; a[i * 3 + 1] = tv.y; a[i * 3 + 2] = tv.z; }); starGlit.geometry.attributes.position.needsUpdate = true;
         star.meshes.torso.getMatrixAt(0, tm); lapels.forEach((l) => { l.visible = true; l.matrix.copy(tm); }); starFill.position.copy(new THREE.Vector3(0, 0.75, 0.9).applyMatrix4(tm)); } else lapels.forEach((l) => { l.visible = false; });
       starFill.intensity = sp ? 1.1 : 0;

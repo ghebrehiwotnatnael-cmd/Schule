@@ -79,10 +79,10 @@ def build(v):
     v.key(0, 0, **mix(DAY, glass=1.0, starPos=STAR, starRot=3.1416, starMode="idle", starFace=7.0, youPos=[0, -60, 0],
                      dof=0.12, focus=6.0, fov=58, shake=0.0))
     v.hands(0, "hidden", 0, item="none")
-    v.path(0, 6.0, [[6.5, EYE + 0.3, -18.0], [4.6, EYE, -21.5]], [[2.0, D + 3.0, -70], [2.5, D - 8, -220]])
+    v.path(0, 6.0, [[6.5, EYE + 0.3, -18.0], [4.6, EYE, -21.5]], [[-4.5, D + 3.0, -70], [-16.0, D - 8, -220]])
     v.key(3.0, 0.8, starMode="selfie", starFace=7.0, starRot=0.0)
     v.key(5.6, 0.6, starMode="idle", starRot=3.1416)
-    v.path(6.0, 9.0, [[4.6, EYE, -21.5], [3.6, EYE, -23.6]], [[2.5, D - 8, -220], [3.0, D - 14, -200]])
+    v.path(6.0, 9.0, [[4.6, EYE, -21.5], [3.6, EYE, -23.6]], [[-16.0, D - 8, -220], [3.0, D - 14, -200]])
     v.key(6.0, 3.0, focus=5.0, dof=0.16)
     v.bigcount(6.0, 9.0, "ALL GLASS DISAPPEARS IN", 3, 0)
     # ================= B (9-19): the glass is gone, he tips, you grab him, time slows
