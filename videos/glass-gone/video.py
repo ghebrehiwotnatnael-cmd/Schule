@@ -30,7 +30,7 @@ CAPTIONS = [
     (16.8, 19.6, "Every window in the city: gone."),
     (20.0, 23.0, "Wind rips through the offices."),
     (23.4, 26.4, "A blizzard of paper."),
-    (26.8, 29.8, "Cars without windshields."),
+    (27.6, 30.2, "Cars without windshields."),
     (30.4, 33.2, "Shop windows, wide open."),
     (33.6, 36.6, "The aquarium has no front."),
     (37.2, 40.2, "Fiber cables are glass too."),
@@ -99,9 +99,9 @@ def build(v):
     v.key(9.01, 1.4, camPos=[3.3, EYE - 0.25, -25.6], camLook=[3.0, D + 0.7, -29.0])
     v.hands(10.2, "grab", 0.35)
     hit(v, 11.2, 0.4, 0.2, "impact-bass-2", 0.6)
-    v.key(11.2, 2.2, camLook=[3.0, D - 25, -60])
+    v.key(11.2, 2.2, camLook=[3.0, D + 0.6, -29.4])
     v.key(12.0, 1.5, starPos=[3.0, D, -27.6])
-    v.key(13.5, 0, starMode="kneel", starFace=3.0)
+    v.key(13.5, 0, starMode="cry", starFace=5.0)
     # pull out of your body: wide shot of both of you at the open edge, then off the deck
     v.key(13.5, 0, youPos=[3.1, D, -25.6], youRot=3.1416, youMode="hug", youFace=3.0, camPos=[4.0, D + 2.4, -31.5], camLook=[3.0, D + 0.8, -26.4], fov=56)
     v.hands(13.5, "hidden", 0)
@@ -111,19 +111,23 @@ def build(v):
     v.key(15.01, 34.0, paperT=4.5, lin=True)
     v.sfx(m + "paper", 16.0, 0.5)
     hit(v, 16.8, 0.25, 0.25, "whoosh", 0.4)
-    # ================= C (19-30): dive down the north facade, paper storm, down to the cars
-    v.path(19.0, 30.0, [[14.0, D + 4.0, -44.0], [14, 180, -52], [10, 100, -48], [6, 34, -48], [12, 3.0, -40]],
-           [[0, D - 30, -26], [0, 140, -26], [0, 60, -26], [-20, 14, -36], [-60, 1.5, -40]])
+    # ================= C (19-30.4): down the north facade, the paper storm over the city, a taxi without windshield
+    v.path(19.0, 23.0, [[14.0, D + 4.0, -44.0], [15.0, 165, -57]], [[3.0, D + 0.4, -26.6], [-220, 120, -300]])
     v.key(19.0, 0, dof=0.0, fov=62)
+    v.path(23.0, 27.5, [[15.0, 165, -57], [10, 60, -52], [-4, 2.4, -39.5]], [[-220, 120, -300], [-150, 30, -120], [-30, 1.5, -43]])
     hit(v, 23.4, 0.2, 0.25, "whoosh", 0.4)
     v.key(26.0, 0, carsMove=0.15)
-    hit(v, 26.8, 0.3, 0.3, "impact-bass-1", 0.45)
-    # ================= D (30-37): street level: shop windows, the aquarium bursts
-    v.path(30.0, 37.0, [[12, 3.0, -40], [-40, 1.8, -44], [-62, 1.6, -45]], [[-60, 1.5, -40], [-68, 1.6, -31], [-68, 1.2, -31]])
-    v.key(30.0, 2.0, dof=0.25, focus=12.0)
+    v.path(27.5, 30.4, [[-4, 2.4, -39.5], [-16, 1.9, -40.6], [-22, 1.75, -41.2]], [[-30, 1.5, -43], [-24, 1.3, -43.2], [-24.6, 1.15, -43.6]])
+    v.key(27.5, 1.0, dof=0.22, focus=3.0)
+    hit(v, 27.6, 0.3, 0.3, "impact-bass-1", 0.45)
+    # ================= D (30.4-37): shop windows wide open, the aquarium bursts
+    v.path(30.4, 33.6, [[-22, 1.75, -41.2], [-50, 1.8, -37.5], [-64, 1.6, -36.2]], [[-30, 1.6, -30], [-60, 1.8, -28], [-68, 1.4, -31]])
+    v.key(30.4, 1.0, focus=7.0, dof=0.18)
     v.key(33.4, 0, aquaBurst=33.6)
     hit(v, 33.6, 0.45, 0.4, m + "splash", 0.9)
-    v.key(33.6, 1.5, focus=9.0)
+    v.key(33.6, 0, camPos=[-65.6, 1.5, -36.0], camLook=[-68, 1.2, -31])
+    v.key(33.61, 3.4, camPos=[-64.6, 1.8, -38.6], camLook=[-68, 0.6, -32.5])
+    v.key(33.6, 1.5, focus=5.5)
     # ================= E (37-44.5): the globe: every fiber cable goes dark
     v.key(37.0, 0, set="space", earthSun=1.0, earthLights=0.5, earthIce=0.0, earthTilt=0.3, earthRot=-0.9, spaceFov=40, spaceCam=[0, 8, 30],
           cables=0.0, cableDim=0.0, dof=0.0, bloom=0.6, chroma=0.0, shake=0.0)
@@ -133,7 +137,7 @@ def build(v):
     hit(v, 40.6, 0.15, 0.3, m + "powerdown", 0.8)
     v.sfx("whoosh", 36.85, 0.35)
     # ================= F (44.5-58): back on the deck: the glass returns, a pigeon in a window
-    v.key(44.5, 0, **mix(DAY, set="nyc", glass=0.0, paper=0.6, tourMood="panic", starPos=[3.0, D, -27.2], starRot=0.0, starMode="kneel", starFace=3.0,
+    v.key(44.5, 0, **mix(DAY, set="nyc", glass=0.0, paper=0.6, tourMood="panic", starPos=[3.0, D, -27.2], starRot=0.0, starMode="cry", starFace=5.0,
                          youPos=[3.1, D, -25.4], youRot=3.1416, youMode="hug", youFace=3.0, dof=0.25, focus=6.0, fov=56))
     v.key(44.5, 0, camPos=[-5.0, D + 2.4, -36.5], camLook=[3.0, D + 1.0, -26.4])
     v.key(44.51, 6.5, camPos=[-3.0, D + 2.0, -34.0])
@@ -146,15 +150,19 @@ def build(v):
     # pigeon close-up on the tower facade
     v.key(51.0, 0, camPos=[5.6, 60.4, -29.9], camLook=[5.0, 60.1, -28.0], pigeonPos=[5.0, 60.0, -28.05], pigeonRot=3.1416, pigeonFlap=0.0,
           dof=0.35, focus=1.9, fov=50, tourMood="relief")
-    v.key(51.01, 7.0, camPos=[5.3, 60.3, -29.4])
-    v.sfx(m + "pigeon", 54.6, 0.8)
-    v.key(54.6, 0.08, shake=0.25)
-    v.key(54.7, 0.6, shake=0.0)
+    v.key(51.01, 4.5, camPos=[5.3, 60.3, -29.4])
+    v.sfx(m + "pigeon", 53.6, 0.8)
+    v.key(53.6, 0.08, shake=0.25)
+    v.key(53.7, 0.6, shake=0.0)
     v.sfx("whoosh", 50.85, 0.3)
-    # ================= G (58-74): the twist, looking down 330 m
-    v.key(58.0, 0, camPos=[3.0, EYE + 0.2, -30.2], camLook=[3.0, 0, -62], pigeonPos=[0, -500, 0], dof=0.0, fov=62, starPos=[5.4, D, -26.8], starRot=-0.5, starMode="cheer",
-          youPos=[0, -60, 0], tourMood="calm")
-    v.key(58.01, 16.0, camPos=[3.0, EYE + 0.5, -30.8], camLook=[3.0, 0, -80])
+    # relief on the deck
+    v.key(55.5, 0, camPos=[-4.5, D + 2.0, -33.8], camLook=[3.0, D + 1.1, -26.4], dof=0.2, focus=8.0, fov=56, starMode="hug", starFace=7.0, youMode="hug", youFace=7.0)
+    v.key(55.51, 2.5, camPos=[-3.6, D + 2.2, -33.0])
+    v.sfx("whoosh", 55.35, 0.25)
+    # ================= G (58-74): the twist: pull back and up from the deck over Manhattan
+    v.key(58.0, 0, camPos=[3.0, D + 2.6, -19.0], camLook=[3.0, D + 0.6, -60.0], pigeonPos=[0, -500, 0], dof=0.0, fov=60, tourMood="calm",
+          starPos=[3.6, D, -27.0], starRot=3.1416, starMode="idle", youPos=[2.4, D, -27.0], youRot=3.1416, youMode="idle")
+    v.path(58.0, 74.0, [[3.0, D + 2.6, -19.0], [6, D + 40, 40], [12, D + 150, 140]], [[3.0, D + 0.6, -60.0], [0, D - 30, -200], [0, D - 120, -520]])
     v.sfx("whoosh", 57.85, 0.3)
     v.key(65.2, 0.1, crack=1.0, shake=0.6, chroma=0.5)
     v.key(65.4, 1.4, shake=0.12, chroma=0.0)
