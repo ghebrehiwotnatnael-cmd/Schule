@@ -770,6 +770,7 @@ window.WI_BLOCKY = function (WI) {
     const lapMat = new THREE.MeshStandardMaterial({ color: C("#8e0a1e"), roughness: 0.4, metalness: 0.2 });
     const lapels = [-1, 1].map((sd) => { const g = new THREE.Group(); const m = new THREE.Mesh(new THREE.BoxGeometry(0.09, 0.42, 0.02), lapMat); m.position.set(sd * 0.115, 0.36, 0.142); m.rotation.z = sd * 0.32; g.add(m); g.matrixAutoUpdate = false; scene.add(g); return g; });
     const starFill = new THREE.PointLight(0xffe2cc, 1.1, 3.2, 2); add(starFill);
+    const starBack = new THREE.PointLight(0xdfe8ff, 1.0, 3.0, 2); add(starBack);   // soft rim from behind so his head/afro never turn into a black block when seen from the back
 
     // ================================================================ paper storm out of the open windows
     const NP = 4400; const nearB = blds.filter((b) => Math.hypot(b.x + 60, b.z + 160) < 300 && b.h > 40 && !(b.x === 0 && b.z === 0)); const paperGeo = new THREE.PlaneGeometry(0.8, 1.1); const paper = add(new THREE.InstancedMesh(paperGeo, new THREE.MeshStandardMaterial({ color: 0xf6f4ee, side: THREE.DoubleSide, roughness: 0.8 }), NP));
@@ -818,8 +819,8 @@ window.WI_BLOCKY = function (WI) {
       starGlit.visible = !!sp; if (sp) { const a = starGlit.geometry.attributes.position.array; let last = null; const ca = starGlit.geometry.attributes.color.array;
         glitPh.forEach(([ph, sp2], i) => { const b = 0.35 + 0.65 * Math.pow(Math.max(0, Math.sin(t * sp2 + ph)), 3); ca[i * 3] = ca[i * 3 + 1] = ca[i * 3 + 2] = b; }); starGlit.geometry.attributes.color.needsUpdate = true;
         glitLoc.forEach((l, i) => { if (l[0] !== last) { star.meshes[l[0]].getMatrixAt(0, tm); last = l[0]; } tv.set(l[1], l[2], l[3]).applyMatrix4(tm); a[i * 3] = tv.x; a[i * 3 + 1] = tv.y; a[i * 3 + 2] = tv.z; }); starGlit.geometry.attributes.position.needsUpdate = true;
-        star.meshes.torso.getMatrixAt(0, tm); lapels.forEach((l) => { l.visible = true; l.matrix.copy(tm); }); starFill.position.copy(new THREE.Vector3(0, 0.75, 0.9).applyMatrix4(tm)); } else lapels.forEach((l) => { l.visible = false; });
-      starFill.intensity = sp ? 1.1 : 0;
+        star.meshes.torso.getMatrixAt(0, tm); lapels.forEach((l) => { l.visible = true; l.matrix.copy(tm); }); starFill.position.copy(new THREE.Vector3(0, 0.75, 0.9).applyMatrix4(tm)); star.meshes.head.getMatrixAt(0, tm); starBack.position.copy(new THREE.Vector3(0, 0.45, -1.1).applyMatrix4(tm)); } else lapels.forEach((l) => { l.visible = false; });
+      starFill.intensity = sp ? 1.1 : 0; starBack.intensity = sp ? 1.0 : 0;
       // paper storm
       const pk = num("paper", t); paper.visible = pk > 0.01; if (paper.visible) { const pt = num("paperT", t, 0); const E = new THREE.Euler();
         paperSeed.forEach((p, i) => { if (p.air) { const k = pt; V.set(p.air[0] + k * p.sp * 1.6 + Math.sin(p.ph + k * 1.3) * 1.5, p.air[1] + Math.sin(p.ph * 2 + k) * 1.2 - k * 0.4, p.air[2] + Math.cos(p.ph + k * 0.9) * 1.5);
