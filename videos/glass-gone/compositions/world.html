@@ -712,7 +712,7 @@ window.WI_BLOCKY = function (WI) {
       const roofT = new THREE.Mesh(new THREE.BoxGeometry(1.66, 0.08, 2.0), yel); roofT.position.set(0, 1.66, -0.2); taxi.add(roofT);
       const sign = new THREE.Mesh(new THREE.BoxGeometry(0.7, 0.22, 0.28), MK.std(C("#fff6d0"), { emissive: C("#ffe9a0"), emissiveIntensity: 0.4 })); sign.position.set(0, 1.81, -0.2); taxi.add(sign);
       [[-0.8, 0.85], [0.8, 0.85], [-0.8, -1.25], [0.8, -1.25]].forEach(([x, z]) => { const p2 = new THREE.Mesh(new THREE.BoxGeometry(0.07, 0.66, 0.07), blk); p2.position.set(x, 1.33, z); taxi.add(p2); });
-      [[0, 1.2, 0.0], [0, 1.2, -1.2]].forEach(([x, y, z]) => { const st = new THREE.Mesh(new THREE.BoxGeometry(1.5, 0.55, 0.5), seat); st.position.set(x, y, z); taxi.add(st); });
+      [[0, 1.2, -1.25]].forEach(([x, y, z]) => { const st = new THREE.Mesh(new THREE.BoxGeometry(1.5, 0.55, 0.5), seat); st.position.set(x, y, z); taxi.add(st); });
       const wheel = new THREE.Mesh(new THREE.TorusGeometry(0.16, 0.04, 6, 14), blk); wheel.position.set(-0.4, 1.35, 0.55); wheel.rotation.x = -0.5; taxi.add(wheel);
       [[-0.95, 1.5], [0.95, 1.5], [-0.95, -1.5], [0.95, -1.5]].forEach(([x, z]) => { const w2 = new THREE.Mesh(new THREE.CylinderGeometry(0.34, 0.34, 0.25, 14), blk); w2.rotation.z = Math.PI / 2; w2.position.set(x, 0.34, z); taxi.add(w2); });
       taxi.traverse((o) => { if (o.isMesh) o.castShadow = true; }); }
@@ -771,10 +771,11 @@ window.WI_BLOCKY = function (WI) {
     const starFill = new THREE.PointLight(0xffe2cc, 1.1, 3.2, 2); add(starFill);
 
     // ================================================================ paper storm out of the open windows
-    const NP = 2600; const paperGeo = new THREE.PlaneGeometry(0.55, 0.75); const paper = add(new THREE.InstancedMesh(paperGeo, new THREE.MeshStandardMaterial({ color: 0xf6f4ee, side: THREE.DoubleSide, roughness: 0.8 }), NP));
-    paper.frustumCulled = false; const paperSeed = Array.from({ length: NP }, () => { const b = blds[Math.floor(R() * blds.length)]; const face = Math.floor(R() * 4);
-      return { b, face, u: rr(-0.45, 0.45), y: b.base + rr(6, b.h - 2), sp: rr(3, 8), up: rr(-1, 2), ph: R() * 6.28, rs: rr(1, 5) }; });
-    const towerB = blds.find((b) => b.x === 0 && b.z === 0 && b.w === TW); const nearPaper = paperSeed.slice(0, 1700); nearPaper.forEach((p, i) => { p.b = towerB; p.face = i % 5 === 0 ? 0 : 3; p.y = rr(4, deckY - 3); p.sp = rr(4, 11); });
+    const NP = 4400; const nearB = blds.filter((b) => Math.hypot(b.x + 60, b.z + 160) < 300 && b.h > 40 && !(b.x === 0 && b.z === 0)); const paperGeo = new THREE.PlaneGeometry(0.8, 1.1); const paper = add(new THREE.InstancedMesh(paperGeo, new THREE.MeshStandardMaterial({ color: 0xf6f4ee, side: THREE.DoubleSide, roughness: 0.8 }), NP));
+    paper.frustumCulled = false; const paperSeed = Array.from({ length: NP }, () => { const b = nearB[Math.floor(R() * nearB.length)]; const face = Math.floor(R() * 4);
+      return { b, face, u: rr(-0.45, 0.45), y: b.base + rr(6, b.h - 2), sp: rr(6, 16), up: rr(-1, 2), ph: R() * 6.28, rs: rr(1, 5) }; });
+    paperSeed.slice(2600).forEach((p) => { p.air = [rr(-160, 60), rr(4, 255), rr(-230, -36)]; p.sp = rr(2, 5); });
+    const towerB = blds.find((b) => b.x === 0 && b.z === 0 && b.w === TW); const nearPaper = paperSeed.slice(0, 1100); nearPaper.forEach((p, i) => { p.b = towerB; p.face = i % 5 === 0 ? 0 : 3; p.y = rr(4, deckY - 3); p.sp = rr(4, 11); });
 
     // ================================================================ street level: restaurant with a big aquarium window, a pigeon
     const SX = 0, SZ = TZ / 2 - 30 + 0;       // street-level hero spot: south side of the tower block, on the sidewalk at z ~ 34
@@ -797,7 +798,7 @@ window.WI_BLOCKY = function (WI) {
       const gl = num("glass", t, 1); fU.uGlass.value = gl; fU.uLit.value = num("windowsLit", t, 0.35); fU.uSkyT.value.copy(col("skyTop", t)); fU.uSkyH.value.copy(col("skyHorizon", t));
       const sd = val("sunDir", t) || [0.3, 0.5, 0.4]; fU.uSun.value.set(sd[0], sd[1], sd[2]); fU.uDay.value = 1;
       rails.forEach((r) => { r.visible = gl > 0.5; }); taxiGlass.visible = gl > 0.5;
-      driver.update(t, (p) => { const wpos = new THREE.Vector3(-0.42, 0.55, 0.05).applyAxisAngle(new THREE.Vector3(0, 1, 0), taxi.rotation.y).add(taxi.position); p.x = wpos.x; p.y = wpos.y; p.z = wpos.z; p.rot = taxi.rotation.y; p.mode = gl > 0.5 ? "sit" : "sit"; p.face = gl > 0.5 ? 1 : 3; }); cabMat.opacity = 0.85 * gl; cab.visible = gl > 0.02; aquaGlass.visible = gl > 0.5;
+      driver.update(t, (p) => { const wpos = new THREE.Vector3(-0.42, 0.62, 0.15).applyAxisAngle(new THREE.Vector3(0, 1, 0), taxi.rotation.y).add(taxi.position); p.x = wpos.x; p.y = wpos.y; p.z = wpos.z; p.rot = taxi.rotation.y; p.mode = gl > 0.5 ? "sit" : "sit"; p.face = gl > 0.5 ? 1 : 3; }); cabMat.opacity = 0.85 * gl; cab.visible = gl > 0.02; aquaGlass.visible = gl > 0.5;
       // cars
       const mv = num("carsMove", t, 1); const M4 = new THREE.Matrix4(), Q = new THREE.Quaternion(), V = new THREE.Vector3(), S = new THREE.Vector3(1, 1, 1), Y = new THREE.Vector3(0, 1, 0);
       carM.forEach((c, i) => { const along = c.v * mv * t; let x = c.x, z = c.z; if (c.r === 0) z = c.z + ((along % TZ) + TZ) % TZ - TZ / 2 * 0; else x = c.x + along % 60;
@@ -819,7 +820,9 @@ window.WI_BLOCKY = function (WI) {
       starFill.intensity = sp ? 1.1 : 0;
       // paper storm
       const pk = num("paper", t); paper.visible = pk > 0.01; if (paper.visible) { const pt = num("paperT", t, 0); const E = new THREE.Euler();
-        paperSeed.forEach((p, i) => { const b = p.b; const nx = [1, -1, 0, 0][p.face], nz = [0, 0, 1, -1][p.face]; const fx = b.x + nx * (b.w / 2) + (nz ? p.u * b.w : 0), fz = b.z + nz * (b.d / 2) + (nx ? p.u * b.d : 0);
+        paperSeed.forEach((p, i) => { if (p.air) { const k = pt; V.set(p.air[0] + k * p.sp * 1.6 + Math.sin(p.ph + k * 1.3) * 1.5, p.air[1] + Math.sin(p.ph * 2 + k) * 1.2 - k * 0.4, p.air[2] + Math.cos(p.ph + k * 0.9) * 1.5);
+            E.set(p.ph + k * p.rs, p.ph * 2 + k * p.rs * 0.7, k * p.rs * 0.5); Q.setFromEuler(E); const sc = pk * clamp01(k * 2); M4.compose(V, Q, S.set(sc, sc, sc)); paper.setMatrixAt(i, M4); return; }
+          const b = p.b; const nx = [1, -1, 0, 0][p.face], nz = [0, 0, 1, -1][p.face]; const fx = b.x + nx * (b.w / 2) + (nz ? p.u * b.w : 0), fz = b.z + nz * (b.d / 2) + (nx ? p.u * b.d : 0);
           const k = Math.max(0, pt - (i % 30) * 0.05); const dist = k * p.sp; V.set(fx + nx * dist + Math.sin(p.ph + k * 2) * 0.6 + k * 1.2, p.y + k * p.up - k * k * 0.15, fz + nz * dist + Math.cos(p.ph + k) * 0.6);
           E.set(p.ph + k * p.rs, p.ph * 2 + k * p.rs * 0.7, k * p.rs * 0.5); Q.setFromEuler(E); const sc = k > 0 ? Math.min(1, pk * 1.5) : 0; M4.compose(V, Q, S.set(sc, sc, sc)); paper.setMatrixAt(i, M4); }); paper.instanceMatrix.needsUpdate = true; }
       // aquarium
