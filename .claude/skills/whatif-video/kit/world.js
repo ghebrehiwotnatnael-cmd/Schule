@@ -23,7 +23,7 @@
       float coc(vec2 uv){ float z = lin(texture2D(tDepth, uv).x); return clamp(abs(z - focus) / max(z, 0.001) * amount, 0.0, 1.0); }
       void main(){ vec4 base = texture2D(tColor, vUv); if (amount <= 0.0) { gl_FragColor = vec4(base.rgb, opacity); return; }
         float c = coc(vUv); vec3 acc = base.rgb; float wsum = 1.0;
-        for (int i = 0; i < 24; i++) { float a = float(i) * 2.399; float r = sqrt(float(i) / 24.0) * c * 0.022;
+        for (int i = 0; i < 16; i++) { float a = float(i) * 2.399; float r = sqrt(float(i) / 16.0) * c * 0.022;
           vec2 o = vec2(cos(a) / aspect, sin(a)) * r * vec2(aspect, 1.0) * vec2(1.0/aspect, 1.0);
           vec2 uv = vUv + vec2(cos(a), sin(a) * aspect) * r;
           float cw = max(coc(uv), c * 0.5); acc += texture2D(tColor, uv).rgb * cw; wsum += cw; }
@@ -545,7 +545,7 @@
         iss.position.copy(issDir).multiplyScalar(hgt); iss.lookAt(0, 0, 0); iss.rotateX(Math.PI / 2); iss.rotation.z += t * 0.05; const top = issDir.clone().multiplyScalar(10.63);
         issTrail.position.copy(top.clone().add(iss.position).multiplyScalar(0.5)); issTrail.scale.set(1, Math.max(0.001, dr * 0.12), 1); issTrail.lookAt(0, 0, 0); issTrail.rotateX(Math.PI / 2); } shockU.ang.value = num("shock", t); shockU.k.value = num("shockI", t); shock.visible = shockU.k.value > 0.01;
       const cb = num("cables", t), cc = num("cableCut", t); cableGroup.visible = cb > 0.001; if (cableGroup.visible) cables.forEach((m, i) => { const idx = m.geometry.index.count; m.geometry.setDrawRange(0, Math.floor(idx * Math.min(1, Math.max(0, cb * 1.6 - (i % 5) * 0.12)) / 3) * 3);
-        const blink = Math.sin(t * 14) > 0 ? 1 : 0.15; if (m.userData.tonga && cc > 0.01) { m.material.color.setHex(0xff3b30); m.material.opacity = cb * (0.4 + 0.6 * blink); } else { m.material.color.setHex(0x5ff3ff); m.material.opacity = cb * (0.75 + 0.25 * Math.sin(t * 3 + i)); } });
+        const blink = Math.sin(t * 14) > 0 ? 1 : 0.15; if (m.userData.tonga && cc > 0.01) { m.material.color.setHex(0xff3b30); m.material.opacity = cb * (0.4 + 0.6 * blink); } else { m.material.color.setHex(0x5ff3ff); m.material.opacity = cb * (0.75 + 0.25 * Math.sin(t * 3 + i)) * (1 - clamp01(num("cableDim", t) * 1.6 - (i % 7) * 0.09)); } });
       tongaPulse.material.opacity = cc * (0.5 + 0.5 * Math.sin(t * 7)); tongaPulse.scale.setScalar(0.2 + cc * (0.45 + 0.2 * Math.sin(t * 7))); clouds.rotation.y = earth.rotation.y + t * 0.01;
       earthU.sun.value = num("earthSun", t, 1); earthU.lights.value = num("earthLights", t, 1); earthU.ice.value = num("earthIce", t);
       clouds.material.opacity = 0.5 * num("earthSun", t, 1) + 0.08; spaceLight.intensity = num("earthSun", t, 1);

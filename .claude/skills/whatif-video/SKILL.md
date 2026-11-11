@@ -123,6 +123,14 @@ Models live in `kit/models/` (gitignored, fetch with `python3 kit/tools/fetch_mo
       check previews at full size before the final render.
     - **Attention span**: spectacular first frame, a new escalation beat every 3-4 s (number jumps, effect, camera
       punch-in/whip, speed ramp), a sound hit on every beat, the widget never stands still, the end loops into the start.
+  - (approved 2026-11-11, after a frame-by-frame analysis of all 14 reference videos) **Reference-grade look and sound**:
+    - **Facades with real detail**: brick/stone/glass facades with window frames, sashes, cornices, storefronts with awnings,
+      fire escapes, water towers, offices visible behind the windows (interior mapping); aerial haze so far buildings fade.
+    - **Natural colours**: reference saturation is ~0.2-0.43 (ours was 0.43-0.76): soft sun, real shadows, filmic grade
+      (saturation ~1.0-1.1, no plastic over-saturation), still rich and never pale or dark.
+    - **Dynamic sound**: integrated loudness ~-16 LUFS with a wide range (LRA 9-17): quiet start, build, a hard sound hit at
+      every turning point (5-10 per minute), near silence at the very end.  Motion and cuts front-loaded (fastest in the first half).
+    - **Delivery**: ~8 Mbit/s H.264 (crf 18) so more detail survives TikTok's re-encode.
   - **Text and ending**: captions of at most ~6 words, a hard closing line that hits the viewer personally, a plain
     black end card with just the title, TikTok caption phrased as a direct question to the viewer.
 

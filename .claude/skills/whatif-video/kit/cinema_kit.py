@@ -40,6 +40,7 @@ POSES = {
     "warm": ([0.06, -0.11, -0.4, 1.25, 0.0, 0.3], [0.06, -0.11, -0.4, 1.25, 0.0, 0.3]),        # palms forward, cold
     "reach": ([0.06, -0.1, -0.46, 0.75, 0.0, 0.05], HIDDEN),              # reaching out, palm up
     "torch": ([0.075, -0.14, -0.42, 0.7, 0.0, 0.08], HIDDEN),            # phone flashlight pointed forward
+    "grab": ([0.07, -0.09, -0.52, 0.25, 0.0, 0.25], [0.07, -0.09, -0.52, 0.25, 0.0, -0.1]),   # both hands forward, grabbing someone
 }
 
 

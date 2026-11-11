@@ -1,0 +1,63 @@
+<template>
+<style>
+@font-face{font-family:"WI Serif";src:url("assets/fonts/spectral-400-normal.woff2") format("woff2");font-weight:400}
+@font-face{font-family:"WI Serif";src:url("assets/fonts/spectral-500-normal.woff2") format("woff2");font-weight:500}
+@font-face{font-family:"WI Serif";src:url("assets/fonts/spectral-400-italic.woff2") format("woff2");font-weight:400;font-style:italic}
+#root{position:absolute;inset:0;pointer-events:none;}
+.cap{position:absolute;left:0;top:1236px;width:1080px;height:200px;text-align:center;}
+.cap-in{display:inline-block;max-width:930px;font:italic 400 46px/1.25 "WI Serif";color:#fff;
+  text-shadow:0 2px 14px rgba(0,0,0,.7),0 1px 3px rgba(0,0,0,.8);}
+</style>
+<div id="root" data-composition-id="captions" data-width="1080" data-height="1920">
+<div id="cap-0" class="clip cap" data-start="3.4" data-duration="2.4" data-track-index="0"><div class="cap-in">New York. 250 metres up.</div></div>
+<div id="cap-1" class="clip cap" data-start="6.0" data-duration="2.8" data-track-index="0"><div class="cap-in">He leans on the glass.</div></div>
+<div id="cap-2" class="clip cap" data-start="9.2" data-duration="1.8" data-track-index="0"><div class="cap-in">The railing is gone.</div></div>
+<div id="cap-3" class="clip cap" data-start="11.2" data-duration="2.2" data-track-index="0"><div class="cap-in">You grab his arm.</div></div>
+<div id="cap-4" class="clip cap" data-start="13.8" data-duration="2.6" data-track-index="0"><div class="cap-in">Time slows down 8x.</div></div>
+<div id="cap-5" class="clip cap" data-start="16.8" data-duration="2.8" data-track-index="0"><div class="cap-in">Every window in the city: gone.</div></div>
+<div id="cap-6" class="clip cap" data-start="20.0" data-duration="3.0" data-track-index="0"><div class="cap-in">Wind rips through the offices.</div></div>
+<div id="cap-7" class="clip cap" data-start="23.4" data-duration="3.0" data-track-index="0"><div class="cap-in">A blizzard of paper.</div></div>
+<div id="cap-8" class="clip cap" data-start="26.8" data-duration="3.0" data-track-index="0"><div class="cap-in">Cars without windshields.</div></div>
+<div id="cap-9" class="clip cap" data-start="30.4" data-duration="2.8" data-track-index="0"><div class="cap-in">Shop windows, wide open.</div></div>
+<div id="cap-10" class="clip cap" data-start="33.6" data-duration="3.0" data-track-index="0"><div class="cap-in">The aquarium has no front.</div></div>
+<div id="cap-11" class="clip cap" data-start="37.2" data-duration="3.0" data-track-index="0"><div class="cap-in">Fiber cables are glass too.</div></div>
+<div id="cap-12" class="clip cap" data-start="40.6" data-duration="2.8" data-track-index="0"><div class="cap-in">The internet goes dark.</div></div>
+<div id="cap-13" class="clip cap" data-start="44.6" data-duration="2.8" data-track-index="0"><div class="cap-in">Then: 5 seconds are over.</div></div>
+<div id="cap-14" class="clip cap" data-start="47.8" data-duration="2.8" data-track-index="0"><div class="cap-in">Every pane comes back.</div></div>
+<div id="cap-15" class="clip cap" data-start="51.0" data-duration="3.0" data-track-index="0"><div class="cap-in">Exactly where it was.</div></div>
+<div id="cap-16" class="clip cap" data-start="54.4" data-duration="3.0" data-track-index="0"><div class="cap-in">Even if something was in the way.</div></div>
+<div id="cap-17" class="clip cap" data-start="58.4" data-duration="3.0" data-track-index="0"><div class="cap-in">Plot twist: glass is melted sand.</div></div>
+<div id="cap-18" class="clip cap" data-start="61.8" data-duration="3.0" data-track-index="0"><div class="cap-in">Silica: 60% of Earth&#x27;s crust.</div></div>
+<div id="cap-19" class="clip cap" data-start="65.2" data-duration="3.0" data-track-index="0"><div class="cap-in">If all of it vanished...</div></div>
+<div id="cap-20" class="clip cap" data-start="68.4" data-duration="2.2" data-track-index="0"><div class="cap-in">...so would the ground.</div></div>
+<div id="cap-21" class="clip cap" data-start="71.0" data-duration="3.0" data-track-index="0"><div class="cap-in">Would you have caught him?</div></div>
+</div>
+<script>
+(function(){
+const tl = gsap.timeline({paused:true,defaults:{lazy:false}});
+tl.fromTo("#cap-0 .cap-in",{opacity:0,y:8},{opacity:1,y:0,duration:.28,ease:"power2.out"},3.4);tl.to("#cap-0 .cap-in",{opacity:0,duration:.18},5.61);
+tl.fromTo("#cap-1 .cap-in",{opacity:0,y:8},{opacity:1,y:0,duration:.28,ease:"power2.out"},6.0);tl.to("#cap-1 .cap-in",{opacity:0,duration:.18},8.61);
+tl.fromTo("#cap-2 .cap-in",{opacity:0,y:8},{opacity:1,y:0,duration:.28,ease:"power2.out"},9.2);tl.to("#cap-2 .cap-in",{opacity:0,duration:.18},10.81);
+tl.fromTo("#cap-3 .cap-in",{opacity:0,y:8},{opacity:1,y:0,duration:.28,ease:"power2.out"},11.2);tl.to("#cap-3 .cap-in",{opacity:0,duration:.18},13.21);
+tl.fromTo("#cap-4 .cap-in",{opacity:0,y:8},{opacity:1,y:0,duration:.28,ease:"power2.out"},13.8);tl.to("#cap-4 .cap-in",{opacity:0,duration:.18},16.21);
+tl.fromTo("#cap-5 .cap-in",{opacity:0,y:8},{opacity:1,y:0,duration:.28,ease:"power2.out"},16.8);tl.to("#cap-5 .cap-in",{opacity:0,duration:.18},19.41);
+tl.fromTo("#cap-6 .cap-in",{opacity:0,y:8},{opacity:1,y:0,duration:.28,ease:"power2.out"},20.0);tl.to("#cap-6 .cap-in",{opacity:0,duration:.18},22.81);
+tl.fromTo("#cap-7 .cap-in",{opacity:0,y:8},{opacity:1,y:0,duration:.28,ease:"power2.out"},23.4);tl.to("#cap-7 .cap-in",{opacity:0,duration:.18},26.21);
+tl.fromTo("#cap-8 .cap-in",{opacity:0,y:8},{opacity:1,y:0,duration:.28,ease:"power2.out"},26.8);tl.to("#cap-8 .cap-in",{opacity:0,duration:.18},29.61);
+tl.fromTo("#cap-9 .cap-in",{opacity:0,y:8},{opacity:1,y:0,duration:.28,ease:"power2.out"},30.4);tl.to("#cap-9 .cap-in",{opacity:0,duration:.18},33.01);
+tl.fromTo("#cap-10 .cap-in",{opacity:0,y:8},{opacity:1,y:0,duration:.28,ease:"power2.out"},33.6);tl.to("#cap-10 .cap-in",{opacity:0,duration:.18},36.41);
+tl.fromTo("#cap-11 .cap-in",{opacity:0,y:8},{opacity:1,y:0,duration:.28,ease:"power2.out"},37.2);tl.to("#cap-11 .cap-in",{opacity:0,duration:.18},40.01);
+tl.fromTo("#cap-12 .cap-in",{opacity:0,y:8},{opacity:1,y:0,duration:.28,ease:"power2.out"},40.6);tl.to("#cap-12 .cap-in",{opacity:0,duration:.18},43.21);
+tl.fromTo("#cap-13 .cap-in",{opacity:0,y:8},{opacity:1,y:0,duration:.28,ease:"power2.out"},44.6);tl.to("#cap-13 .cap-in",{opacity:0,duration:.18},47.21);
+tl.fromTo("#cap-14 .cap-in",{opacity:0,y:8},{opacity:1,y:0,duration:.28,ease:"power2.out"},47.8);tl.to("#cap-14 .cap-in",{opacity:0,duration:.18},50.41);
+tl.fromTo("#cap-15 .cap-in",{opacity:0,y:8},{opacity:1,y:0,duration:.28,ease:"power2.out"},51.0);tl.to("#cap-15 .cap-in",{opacity:0,duration:.18},53.81);
+tl.fromTo("#cap-16 .cap-in",{opacity:0,y:8},{opacity:1,y:0,duration:.28,ease:"power2.out"},54.4);tl.to("#cap-16 .cap-in",{opacity:0,duration:.18},57.21);
+tl.fromTo("#cap-17 .cap-in",{opacity:0,y:8},{opacity:1,y:0,duration:.28,ease:"power2.out"},58.4);tl.to("#cap-17 .cap-in",{opacity:0,duration:.18},61.21);
+tl.fromTo("#cap-18 .cap-in",{opacity:0,y:8},{opacity:1,y:0,duration:.28,ease:"power2.out"},61.8);tl.to("#cap-18 .cap-in",{opacity:0,duration:.18},64.61);
+tl.fromTo("#cap-19 .cap-in",{opacity:0,y:8},{opacity:1,y:0,duration:.28,ease:"power2.out"},65.2);tl.to("#cap-19 .cap-in",{opacity:0,duration:.18},68.01);
+tl.fromTo("#cap-20 .cap-in",{opacity:0,y:8},{opacity:1,y:0,duration:.28,ease:"power2.out"},68.4);tl.to("#cap-20 .cap-in",{opacity:0,duration:.18},70.41);
+tl.fromTo("#cap-21 .cap-in",{opacity:0,y:8},{opacity:1,y:0,duration:.28,ease:"power2.out"},71.0);tl.to("#cap-21 .cap-in",{opacity:0,duration:.18},73.81);
+window.__timelines["captions"] = tl;
+})();
+</script>
+</template>

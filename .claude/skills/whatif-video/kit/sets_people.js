@@ -141,6 +141,8 @@ window.WI_BLOCKY = function (WI) {
           else if (m === "micstand") { aL = [-1.85, -0.35]; aR = [-0.25 + 0.1 * Math.sin(ph * 2), -0.25]; headY = 0.35 + Math.sin(ph * 1.3) * 0.1; headX = -0.12; lean = -0.04; }
           else if (m === "belt") { aR = [-2.3, -0.4]; aL = [-1.2, 1.6]; headX = -0.4; lean = -0.1; }
           else if (m === "jump") { const w = Math.max(0, Math.sin(ph * 6)); bodyY = w * 0.35; aL = [0, 2.6]; aR = [0, -2.6]; lL = -w * 0.3; lR = -w * 0.3; }
+          else if (m === "tip") { const w = Math.sin(ph * 9); lean = 0.55 + 0.06 * Math.sin(ph * 3); aL = [-2.2 + 0.6 * w, 0.7]; aR = [-2.2 - 0.6 * w, -0.7]; headX = -0.35; lL = -0.15; }
+          else if (m === "selfie") { aR = [-2.55, -0.35]; aL = [0.05 * Math.sin(ph * 1.3), 0.12]; headY = 0.25; headX = -0.15; }
           else if (m === "kneel") { lL = 1.35; lR = 1.3; bodyY = -0.5; aL = [-0.7, 0.12]; aR = [-0.7, -0.12]; lean = 0.25; headX = 0.25; }
           else if (m === "heavy") { bodyY = -0.08; lL = -0.25; lR = -0.2; aL = [0.15, 0.05]; aR = [0.15, -0.05]; lean = 0.38; headX = 0.35; }
           else if (m === "lieBed") { pitch = -Math.PI / 2; bodyY = 0.16; aL = [-0.3, 0.2]; aR = [-0.3, -0.2]; }
@@ -157,7 +159,7 @@ window.WI_BLOCKY = function (WI) {
           const shY = hip + 0.56 * cl, shZ = 0.56 * sl;
           put(M.armL, i, -0.3, shY, shZ, aL[0] + lean, 0, aL[1]);
           local(0.3, shY, shZ, aR[0] + lean, 0, aR[1]); M.armR.setMatrixAt(i, out);
-          if (p.phone || m === "phone" || m === "text" || m === "film" || m === "sing" || m === "belt") { tmp.copy(out).multiply(part.makeTranslation(0, -0.6, 0.08)); M.phone.setMatrixAt(i, tmp); } else M.phone.setMatrixAt(i, ZERO);
+          if (p.phone || m === "phone" || m === "text" || m === "film" || m === "sing" || m === "belt" || m === "selfie") { tmp.copy(out).multiply(part.makeTranslation(0, -0.6, 0.08)); M.phone.setMatrixAt(i, tmp); } else M.phone.setMatrixAt(i, ZERO);
           const nkY = hip + 0.61 * cl, nkZ = 0.61 * sl;
           put(M.head, i, 0, nkY, nkZ, headX + lean * 0.4, headY, 0); put(M.hair, i, 0, nkY, nkZ, headX + lean * 0.4, headY, 0);
           if (p.longHair && p.hair) put(M.hairBack, i, 0, nkY, nkZ, headX * 0.5 + lean * 0.4, headY, 0); else M.hairBack.setMatrixAt(i, ZERO);
