@@ -20,7 +20,8 @@ mod = importlib.util.module_from_spec(spec)
 spec.loader.exec_module(mod)
 v = ck.Cinema(vdir, mod)
 mod.build(v)
-FPS = 30
+FPS = int(os.environ.get("WP_FPS") or 30)
+PREVIEW = bool(os.environ.get("WP_PREVIEW"))   # fast low-res check of the whole video: own output + parts, index.html untouched
 dur = v.story_end
 frames = int(os.environ.get("WP_FRAMES") or round(dur * FPS))
 
@@ -44,7 +45,7 @@ libs = "".join(f'<script src="{H}/lib/{f}"></script>' for f in ["three147.min.js
 open(page, "w").write(f'''<html><body style="margin:0;background:#000"><canvas id="world-canvas" width="1080" height="1920" style="width:1080px;height:1920px"></canvas>
 {libs}<script>window.WI_SS={float(os.environ.get("WI_SS") or SS_DEFAULT)};window.WI_MSAA={int(os.environ.get("WI_MSAA") or 4)};window.WI_MODEL_BASE="{H}/models/";window.WI_HDRI_BASE="{H}/lib/hdri/";window.WI_TRACKS={json.dumps(v.tracks())};</script>
 <script>{js}</script></body></html>''')
-out = os.path.join(vdir, "build", "world.mp4")
+out = os.path.join(vdir, "build", "preview_world.mp4" if PREVIEW else "world.mp4")
 os.makedirs(os.path.dirname(out), exist_ok=True)
 runner = os.path.join(vdir, "build", "worldpass.js")
 open(runner, "w").write(r'''const { chromium } = require('playwright'); const { spawn } = require('child_process');
@@ -86,7 +87,7 @@ elif os.environ.get("WP_REUSE") and os.path.exists(out) and abs(_dur(out) - fram
 else:
     # resumable: render in chunks (build/world_parts/part_<start>.mp4), skip finished chunks, then join them losslessly
     CH = int(os.environ.get("WP_CHUNK") or 240)
-    pdir = os.path.join(vdir, "build", "world_parts"); os.makedirs(pdir, exist_ok=True)
+    pdir = os.path.join(vdir, "build", "preview_parts" if PREVIEW else "world_parts"); os.makedirs(pdir, exist_ok=True)
     parts = []
     for f0 in range(0, frames, CH):
         n = min(CH, frames - f0); part = os.path.join(pdir, f"part_{f0:05d}.mp4"); parts.append(part)
@@ -102,6 +103,8 @@ else:
     subprocess.run(["ffmpeg", "-v", "error", "-y", "-f", "concat", "-safe", "0", "-i", lst, "-c", "copy", out], check=True)
     if not os.path.exists(out):
         sys.exit("world pass failed")
+if PREVIEW:
+    print("preview world:", out); sys.exit(0)
 # point index.html at the rendered world video
 idx = os.path.join(vdir, "index.html")
 html = open(idx).read()

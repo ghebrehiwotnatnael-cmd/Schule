@@ -56,6 +56,7 @@ class Cinema:
         self.T = Timing(tp) if self.voice else None
         self.keys, self.widgets, self.sfx_list, self.no_caption, self.ambient_list = [], [], [], set(), []
         self.bigcounts = []
+        self.freezes, self.callouts = [], []
         self.caps = list(getattr(mod, "CAPTIONS", []))   # no-voice mode: [(t0, t1, text)]
         self.story_end = r3(self.T.voice_end + 0.6) if self.voice else r3(getattr(mod, "DURATION", 60))
         self.end_card = float(getattr(mod, "END_CARD", 4.0))
@@ -129,6 +130,18 @@ class Cinema:
         self.bigcounts.append(dict(t0=r3(t0), t1=r3(t1), label=label, n0=n0, n1=n1))
         return self
 
+    def freeze(self, t0, dur):
+        """freeze frame: the world holds the frame at t0 for dur seconds, then jumps on (overlays keep running)"""
+        self.freezes.append([r3(t0), r3(dur)])
+        return self
+
+    def callout(self, t0, t1, x, y, text, lx=None, ly=None, color="#ffe14d"):
+        """arrow from a label at (lx, ly) to the point (x, y) in 1080x1920 screen pixels, e.g. on a freeze frame"""
+        lx = x + 160 if lx is None else lx
+        ly = y - 260 if ly is None else ly
+        self.callouts.append(dict(t0=r3(t0), t1=r3(t1), x=x, y=y, lx=lx, ly=ly, text=text, color=color))
+        return self
+
     def sfx(self, name, t, vol=0.5):
         self.sfx_list.append((name, max(0.0, t), vol))
 
@@ -178,6 +191,7 @@ class Cinema:
                                  cur, props[prop]] + ([1] if props.get("__lin__") else []))
                     cur = props[prop]
             out[prop] = {"init": init, "segs": segs}
+        out["__freeze"] = sorted(self.freezes)
         return out
 
     # ------------------------------------------------ compositions
@@ -240,6 +254,7 @@ window.__timelines["title"] = tl;
         D = self.story_end
         segs = json.dumps(self.widgets)
         bcs = json.dumps(self.bigcounts)
+        cos = json.dumps(self.callouts)
         return f'''<template>
 <style>
 {FONTS}
@@ -255,6 +270,11 @@ window.__timelines["title"] = tl;
 <div id="root" data-composition-id="widget" data-width="1080" data-height="1920">
   <div id="wg"><div id="wg-label"></div><div id="wg-value"></div><div id="wg-sub"></div></div>
   <div id="bc"><div id="bc-label"></div><div id="bc-num"></div></div>
+  <svg id="co" width="1080" height="1920" viewBox="0 0 1080 1920" style="position:absolute;left:0;top:0;opacity:0" data-layout-allow-overflow>
+    <defs><marker id="co-h" markerWidth="10" markerHeight="10" refX="6" refY="5" orient="auto"><path d="M0,0 L10,5 L0,10 z" fill="#ffe14d"/></marker></defs>
+    <path id="co-p" d="" fill="none" stroke="#ffe14d" stroke-width="9" stroke-linecap="round" marker-end="url(#co-h)" style="filter:drop-shadow(0 2px 6px rgba(0,0,0,.6))"/>
+    <text id="co-t" x="0" y="0" text-anchor="middle" style="font:700 64px 'Inter';fill:#ffe14d;letter-spacing:2px;paint-order:stroke;stroke:rgba(0,0,0,.55);stroke-width:8px"></text>
+  </svg>
 </div>
 <script>
 (function(){{
@@ -273,6 +293,15 @@ function fmt(seg, t){{
   return seg.value;
 }}
 const BCS = {bcs};
+const COS = {cos};
+function renderCO(t){{
+  let c=null; for(const s of COS){{ if(s.t0<=t && t<s.t1) c=s; }}
+  const e=el("co"); if(!c){{ e.style.opacity=0; return; }}
+  const k=Math.min(1,(t-c.t0)/0.25); e.style.opacity=Math.min(1,(t-c.t0)/0.12,(c.t1-t)/0.15);
+  const sx=c.lx, sy=c.ly+24, ex=sx+(c.x-sx)*k, ey=sy+(c.y-sy)*k, mx=(sx+ex)/2+(ey-sy)*0.25, my=(sy+ey)/2-(ex-sx)*0.25;
+  el("co-p").setAttribute("d","M"+sx+","+sy+" Q"+mx+","+my+" "+ex+","+ey);
+  const tt=el("co-t"); tt.textContent=c.text; tt.setAttribute("x",c.lx); tt.setAttribute("y",c.ly); tt.style.fontSize=(64*(0.8+0.2*k))+"px";
+}}
 function renderBC(t){{
   let b=null; for(const s of BCS){{ if(s.t0<=t && t<s.t1) b=s; }}
   const e=el("bc"); if(!b){{ e.style.opacity=0; return; }}
@@ -282,7 +311,7 @@ function renderBC(t){{
   el("bc-num").style.transform="scale("+(1+0.18*Math.max(0,frac-0.8)*5)+")";
 }}
 function render(t){{
-  renderBC(t);
+  renderBC(t); renderCO(t);
   let seg=null; for(const s of S){{ if(s.t0<=t && t<s.t1) seg=s; }}
   const w=el("wg");
   if(!seg){{ w.style.opacity=0; return; }}

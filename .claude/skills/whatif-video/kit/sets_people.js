@@ -146,7 +146,17 @@ window.WI_BLOCKY = function (WI) {
           else if (m === "kneel") { lL = 1.35; lR = 1.3; bodyY = -0.5; aL = [-0.7, 0.12]; aR = [-0.7, -0.12]; lean = 0.25; headX = 0.25; }
           else if (m === "heavy") { bodyY = -0.08; lL = -0.25; lR = -0.2; aL = [0.15, 0.05]; aR = [0.15, -0.05]; lean = 0.38; headX = 0.35; }
           else if (m === "lieBed") { pitch = -Math.PI / 2; bodyY = 0.16; aL = [-0.3, 0.2]; aR = [-0.3, -0.2]; }
-          const s = p.s; q.setFromEuler(e.set(pitch, p.rot || 0, 0, "YXZ"));
+          // ---- no-friction set: slipping, gliding, falling (friction video)
+          else if (m === "slip") { const w = Math.sin(ph * 7); lL = 0.25 + 0.85 * w; lR = 0.25 - 0.85 * w; aL = [-1.0 + 1.3 * Math.sin(ph * 5), 1.1 + 0.7 * Math.sin(ph * 4)]; aR = [-1.0 + 1.3 * Math.sin(ph * 5 + 2.1), -1.1 - 0.7 * Math.sin(ph * 4 + 1)];
+            lean = -0.28 + 0.22 * Math.sin(ph * 3); headX = -0.25; headY = 0.3 * Math.sin(ph * 2.3); bodyY = -0.04; }
+          else if (m === "glide") { const w = Math.sin(ph * 2.2); lL = 0.32; lR = -0.22; aL = [0.1 * w, 1.45 + 0.25 * w]; aR = [-0.1 * w, -1.45 + 0.25 * w]; lean = 0.08 * Math.sin(ph * 1.7); headY = 0.2 * w; bodyY = -0.06; }
+          else if (m === "split") { lL = -1.52; lR = 1.5; bodyY = -0.6; aL = [0.2, 2.3 + 0.15 * Math.sin(ph * 6)]; aR = [0.2, -2.3 - 0.15 * Math.sin(ph * 6)]; headX = -0.25; }
+          else if (m === "flail") { pitch = -Math.PI / 2; bodyY = 0.16; aL = [-2.6 + 0.9 * Math.sin(ph * 9), 0.7]; aR = [-2.6 + 0.9 * Math.sin(ph * 9 + 1.7), -0.7]; lL = -0.7 + 0.6 * Math.sin(ph * 8); lR = -0.7 - 0.6 * Math.sin(ph * 8); headX = -0.3; }
+          else if (m === "faceplant") { pitch = Math.PI / 2 - 0.06; bodyY = 0.16; aL = [-3.0, 0.35]; aR = [-3.0, -0.35]; lL = 0.15 * Math.sin(ph * 3); lR = 0; headX = 0.2; }
+          else if (m === "violin") { aL = [-1.55, 0.95]; aR = [-1.25 + 0.28 * Math.sin(ph * 4), -0.55]; headX = 0.25; headY = 0.35; }
+          else if (m === "eat") { aR = [-2.15, -0.4]; aL = [0.05 * Math.sin(ph * 1.3), 0.1]; headX = -0.05; }
+          else if (m === "grabYou") { aL = [-1.5, 0.5]; aR = [-1.7, -0.9]; lean = -0.15; lL = 0.4 + 0.3 * Math.sin(ph * 7); lR = -0.3 - 0.3 * Math.sin(ph * 7); headX = -0.15; headY = 0.5; }
+          const s = p.s; q.setFromEuler(e.set(pitch + (p.tilt || 0), p.rot || 0, p.roll || 0, "YXZ"));
           const py = (p.y || 0) + (pitch ? bodyY : 0);
           base.compose(v.set(p.x, py, p.z), q, sc.set(s, s, s));
           const hip = 0.8 + (pitch ? 0 : bodyY);
@@ -167,7 +177,7 @@ window.WI_BLOCKY = function (WI) {
           if (!p.hair || p.hat || p.afro) M.hair.setMatrixAt(i, ZERO);
           if (p.afro) put(M.afro, i, 0, nkY, nkZ, headX + lean * 0.4, headY, 0); else M.afro.setMatrixAt(i, ZERO);
           if (p.hat) { put(M.hatTop, i, 0, nkY, nkZ, headX + lean * 0.4, headY, 0); put(M.hatBrim, i, 0, nkY, nkZ, headX + lean * 0.4 - 0.08, headY, 0); } else { M.hatTop.setMatrixAt(i, ZERO); M.hatBrim.setMatrixAt(i, ZERO); }
-          if (p.glasses) put(M.glasses, i, 0, nkY, nkZ, headX + lean * 0.4, headY, 0); else M.glasses.setMatrixAt(i, ZERO);
+          if (p.glasses && !p.noGlasses) { local(0, nkY, nkZ, headX + lean * 0.4, headY, 0); const go = p.glassOff || [0, 0]; tmp.copy(out).multiply(part.makeTranslation(0, -go[0], go[1])); M.glasses.setMatrixAt(i, tmp); } else M.glasses.setMatrixAt(i, ZERO);
           if (p.mustache) put(M.mustache, i, 0, nkY, nkZ, headX + lean * 0.4, headY, 0); else M.mustache.setMatrixAt(i, ZERO);
           if (p.tie) put(M.tie, i, 0, hip, 0, lean, 0, 0); else M.tie.setMatrixAt(i, ZERO);
           if (p.baby) { const by = shY - 0.42, bz = 0.3 + shZ; put(M.blanket, i, 0, by, bz, 0.1, 0, 0.15); put(M.babyHead, i, 0.2, by + 0.08, bz + 0.02, -0.4, 0.3, 0.15); bfi[i] = p.babyFace || 0; }
@@ -204,16 +214,17 @@ window.WI_BLOCKY = function (WI) {
       const s = p.s || rr(0.9, 1.08); Q.setFromAxisAngle(Y, p.rot || 0); M4.compose(V.set(p.x, p.y || 0, p.z), Q, S.set(s, s, s)); mesh.setMatrixAt(i, M4); });
     geo.setAttribute("cShirt", new THREE.InstancedBufferAttribute(cS, 3)); geo.setAttribute("cLegs", new THREE.InstancedBufferAttribute(cL, 3));
     geo.setAttribute("cSkin", new THREE.InstancedBufferAttribute(cK, 3)); geo.setAttribute("cHair", new THREE.InstancedBufferAttribute(cH, 3)); geo.setAttribute("aMode", new THREE.InstancedBufferAttribute(aM, 4));
-    const u = { uTime: { value: 0 }, uCheer: { value: 0 }, uJump: { value: 0 }, uFilm: { value: 0 }, uRun: { value: 0 }, uHide: { value: new THREE.Vector3(0, 0, -1) }, uScale: { value: 1 } };
+    const u = { uTime: { value: 0 }, uCheer: { value: 0 }, uJump: { value: 0 }, uFilm: { value: 0 }, uRun: { value: 0 }, uSlip: { value: 0 }, uSlipD: { value: 0 }, uStop: { value: 0 }, uHide: { value: new THREE.Vector3(0, 0, -1) }, uScale: { value: 1 } };
     const mat = new THREE.MeshLambertMaterial({ color: 0xffffff });
     mat.onBeforeCompile = (sh) => { Object.assign(sh.uniforms, u);
       sh.vertexShader = `attribute float part; attribute vec3 cShirt; attribute vec3 cLegs; attribute vec3 cSkin; attribute vec3 cHair; attribute vec4 aMode;
-        uniform float uTime; uniform float uCheer; uniform float uJump; uniform float uFilm; uniform float uRun; uniform vec3 uHide; varying vec3 vMC;
+        uniform float uTime; uniform float uCheer; uniform float uJump; uniform float uFilm; uniform float uRun; uniform float uSlip; uniform float uSlipD; uniform float uStop; uniform vec3 uHide; varying vec3 vMC;
         vec3 rotX(vec3 p, vec3 pv, float a){ p -= pv; float c = cos(a), s = sin(a); return vec3(p.x, p.y * c - p.z * s, p.y * s + p.z * c) + pv; }
         vec3 rotZ(vec3 p, vec3 pv, float a){ p -= pv; float c = cos(a), s = sin(a); return vec3(p.x * c - p.y * s, p.x * s + p.y * c, p.z) + pv; }
         ` + sh.vertexShader.replace("#include <begin_vertex>", `#include <begin_vertex>
         float md = aMode.x; float r = aMode.w; float ph = aMode.y + uTime * aMode.z;
         if (r < uFilm) md = 2.0; if (r < uCheer) md = 1.0; if (r < uJump) md = 3.0; if (uRun > 0.0) md = 5.0;
+        if (uSlip > 0.0) md = 6.0;
         float side = fract(part) > 0.25 ? 1.0 : -1.0; float pk = floor(part);
         float bodyY = 0.0;
         if (pk == 3.0) { vec3 sp = vec3(0.3 * side, 1.36, 0.0);
@@ -226,6 +237,13 @@ window.WI_BLOCKY = function (WI) {
         if (md == 1.0) bodyY = max(0.0, sin(ph * 7.0)) * 0.1;
         if (md == 3.0) bodyY = max(0.0, sin(ph * 6.0)) * 0.45;
         if (md == 5.0) { bodyY = abs(cos(ph * 11.0)) * 0.08; transformed.x = -transformed.x; transformed.z = -transformed.z - uRun * aMode.z; }
+        if (md == 6.0) { float fall = clamp((uSlipD * aMode.z - r * 4.0) * 0.9, 0.0, 1.0) * step(0.35, r); float fallS = max(fall, uStop * step(r, 0.35) * 0.95);
+          if (pk == 3.0) { vec3 sp = vec3(0.3 * side, 1.36, 0.0); transformed = rotZ(transformed, sp, side * (1.3 + 0.9 * sin(ph * 5.0 + side * 1.7)) * (1.0 - fallS * 0.4)); }
+          if (pk == 0.0) transformed = rotX(transformed, vec3(0.0, 0.8, 0.0), sin(ph * 7.0) * side * 0.85 * (1.0 - uStop));
+          transformed = rotX(transformed, vec3(0.0, 0.0, 0.0), -1.5 * fall * (r > 0.7 ? -1.0 : 1.0) + (1.0 - fall) * (-0.25 + 0.2 * sin(ph * 3.0)) * uSlip * (1.0 - uStop));
+          transformed = rotX(transformed, vec3(0.0, 0.0, 0.0), 1.5 * uStop * step(r, 0.35));
+          transformed.y += 0.15 * max(fall, uStop * step(r, 0.35));
+          transformed.z += uSlipD * (0.6 + aMode.z * 0.6); transformed.x += uSlipD * (r - 0.5) * 0.6; }
         transformed.y += bodyY;
         vec4 wc = instanceMatrix * vec4(0.0, 0.0, 0.0, 1.0); if (uHide.z > 0.0 && distance(wc.xz, uHide.xy) < uHide.z) transformed *= 0.0;
         vMC = pk == 0.0 ? cLegs : pk == 1.0 ? cShirt : pk == 4.0 ? cHair : cSkin;`);

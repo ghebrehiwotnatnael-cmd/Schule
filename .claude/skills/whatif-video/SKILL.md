@@ -131,6 +131,16 @@ Models live in `kit/models/` (gitignored, fetch with `python3 kit/tools/fetch_mo
     - **Dynamic sound**: integrated loudness ~-16 LUFS with a wide range (LRA 9-17): quiet start, build, a hard sound hit at
       every turning point (5-10 per minute), near silence at the very end.  Motion and cuts front-loaded (fastest in the first half).
     - **Delivery**: ~8 Mbit/s H.264 (crf 18) so more detail survives TikTok's re-encode.
+  - (approved 2026-11-12, creator asked for "more entertaining, more interesting, slower/better sound") **Fun pass**:
+    - **A gag every 3-4 s**: small funny surprises in the world (props sliding away, animals and bystanders reacting,
+      rule-of-three jokes), not only spectacle.
+    - **The Weeknd reacts**: slapstick and facial expression (slips, clings to you, loses his sunglasses, looks at camera).
+    - **On-screen gags**: funny widget values ("SHOES: 0% GRIP"), freeze-frame with an arrow + label ("that's you").
+    - **Sound "mix"**: playful and light at the start (pizzicato/bass groove, comedy SFX: squeaks, slide whooshes), then
+      slow and cinematic towards the climax (~70 BPM, deep slowed-down hits with reverb, a beat of silence before each big
+      moment), near silence at the end.
+    - **Workflow**: render a fast low-res preview of the whole video first and check it frame by frame, then the sharp
+      final; on a local problem re-render only the affected chunk(s).
   - **Text and ending**: captions of at most ~6 words, a hard closing line that hits the viewer personally, a plain
     black end card with just the title, TikTok caption phrased as a direct question to the viewer.
 

@@ -399,6 +399,10 @@
       g.fillStyle = gr; g.fillRect(0, 0, w, h); const ex = WI_PHONE_EXTRA(t); if (ex > 0) { g.fillStyle = "rgba(90,85,80,0.9)"; g.beginPath(); g.ellipse(w * 0.35, h * 0.47 - ex * 160, 30 + ex * 70, ex * 170, 0, 0, 7); g.fill(); }
       g.fillStyle = "#ff2d2d"; g.beginPath(); g.arc(24, 28, 8, 0, 7); g.fill(); g.fillStyle = "#fff"; g.font = "bold 18px Arial"; g.fillText("REC  00:" + String(Math.floor(t % 60)).padStart(2, "0"), 40, 34);
       g.strokeStyle = "rgba(255,255,255,0.7)"; g.lineWidth = 2; g.strokeRect(w / 2 - 30, h / 2 - 30, 60, 60); }
+    else if (mode === "tiktok") { const gr = g.createLinearGradient(0, 0, 0, h); gr.addColorStop(0, "#1d3b6e"); gr.addColorStop(1, "#0b0b10"); g.fillStyle = gr; g.fillRect(0, 0, w, h);
+      g.fillStyle = "#fff"; g.font = "bold 18px Arial"; g.fillText("Following   For You", 50, 34); g.fillStyle = "#e5e7eb"; g.font = "bold 22px Arial"; g.fillText("What if friction", 20, 380); g.fillText("disappeared?", 20, 408);
+      g.font = "16px Arial"; g.fillStyle = "#cbd5e1"; g.fillText("@manwhat.3", 20, 440); [0, 1, 2].forEach((k) => { g.fillStyle = k ? "#f1f5f9" : "#ff3b5c"; g.beginPath(); g.arc(232, 250 + k * 70, 17, 0, 7); g.fill(); });
+      const hp = (t * 0.7) % 1; g.fillStyle = `rgba(255,59,92,${1 - hp})`; g.font = "bold 26px Arial"; g.fillText("\u2665", 222, 230 - hp * 120); }
     else if (mode === "map") { g.fillStyle = "#e8e2d0"; g.fillRect(0, 0, w, h); g.strokeStyle = "#fff"; g.lineWidth = 14; for (let i = 0; i < 5; i++) { g.beginPath(); g.moveTo(0, 80 + i * 110); g.lineTo(w, 40 + i * 120); g.stroke(); }
       g.fillStyle = "#9ca3af"; g.font = "bold 20px Arial"; g.fillText("Map unavailable", 50, 270); }
     phoneTex.needsUpdate = true; }
@@ -530,7 +534,8 @@
     if (shiver) { handR.position.x += sh(40, 0.006 * shiver); handL.position.x += sh(43, 0.006 * shiver); }
     const item = val("item", t) || "none";
     phone.visible = item === "phone"; cone2.visible = item === "cone"; testStick.visible = item === "test";
-    if (phone.visible) { const pm = val("phoneUI", t) || "feed"; if (pm !== lastPhone || pm === "feed" || pm === "notifs" || pm === "rec") { drawPhone(pm, t); lastPhone = pm; } }
+    { const ps = num("phoneSlip", t); phone.position.set(0.02 * ps, 0.03 + 0.05 * ps * ps, -0.07 - 0.32 * ps); phone.rotation.set(-0.5 * ps, 0.9 * ps, 0.6 * ps * ps); }
+    if (phone.visible) { const pm = val("phoneUI", t) || "feed"; if (pm !== lastPhone || pm === "feed" || pm === "notifs" || pm === "rec" || pm === "tiktok") { drawPhone(pm, t); lastPhone = pm; } }
     torch.intensity = num("torch", t) * 3.0;
     frostLens.material.opacity = num("frostLens", t);
     flash.material.opacity = num("flash", t);
@@ -636,7 +641,9 @@
   function cullLights(sc) { let list = lightCache.get(sc); if (!list) { list = []; sc.traverse((o) => { if (o.isPointLight || o.isSpotLight) list.push(o); }); lightCache.set(sc, list); }
     cam.getWorldPosition(camW);
     for (const l of list) { if (l === torch) continue; l.getWorldPosition(lp); const reach = (l.distance || 60) + 30; l.visible = l.intensity > 0.001 && lp.distanceTo(camW) < reach; } }
+  const FZ = TR.__freeze || [];   // freeze frames: [[t0, dur], ...] hold the world at t0 (post effects keep real time)
   function draw(t) {
+    const tReal = t; for (const f of FZ) { if (t >= f[0] && t < f[0] + f[1]) t = f[0]; }
     const mb = num("mblur", t), n = mb > 0 ? 4 : 1, shutter = (1 / 30) * mb; windU.value = t * (1 + num("wind", t) * 3);
     dofMat.uniforms.amount.value = num("dof", t); dofMat.uniforms.focus.value = num("focus", t, 5);
     for (let i = 0; i < n; i++) {
@@ -646,7 +653,7 @@
       dofMat.uniforms.opacity.value = 1 / (i + 1);
       renderer.setRenderTarget(rtAcc); renderer.autoClear = i === 0; renderer.render(postScene, postCam); renderer.autoClear = true;
     }
-    const cu = copyMat.uniforms; cu.bloom.value = num("bloom", t, 0); cu.chroma.value = num("chroma", t, 0); cu.crack.value = num("crack", t, 0); cu.exposure.value = num("exposure", t, 1); cu.contrast.value = num("contrast", t, 1); cu.saturation.value = num("saturation", t, 1);
+    const cu = copyMat.uniforms; t = tReal; cu.bloom.value = num("bloom", t, 0); cu.chroma.value = num("chroma", t, 0); cu.crack.value = num("crack", t, 0); cu.exposure.value = num("exposure", t, 1); cu.contrast.value = num("contrast", t, 1); cu.saturation.value = num("saturation", t, 1);
     cu.warmth.value = num("warmth", t); cu.vignette.value = num("vignette", t); cu.grain.value = num("grain", t); cu.tonemap.value = num("tonemap", t); cu.seed.value = (Math.floor(t * 30) % 97) * 0.37;
     renderer.setRenderTarget(null); renderer.render(copyScene, postCam);
   }

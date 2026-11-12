@@ -185,7 +185,7 @@
 
     // ================================================================ ground: streets, sidewalks, crosswalks, park, rivers
     const streetTex = canvasTex(1024, 348, (g, w, h) => { const kx = w / TX, kz = h / TZ; const ax = AVE / 2 * kx, sz2 = STR / 2 * kz;
-      g.fillStyle = "#3b3c40"; g.fillRect(0, 0, w, h);
+      g.fillStyle = "#4a4c51"; g.fillRect(0, 0, w, h);
       g.fillStyle = "#a7a39b"; g.fillRect(ax - 4.5 * kx, sz2 - 4 * kz, w - 2 * ax + 9 * kx, h - 2 * sz2 + 8 * kz);
       g.fillStyle = "#77746e"; g.fillRect(ax, sz2, w - 2 * ax, h - 2 * sz2);
       g.fillStyle = "#cfcabe"; for (let i = 0; i < 9; i++) { g.fillRect(ax + 2 * kx + i * 1.4 * kx, 0, 0.7 * kx, sz2 - 5 * kz); g.fillRect(ax + 2 * kx + i * 1.4 * kx, h - sz2 + 5 * kz, 0.7 * kx, sz2 - 5 * kz); }
@@ -245,7 +245,7 @@
     const seats = add(new THREE.InstancedMesh(new THREE.BoxGeometry(1.5, 0.5, 1.8), MK.std(C("#2a2a2a")), carList.length));
     const carC = ["#f2c200", "#f2c200", "#f2c200", "#e8e8e8", "#1d1d1f", "#9a9fa6", "#7a1c1c", "#24427a"].map(C);
     const carM = []; { const M4 = new THREE.Matrix4(), Q = new THREE.Quaternion(), V = new THREE.Vector3(), S = new THREE.Vector3(1, 1, 1), Y = new THREE.Vector3(0, 1, 0);
-      carList.forEach((c, i) => { Q.setFromAxisAngle(Y, c[2]); const col2 = carC[Math.floor(c[3] * carC.length)]; carBody.setColorAt(i, col2); roofs.setColorAt(i, col2); carM.push({ x: c[0], z: c[1], r: c[2], v: rr(4, 9) * (R() < 0.5 ? 1 : -1) }); }); }
+      carList.forEach((c, i) => { Q.setFromAxisAngle(Y, c[2]); const col2 = carC[Math.floor(c[3] * carC.length)]; carBody.setColorAt(i, col2); roofs.setColorAt(i, col2); carM.push({ x: c[0], z: c[1], r: c[2], v: rr(4, 9) * (R() < 0.5 ? 1 : -1), sp: rr(0.4, 1.6) * (R() < 0.5 ? 1 : -1) }); }); }
     carBody.castShadow = true; cab.castShadow = true;
     const cabEdge = add(new THREE.InstancedMesh(new THREE.BoxGeometry(0.08, 0.62, 0.08), MK.std(C("#1b1b1b")), carList.length * 4));
     // people on the sidewalks (GPU mass) + a few near crowds
@@ -305,9 +305,23 @@
     const aquaFish = Array.from({ length: 16 }, (_, i) => { const m = new THREE.Mesh(new THREE.ConeGeometry(0.1, 0.34, 5), MK.std(C(["#ff7b00", "#ffd000", "#3ec1ff", "#ff4fa3"][i % 4]), { roughness: 0.4 })); m.rotation.z = Math.PI / 2; aqua.add(m); m.userData = { ph: R() * 6, y: rr(0.8, 2.4), z: rr(0.3, 1.5) }; return m; });
     const flood = add(new THREE.Mesh(new THREE.CircleGeometry(1, 40), new THREE.MeshStandardMaterial({ color: C("#2a6f8a"), transparent: true, opacity: 0.55, roughness: 0.05, metalness: 0.2 }))); flood.rotation.x = -Math.PI / 2; flood.visible = false;
     const splashes = Array.from({ length: 30 }, () => { const s = add(new THREE.Sprite(new THREE.SpriteMaterial({ map: WI.puffTex || glowTex, color: 0xd8f4ff, transparent: true, depthWrite: false, opacity: 0 }))); s.userData = { a: rr(-0.9, 0.9), v: rr(2, 5), u: rr(1, 4) }; return s; });
-    const pigeon = add(new THREE.Group()); { const gm = MK.std(C("#8d939c")); const b = new THREE.Mesh(new THREE.SphereGeometry(0.16, 10, 8), gm); b.scale.set(1, 0.9, 1.5); pigeon.add(b);
-      const h = new THREE.Mesh(new THREE.SphereGeometry(0.08, 8, 6), MK.std(C("#6f7f8a"))); h.position.set(0, 0.13, 0.2); pigeon.add(h); const bk = new THREE.Mesh(new THREE.ConeGeometry(0.02, 0.06, 5), MK.std(C("#d9b37a"))); bk.rotation.x = Math.PI / 2; bk.position.set(0, 0.12, 0.3); pigeon.add(bk);
-      pigeon.userData.wings = [-1, 1].map((s) => { const w = new THREE.Mesh(new THREE.BoxGeometry(0.34, 0.02, 0.18), gm); w.geometry.translate(s * 0.17, 0, 0); w.position.set(s * 0.08, 0.04, 0); pigeon.add(w); return w; }); }
+    const pigeon = add(new THREE.Group()); { const gm = MK.std(C("#9aa1aa"), { roughness: 0.8 }), dk = MK.std(C("#4f5660"), { roughness: 0.8 }), irid = MK.std(C("#4f8a73"), { roughness: 0.35, metalness: 0.4 });
+      const b = new THREE.Mesh(new THREE.SphereGeometry(0.15, 14, 10), gm); b.scale.set(0.95, 0.9, 1.45); pigeon.add(b);
+      const neck = new THREE.Mesh(new THREE.SphereGeometry(0.085, 12, 8), irid); neck.position.set(0, 0.1, 0.15); neck.scale.set(1, 1.15, 1); pigeon.add(neck);
+      const h = new THREE.Mesh(new THREE.SphereGeometry(0.075, 12, 8), MK.std(C("#6c7684"))); h.position.set(0, 0.2, 0.2); pigeon.add(h);
+      const bk = new THREE.Mesh(new THREE.ConeGeometry(0.018, 0.07, 6), MK.std(C("#e8b26a"))); bk.rotation.x = Math.PI / 2; bk.position.set(0, 0.19, 0.29); pigeon.add(bk);
+      for (const sx of [-1, 1]) { const eye = new THREE.Mesh(new THREE.SphereGeometry(0.014, 8, 6), MK.std(C("#ff7a1a"), { emissive: C("#ff5a00"), emissiveIntensity: 0.3 })); eye.position.set(sx * 0.06, 0.22, 0.24); pigeon.add(eye);
+        const pu = new THREE.Mesh(new THREE.SphereGeometry(0.007, 6, 4), MK.std(C("#050505"))); pu.position.set(sx * 0.071, 0.222, 0.25); pigeon.add(pu);
+        const leg = new THREE.Mesh(new THREE.CylinderGeometry(0.008, 0.008, 0.11, 5), MK.std(C("#e0707a"))); leg.position.set(sx * 0.05, -0.16, 0.02); pigeon.add(leg); }
+      const tail = new THREE.Mesh(new THREE.BoxGeometry(0.13, 0.025, 0.2), dk); tail.position.set(0, 0.0, -0.27); tail.rotation.x = 0.25; pigeon.add(tail);
+      pigeon.userData.wings = [-1, 1].map((s) => { const w = new THREE.Group(); const wp = new THREE.Mesh(new THREE.BoxGeometry(0.36, 0.02, 0.2), gm); wp.position.x = s * 0.18; w.add(wp);
+        const tip = new THREE.Mesh(new THREE.BoxGeometry(0.14, 0.022, 0.2), dk); tip.position.x = s * 0.31; w.add(tip);
+        for (const zz of [-0.03, 0.04]) { const bar = new THREE.Mesh(new THREE.BoxGeometry(0.2, 0.024, 0.025), dk); bar.position.set(s * 0.14, 0, zz); w.add(bar); }
+        w.position.set(s * 0.07, 0.06, 0); pigeon.add(w); return w; });
+      pigeon.traverse((o) => { if (o.isMesh) o.castShadow = true; }); }
+
+    // ================================================================ extensions (video-specific props, e.g. sets_slip.js)
+    const exts = (window.WI_NYC_EXT || []).map((f) => f({ WI, scene, K, MK, BL, C, add, TX, TZ, BX, BZ, AVE, STR, taxi, star, walkers, pigeon, glowTex, canvasTex, trunk, crown, pole, lampHead, treeList, lampList, iron }));
 
     // ================================================================ update
     const cTop = new THREE.Color(), cHor = new THREE.Color();
@@ -320,19 +334,22 @@
       driver.update(t, (p) => { const wpos = new THREE.Vector3(-0.42, 0.62, 0.15).applyAxisAngle(new THREE.Vector3(0, 1, 0), taxi.rotation.y).add(taxi.position); p.x = wpos.x; p.y = wpos.y; p.z = wpos.z; p.rot = taxi.rotation.y; p.mode = gl > 0.5 ? "sit" : "sit"; p.face = gl > 0.5 ? 1 : 3; }); cabMat.opacity = 0.85 * gl; cab.visible = gl > 0.02; aquaGlass.visible = gl > 0.5;
       // cars
       const mv = num("carsMove", t, 1); const M4 = new THREE.Matrix4(), Q = new THREE.Quaternion(), V = new THREE.Vector3(), S = new THREE.Vector3(1, 1, 1), Y = new THREE.Vector3(0, 1, 0);
-      carM.forEach((c, i) => { const along = c.v * mv * t; let x = c.x, z = c.z; if (c.r === 0) z = c.z + ((along % TZ) + TZ) % TZ - TZ / 2 * 0; else x = c.x + along % 60;
-        Q.setFromAxisAngle(Y, c.r + (c.v < 0 ? Math.PI : 0)); M4.compose(V.set(x, 0.55, z), Q, S); carBody.setMatrixAt(i, M4);
+      const cT = val("carT", t), spin = num("carSpin", t, 0);
+      carM.forEach((c, i) => { const along = c.v * (cT === undefined ? mv * t : cT); let x = c.x, z = c.z; if (c.r === 0) z = c.z + ((along % TZ) + TZ) % TZ - TZ / 2 * 0; else x = c.x + along % 60;
+        Q.setFromAxisAngle(Y, c.r + (c.v < 0 ? Math.PI : 0) + spin * c.sp); M4.compose(V.set(x, 0.55, z), Q, S); carBody.setMatrixAt(i, M4);
         M4.compose(V.set(x, 1.24, z), Q, S); cab.setMatrixAt(i, M4); M4.compose(V.set(x, 1.58, z), Q, S); roofs.setMatrixAt(i, M4); M4.compose(V.set(x, 1.0, z), Q, S); seats.setMatrixAt(i, M4);
         for (let k = 0; k < 4; k++) { const ox = (k % 2 ? 0.8 : -0.8), oz = (k < 2 ? 1.1 : -1.1); V.set(ox, 0, oz).applyQuaternion(Q); M4.compose(V.set(x + V.x, 1.24, z + V.z), Q, S); cabEdge.setMatrixAt(i * 4 + k, M4); } });
       [carBody, cab, roofs, seats, cabEdge].forEach((m) => { m.instanceMatrix.needsUpdate = true; });
       walkers.u.uTime.value = t; walkers.u.uFilm.value = num("crowdFilm", t, 0.1); walkers.u.uCheer.value = num("crowdCheer", t, 0); walkers.u.uJump.value = 0;
+      walkers.u.uSlip.value = num("crowdSlip", t, 0); walkers.u.uSlipD.value = num("crowdSlipD", t, 0); walkers.u.uStop.value = num("crowdStop", t, 0);
+      { const tp = val("taxiPos", t); if (tp) taxi.position.set(tp[0], tp[1], tp[2]); taxi.rotation.y = num("taxiRot", t, -Math.PI / 2); }
       // tourists + friend
       const tv2 = num("tourists", t, 1); const tmode = val("tourMood", t) || "calm";
       tour.update(t, (p, tt, i) => { p.hidden = tv2 < 0.5 || (Math.abs(p.x - pos[0]) < 2.6 && Math.abs(p.z - pos[2]) < 2.6 && Math.abs(pos[1] - deckY) < 4); if (tmode === "panic") { const h = (i * 0.618) % 1; p.mode = h < 0.4 ? "panic" : h < 0.7 ? "kneel" : "point"; p.face = h < 0.5 ? 4 : 3; } else if (tmode === "relief") { p.mode = (i % 3) ? "cheer" : "hug"; p.face = 7; } });
       const sp = val("starPos", t);
       const yp = val("youPos", t);
-      star.update(t, (p, tt, i) => { if (i === 1) { if (!yp) { p.hidden = true; return; } p.hidden = false; p.x = yp[0]; p.y = yp[1]; p.z = yp[2]; p.rot = num("youRot", t, 0); p.mode = val("youMode", t) || "idle"; p.face = Math.round(num("youFace", t, 0)); return; }
-        if (!sp) { p.hidden = true; return; } p.hidden = false; p.x = sp[0]; p.y = sp[1]; p.z = sp[2]; p.rot = num("starRot", t, 0); p.mode = val("starMode", t) || "selfie"; p.face = Math.round(num("starFace", t, 7)); });
+      star.update(t, (p, tt, i) => { if (i === 1) { if (!yp) { p.hidden = true; return; } p.hidden = false; p.x = yp[0]; p.y = yp[1]; p.z = yp[2]; p.rot = num("youRot", t, 0); p.mode = val("youMode", t) || "idle"; p.face = Math.round(num("youFace", t, 0)); p.roll = num("youRoll", t, 0); p.tilt = num("youTilt", t, 0); return; }
+        if (!sp) { p.hidden = true; return; } p.hidden = false; p.x = sp[0]; p.y = sp[1]; p.z = sp[2]; p.rot = num("starRot", t, 0); p.mode = val("starMode", t) || "selfie"; p.face = Math.round(num("starFace", t, 7)); p.roll = num("starRoll", t, 0); p.tilt = num("starTilt", t, 0); p.glassOff = val("starGlassOff", t) || [0, 0]; p.noGlasses = num("starGlassHide", t, 0) > 0.5; });
       starGlit.visible = !!sp; if (sp) { const a = starGlit.geometry.attributes.position.array; let last = null; const ca = starGlit.geometry.attributes.color.array;
         glitPh.forEach(([ph, sp2], i) => { const b = 0.35 + 0.65 * Math.pow(Math.max(0, Math.sin(t * sp2 + ph)), 3); ca[i * 3] = ca[i * 3 + 1] = ca[i * 3 + 2] = b; }); starGlit.geometry.attributes.color.needsUpdate = true;
         glitLoc.forEach((l, i) => { if (l[0] !== last) { star.meshes[l[0]].getMatrixAt(0, tm); last = l[0]; } tv.set(l[1], l[2], l[3]).applyMatrix4(tm); a[i * 3] = tv.x; a[i * 3 + 1] = tv.y; a[i * 3 + 2] = tv.z; }); starGlit.geometry.attributes.position.needsUpdate = true;
@@ -353,6 +370,7 @@
         splashes.forEach((s) => { const u = s.userData; s.visible = ab < 2.2; if (!s.visible) return; s.position.set(aqua.position.x + u.a * 3.2, 0.3 + ab * u.u - ab * ab * 4.9 * 0.5, aqua.position.z + AQD * (1.8 + ab * u.v)); s.scale.setScalar(0.4 + ab * 0.7); s.material.opacity = 0.8 * (1 - ab / 2.2); }); }
       else { aquaWater.scale.set(1, 1, 1); aquaWater.position.set(0, 1.6, 0.9); flood.visible = false; splashes.forEach((s) => { s.visible = false; }); }
       const pg = val("pigeonPos", t); pigeon.visible = !!pg; if (pg) { pigeon.position.set(pg[0], pg[1], pg[2]); pigeon.rotation.y = num("pigeonRot", t, 0); const fl = num("pigeonFlap", t, 1); pigeon.userData.wings.forEach((w, k) => { w.rotation.z = (k ? -1 : 1) * Math.sin(t * 22) * 0.9 * fl; }); }
+      exts.forEach((e) => e.update(t, look, pos));
       return scene; } };
   });
 })();
