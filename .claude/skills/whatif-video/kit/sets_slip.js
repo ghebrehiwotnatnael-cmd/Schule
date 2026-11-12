@@ -129,6 +129,11 @@
         p.x = x; p.z = z; p.rot = rot; p.mode = mode; p.y = 0.15;
         p.hidden = i !== VIOL && i !== VEND && i !== COP && pos[1] < 3.5 && Math.hypot(x - pos[0], z - pos[2]) < 4.0; });
       A.walkers.u.uHide.value.set(pos[0], pos[2], pos[1] < 3.5 ? 4.0 : -1);
+      // no traffic car may drive through a low camera: hide cars within 7 m of it
+      if (pos[1] < 6) { const [body] = A.carParts; let dirty = false;
+        for (let i = 0; i < body.count; i++) { body.getMatrixAt(i, M4); V.setFromMatrixPosition(M4);
+          if (Math.abs(V.x - pos[0]) < 7 && Math.abs(V.z - pos[2]) < 7) { A.carParts.forEach((m) => m.setMatrixAt(i, ZERO)); for (let k = 0; k < 4; k++) A.cabEdge.setMatrixAt(i * 4 + k, ZERO); dirty = true; } }
+        if (dirty) { A.carParts.forEach((m) => { m.instanceMatrix.needsUpdate = true; }); A.cabEdge.instanceMatrix.needsUpdate = true; } }
       // violin + bow follow the violinist's hands
       if (crowd.meshes) { crowd.meshes.head.getMatrixAt(VIOL, tm); violin.matrixAutoUpdate = false; violin.matrix.copy(tm).multiply(new THREE.Matrix4().makeTranslation(0.2, -0.04, 0.24)).multiply(new THREE.Matrix4().makeRotationFromEuler(new THREE.Euler(0.15, 0.75, -0.35))); violin.matrixWorldNeedsUpdate = true;
         crowd.meshes.armR.getMatrixAt(VIOL, tm); bow.matrixAutoUpdate = false; bow.matrix.copy(tm).multiply(new THREE.Matrix4().makeTranslation(0, -0.62, 0.1)).multiply(new THREE.Matrix4().makeRotationY(1.2)); bow.matrixWorldNeedsUpdate = true; }

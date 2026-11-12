@@ -321,7 +321,7 @@
       pigeon.traverse((o) => { if (o.isMesh) o.castShadow = true; }); }
 
     // ================================================================ extensions (video-specific props, e.g. sets_slip.js)
-    const exts = (window.WI_NYC_EXT || []).map((f) => f({ WI, scene, K, MK, BL, C, add, TX, TZ, BX, BZ, AVE, STR, taxi, star, walkers, pigeon, glowTex, canvasTex, trunk, crown, pole, lampHead, treeList, lampList, iron }));
+    const exts = (window.WI_NYC_EXT || []).map((f) => f({ WI, scene, K, MK, BL, C, add, TX, TZ, BX, BZ, AVE, STR, taxi, star, walkers, pigeon, glowTex, canvasTex, trunk, crown, pole, lampHead, treeList, lampList, iron, carParts: [carBody, cab, roofs, seats], cabEdge }));
 
     // ================================================================ update
     const cTop = new THREE.Color(), cHor = new THREE.Color();
