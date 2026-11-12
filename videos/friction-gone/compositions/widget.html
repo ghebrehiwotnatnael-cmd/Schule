@@ -1,0 +1,76 @@
+<template>
+<style>
+@font-face{font-family:"WI Serif";src:url("assets/fonts/spectral-400-normal.woff2") format("woff2");font-weight:400}
+@font-face{font-family:"WI Serif";src:url("assets/fonts/spectral-500-normal.woff2") format("woff2");font-weight:500}
+@font-face{font-family:"WI Serif";src:url("assets/fonts/spectral-400-italic.woff2") format("woff2");font-weight:400;font-style:italic}
+#root{position:absolute;inset:0;pointer-events:none;}
+#wg{position:absolute;left:64px;top:888px;width:760px;color:#fff;text-shadow:0 1px 10px rgba(0,0,0,.55),0 1px 2px rgba(0,0,0,.6);}
+#wg-label{font:600 27px "Inter";letter-spacing:2.6px;}
+#wg-value{margin-top:2px;font:400 66px/1 "WI Serif";letter-spacing:1px;font-variant-numeric:tabular-nums;}
+#wg-sub{margin-top:18px;font:500 18px "IBM Plex Mono";letter-spacing:3px;opacity:.82;}
+#bc{position:absolute;left:0;right:0;top:300px;text-align:center;color:#ff3b3b;text-shadow:0 0 18px rgba(255,40,40,.45),0 2px 6px rgba(0,0,0,.5);opacity:0;}
+#bc-label{font:700 30px "IBM Plex Mono";letter-spacing:7px;}
+#bc-num{font:500 150px/1 "IBM Plex Mono";margin-top:4px;}
+</style>
+<div id="root" data-composition-id="widget" data-width="1080" data-height="1920">
+  <div id="wg"><div id="wg-label"></div><div id="wg-value"></div><div id="wg-sub"></div></div>
+  <div id="bc"><div id="bc-label"></div><div id="bc-num"></div></div>
+  <svg id="co" width="1080" height="1920" viewBox="0 0 1080 1920" style="position:absolute;left:0;top:0;opacity:0" data-layout-allow-overflow>
+    <defs><marker id="co-h" markerWidth="10" markerHeight="10" refX="6" refY="5" orient="auto"><path d="M0,0 L10,5 L0,10 z" fill="#ffe14d"/></marker></defs>
+    <path id="co-p" d="" fill="none" stroke="#ffe14d" stroke-width="9" stroke-linecap="round" marker-end="url(#co-h)" style="filter:drop-shadow(0 2px 6px rgba(0,0,0,.6))"/>
+    <text id="co-t" x="0" y="0" text-anchor="middle" style="font:700 64px 'Inter';fill:#ffe14d;letter-spacing:2px;paint-order:stroke;stroke:rgba(0,0,0,.55);stroke-width:8px"></text>
+  </svg>
+</div>
+<script>
+(function(){
+const S = [{"t0": 0.0, "t1": 6.5, "label": "SHOE GRIP", "sub": "FRICTION  \u03bc = 0.8", "mode": "num:0:%", "v0": 100, "v1": 100, "value": ""}, {"t0": 6.5, "t1": 12.3, "label": "SHOE GRIP", "sub": "\u03bc = 0 \u00b7 GOOD LUCK", "mode": "text", "v0": 0, "v1": 0, "value": "0%"}, {"t0": 12.3, "t1": 16.8, "label": "SUNGLASSES", "sub": "HELD BY FRICTION", "mode": "text", "v0": 0, "v1": 0, "value": "SLIPPING"}, {"t0": 16.8, "t1": 21.5, "label": "BRAKES", "sub": "NEED FRICTION", "mode": "text", "v0": 0, "v1": 0, "value": "USELESS"}, {"t0": 21.5, "t1": 26.0, "label": "STOPPING DISTANCE", "sub": "NEWTON'S FIRST LAW", "mode": "text", "v0": 0, "v1": 0, "value": "\u221e"}, {"t0": 26.0, "t1": 30.0, "label": "PIGEON LANDING", "sub": "ATTEMPT 1 OF 1", "mode": "text", "v0": 0, "v1": 0, "value": "FAILED"}, {"t0": 30.0, "t1": 33.5, "label": "MUSIC", "sub": "BOWS NEED FRICTION", "mode": "text", "v0": 0, "v1": 0, "value": "SILENT"}, {"t0": 33.5, "t1": 39.5, "label": "SCREWS", "sub": "HELD BY FRICTION", "mode": "text", "v0": 0, "v1": 0, "value": "LOOSE"}, {"t0": 39.5, "t1": 47.0, "label": "FRICTION BACK IN", "sub": "TIME SLOWED DOWN", "mode": "sec", "v0": 0.95, "v1": 0.0, "value": ""}, {"t0": 47.0, "t1": 56.0, "label": "SHOE GRIP", "sub": "FRICTION IS BACK", "mode": "text", "v0": 0, "v1": 0, "value": "100%"}, {"t0": 56.0, "t1": 68.0, "label": "YOUR GRIP", "sub": "ON THIS PHONE, WITHOUT FRICTION", "mode": "text", "v0": 0, "v1": 0, "value": "0%"}];
+const el = (id)=>document.getElementById(id);
+const p2 = (n)=>String(Math.floor(n)).padStart(2,"0");
+function fmt(seg, t){
+  const k = seg.t1>seg.t0 ? Math.min(1,Math.max(0,(t-seg.t0)/(seg.t1-seg.t0))) : 1;
+  const v = seg.v0 + (seg.v1-seg.v0)*k;
+  if(seg.mode==="sec"){ const s=Math.max(0,v); const m=Math.floor(s/60); return m+":"+p2(s%60)+"."+String(Math.floor((s%1)*1000)).padStart(3,"0"); }
+  if(seg.mode==="count"){ return Math.round(Math.max(0,v)).toLocaleString("en-US"); }
+  if(seg.mode.indexOf("num")===0){ const pr=seg.mode.split(":"); const dec=+(pr[1]||0); return v.toLocaleString("en-US",{minimumFractionDigits:dec,maximumFractionDigits:dec})+(pr.slice(2).join(":")||""); }
+  if(seg.mode==="pct"){ const r=Math.round(v); return (r>0?"+":"")+r+"%"; }
+  if(seg.mode==="days"){ const d=Math.max(0,v); const dd=Math.floor(d); const h=(d-dd)*24; const mi=(h%1)*60; const se=(mi%1)*60;
+    return dd+"d "+p2(h)+":"+p2(mi)+":"+p2(se); }
+  return seg.value;
+}
+const BCS = [{"t0": 3.5, "t1": 6.5, "label": "FRICTION DISAPPEARS IN", "n0": 3, "n1": 0}];
+const COS = [{"t0": 10.55, "t1": 11.45, "x": 455, "y": 860, "lx": 330, "ly": 520, "text": "THAT'S YOU", "color": "#ffe14d"}, {"t0": 11.45, "t1": 12.3, "x": 860, "y": 930, "lx": 760, "ly": 560, "text": "YOUR FRIEND", "color": "#ffe14d"}];
+function renderCO(t){
+  let c=null; for(const s of COS){ if(s.t0<=t && t<s.t1) c=s; }
+  const e=el("co"); if(!c){ e.style.opacity=0; return; }
+  const k=Math.min(1,(t-c.t0)/0.25); e.style.opacity=Math.min(1,(t-c.t0)/0.12,(c.t1-t)/0.15);
+  const sx=c.lx, sy=c.ly+24, ex=sx+(c.x-sx)*k, ey=sy+(c.y-sy)*k, mx=(sx+ex)/2+(ey-sy)*0.25, my=(sy+ey)/2-(ex-sx)*0.25;
+  el("co-p").setAttribute("d","M"+sx+","+sy+" Q"+mx+","+my+" "+ex+","+ey);
+  const tt=el("co-t"); tt.textContent=c.text; tt.setAttribute("x",c.lx); tt.setAttribute("y",c.ly); tt.style.fontSize=(64*(0.8+0.2*k))+"px";
+}
+function renderBC(t){
+  let b=null; for(const s of BCS){ if(s.t0<=t && t<s.t1) b=s; }
+  const e=el("bc"); if(!b){ e.style.opacity=0; return; }
+  const k=Math.min(1,Math.max(0,(t-b.t0)/(b.t1-b.t0))); const v=b.n0+(b.n1-b.n0)*k; const n=Math.ceil(v-1e-6);
+  const frac=v-Math.floor(v); e.style.opacity=Math.min(1,(t-b.t0)/0.2,(b.t1-t)/0.2);
+  el("bc-label").textContent=b.label; el("bc-num").textContent=String(n);
+  el("bc-num").style.transform="scale("+(1+0.18*Math.max(0,frac-0.8)*5)+")";
+}
+function render(t){
+  renderBC(t); renderCO(t);
+  let seg=null; for(const s of S){ if(s.t0<=t && t<s.t1) seg=s; }
+  const w=el("wg");
+  if(!seg){ w.style.opacity=0; return; }
+  const fadeIn=Math.min(1,(t-seg.t0)/0.25), fadeOut=Math.min(1,(seg.t1-t)/0.25);
+  const prev=S.find(s=>Math.abs(s.t1-seg.t0)<1e-3 && s.label===seg.label);
+  const next=S.find(s=>Math.abs(s.t0-seg.t1)<1e-3 && s.label===seg.label);
+  w.style.opacity = Math.min(prev?1:fadeIn, next?1:fadeOut);
+  el("wg-label").textContent=seg.label; el("wg-sub").textContent=seg.sub; el("wg-value").textContent=fmt(seg,t);
+}
+const tl = gsap.timeline({paused:true,defaults:{lazy:false}});
+const st={t:0};
+tl.to(st,{t:68.0,duration:68.0,ease:"none",onUpdate:()=>render(st.t)},0);
+render(0);
+window.__timelines["widget"] = tl;
+})();
+</script>
+</template>

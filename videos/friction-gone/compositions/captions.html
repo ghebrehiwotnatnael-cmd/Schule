@@ -1,0 +1,69 @@
+<template>
+<style>
+@font-face{font-family:"WI Serif";src:url("assets/fonts/spectral-400-normal.woff2") format("woff2");font-weight:400}
+@font-face{font-family:"WI Serif";src:url("assets/fonts/spectral-500-normal.woff2") format("woff2");font-weight:500}
+@font-face{font-family:"WI Serif";src:url("assets/fonts/spectral-400-italic.woff2") format("woff2");font-weight:400;font-style:italic}
+#root{position:absolute;inset:0;pointer-events:none;}
+.cap{position:absolute;left:0;top:1236px;width:1080px;height:200px;text-align:center;}
+.cap-in{display:inline-block;max-width:930px;font:italic 400 46px/1.25 "WI Serif";color:#fff;
+  text-shadow:0 2px 14px rgba(0,0,0,.7),0 1px 3px rgba(0,0,0,.8);}
+</style>
+<div id="root" data-composition-id="captions" data-width="1080" data-height="1920">
+<div id="cap-0" class="clip cap" data-start="0.4" data-duration="2.7" data-track-index="0"><div class="cap-in">Lunch break in New York.</div></div>
+<div id="cap-1" class="clip cap" data-start="3.4" data-duration="2.9" data-track-index="0"><div class="cap-in">Friction is about to vanish.</div></div>
+<div id="cap-2" class="clip cap" data-start="6.8" data-duration="2.0" data-track-index="0"><div class="cap-in">Friction: gone.</div></div>
+<div id="cap-3" class="clip cap" data-start="8.9" data-duration="1.6" data-track-index="0"><div class="cap-in">Nobody can stand.</div></div>
+<div id="cap-4" class="clip cap" data-start="12.6" data-duration="2.6" data-track-index="0"><div class="cap-in">Sunglasses need friction too.</div></div>
+<div id="cap-5" class="clip cap" data-start="15.4" data-duration="1.3" data-track-index="0"><div class="cap-in">Bye, sunglasses.</div></div>
+<div id="cap-6" class="clip cap" data-start="17.0" data-duration="2.4" data-track-index="0"><div class="cap-in">Cars can&#x27;t brake.</div></div>
+<div id="cap-7" class="clip cap" data-start="19.6" data-duration="1.8" data-track-index="0"><div class="cap-in">Or steer.</div></div>
+<div id="cap-8" class="clip cap" data-start="21.8" data-duration="2.2" data-track-index="0"><div class="cap-in">Everyone keeps sliding.</div></div>
+<div id="cap-9" class="clip cap" data-start="24.1" data-duration="1.8" data-track-index="0"><div class="cap-in">Forever.</div></div>
+<div id="cap-10" class="clip cap" data-start="26.4" data-duration="3.4" data-track-index="0"><div class="cap-in">Pigeons can&#x27;t land.</div></div>
+<div id="cap-11" class="clip cap" data-start="30.2" data-duration="1.6" data-track-index="0"><div class="cap-in">Violins go silent.</div></div>
+<div id="cap-12" class="clip cap" data-start="31.9" data-duration="1.5" data-track-index="0"><div class="cap-in">Bows need friction.</div></div>
+<div id="cap-13" class="clip cap" data-start="33.8" data-duration="2.6" data-track-index="0"><div class="cap-in">Screws unscrew themselves.</div></div>
+<div id="cap-14" class="clip cap" data-start="36.6" data-duration="2.7" data-track-index="0"><div class="cap-in">Nothing holds anything.</div></div>
+<div id="cap-15" class="clip cap" data-start="39.8" data-duration="3.0" data-track-index="0"><div class="cap-in">You can&#x27;t stop. Can&#x27;t steer.</div></div>
+<div id="cap-16" class="clip cap" data-start="43.1" data-duration="3.5" data-track-index="0"><div class="cap-in">Neither can the taxi.</div></div>
+<div id="cap-17" class="clip cap" data-start="47.3" data-duration="2.1" data-track-index="0"><div class="cap-in">Friction is back.</div></div>
+<div id="cap-18" class="clip cap" data-start="49.5" data-duration="1.7" data-track-index="0"><div class="cap-in">All at once.</div></div>
+<div id="cap-19" class="clip cap" data-start="51.6" data-duration="2.2" data-track-index="0"><div class="cap-in">Everybody hits the ground.</div></div>
+<div id="cap-20" class="clip cap" data-start="54.0" data-duration="1.9" data-track-index="0"><div class="cap-in">The pigeon finally lands.</div></div>
+<div id="cap-21" class="clip cap" data-start="56.4" data-duration="3.0" data-track-index="0"><div class="cap-in">Plot twist: without friction...</div></div>
+<div id="cap-22" class="clip cap" data-start="59.6" data-duration="2.8" data-track-index="0"><div class="cap-in">...you couldn&#x27;t hold this phone.</div></div>
+<div id="cap-23" class="clip cap" data-start="62.8" data-duration="2.8" data-track-index="0"><div class="cap-in">Not even for 5 seconds.</div></div>
+<div id="cap-24" class="clip cap" data-start="65.8" data-duration="2.2" data-track-index="0"><div class="cap-in">Would you stay on your feet?</div></div>
+</div>
+<script>
+(function(){
+const tl = gsap.timeline({paused:true,defaults:{lazy:false}});
+tl.fromTo("#cap-0 .cap-in",{opacity:0,y:8},{opacity:1,y:0,duration:.28,ease:"power2.out"},0.4);tl.to("#cap-0 .cap-in",{opacity:0,duration:.18},2.91);
+tl.fromTo("#cap-1 .cap-in",{opacity:0,y:8},{opacity:1,y:0,duration:.28,ease:"power2.out"},3.4);tl.to("#cap-1 .cap-in",{opacity:0,duration:.18},6.11);
+tl.fromTo("#cap-2 .cap-in",{opacity:0,y:8},{opacity:1,y:0,duration:.28,ease:"power2.out"},6.8);tl.to("#cap-2 .cap-in",{opacity:0,duration:.18},8.61);
+tl.fromTo("#cap-3 .cap-in",{opacity:0,y:8},{opacity:1,y:0,duration:.28,ease:"power2.out"},8.9);tl.to("#cap-3 .cap-in",{opacity:0,duration:.18},10.31);
+tl.fromTo("#cap-4 .cap-in",{opacity:0,y:8},{opacity:1,y:0,duration:.28,ease:"power2.out"},12.6);tl.to("#cap-4 .cap-in",{opacity:0,duration:.18},15.01);
+tl.fromTo("#cap-5 .cap-in",{opacity:0,y:8},{opacity:1,y:0,duration:.28,ease:"power2.out"},15.4);tl.to("#cap-5 .cap-in",{opacity:0,duration:.18},16.51);
+tl.fromTo("#cap-6 .cap-in",{opacity:0,y:8},{opacity:1,y:0,duration:.28,ease:"power2.out"},17.0);tl.to("#cap-6 .cap-in",{opacity:0,duration:.18},19.21);
+tl.fromTo("#cap-7 .cap-in",{opacity:0,y:8},{opacity:1,y:0,duration:.28,ease:"power2.out"},19.6);tl.to("#cap-7 .cap-in",{opacity:0,duration:.18},21.21);
+tl.fromTo("#cap-8 .cap-in",{opacity:0,y:8},{opacity:1,y:0,duration:.28,ease:"power2.out"},21.8);tl.to("#cap-8 .cap-in",{opacity:0,duration:.18},23.81);
+tl.fromTo("#cap-9 .cap-in",{opacity:0,y:8},{opacity:1,y:0,duration:.28,ease:"power2.out"},24.1);tl.to("#cap-9 .cap-in",{opacity:0,duration:.18},25.71);
+tl.fromTo("#cap-10 .cap-in",{opacity:0,y:8},{opacity:1,y:0,duration:.28,ease:"power2.out"},26.4);tl.to("#cap-10 .cap-in",{opacity:0,duration:.18},29.61);
+tl.fromTo("#cap-11 .cap-in",{opacity:0,y:8},{opacity:1,y:0,duration:.28,ease:"power2.out"},30.2);tl.to("#cap-11 .cap-in",{opacity:0,duration:.18},31.61);
+tl.fromTo("#cap-12 .cap-in",{opacity:0,y:8},{opacity:1,y:0,duration:.28,ease:"power2.out"},31.9);tl.to("#cap-12 .cap-in",{opacity:0,duration:.18},33.21);
+tl.fromTo("#cap-13 .cap-in",{opacity:0,y:8},{opacity:1,y:0,duration:.28,ease:"power2.out"},33.8);tl.to("#cap-13 .cap-in",{opacity:0,duration:.18},36.21);
+tl.fromTo("#cap-14 .cap-in",{opacity:0,y:8},{opacity:1,y:0,duration:.28,ease:"power2.out"},36.6);tl.to("#cap-14 .cap-in",{opacity:0,duration:.18},39.11);
+tl.fromTo("#cap-15 .cap-in",{opacity:0,y:8},{opacity:1,y:0,duration:.28,ease:"power2.out"},39.8);tl.to("#cap-15 .cap-in",{opacity:0,duration:.18},42.61);
+tl.fromTo("#cap-16 .cap-in",{opacity:0,y:8},{opacity:1,y:0,duration:.28,ease:"power2.out"},43.1);tl.to("#cap-16 .cap-in",{opacity:0,duration:.18},46.41);
+tl.fromTo("#cap-17 .cap-in",{opacity:0,y:8},{opacity:1,y:0,duration:.28,ease:"power2.out"},47.3);tl.to("#cap-17 .cap-in",{opacity:0,duration:.18},49.21);
+tl.fromTo("#cap-18 .cap-in",{opacity:0,y:8},{opacity:1,y:0,duration:.28,ease:"power2.out"},49.5);tl.to("#cap-18 .cap-in",{opacity:0,duration:.18},51.01);
+tl.fromTo("#cap-19 .cap-in",{opacity:0,y:8},{opacity:1,y:0,duration:.28,ease:"power2.out"},51.6);tl.to("#cap-19 .cap-in",{opacity:0,duration:.18},53.61);
+tl.fromTo("#cap-20 .cap-in",{opacity:0,y:8},{opacity:1,y:0,duration:.28,ease:"power2.out"},54.0);tl.to("#cap-20 .cap-in",{opacity:0,duration:.18},55.71);
+tl.fromTo("#cap-21 .cap-in",{opacity:0,y:8},{opacity:1,y:0,duration:.28,ease:"power2.out"},56.4);tl.to("#cap-21 .cap-in",{opacity:0,duration:.18},59.21);
+tl.fromTo("#cap-22 .cap-in",{opacity:0,y:8},{opacity:1,y:0,duration:.28,ease:"power2.out"},59.6);tl.to("#cap-22 .cap-in",{opacity:0,duration:.18},62.21);
+tl.fromTo("#cap-23 .cap-in",{opacity:0,y:8},{opacity:1,y:0,duration:.28,ease:"power2.out"},62.8);tl.to("#cap-23 .cap-in",{opacity:0,duration:.18},65.41);
+tl.fromTo("#cap-24 .cap-in",{opacity:0,y:8},{opacity:1,y:0,duration:.28,ease:"power2.out"},65.8);tl.to("#cap-24 .cap-in",{opacity:0,duration:.18},67.81);
+window.__timelines["captions"] = tl;
+})();
+</script>
+</template>
