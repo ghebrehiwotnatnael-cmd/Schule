@@ -16,7 +16,7 @@
     const { THREE, R, rr, num, val } = WI;
     const ZERO = new THREE.Matrix4().makeScale(0, 0, 0), M4 = new THREE.Matrix4(), V = new THREE.Vector3(), Q = new THREE.Quaternion(), S = new THREE.Vector3(1, 1, 1), EU = new THREE.Euler();
     // ---- clear trees and lamps around the hero corner (they would block every shot)
-    const clear = (x, z) => x > -114 && x < -78 && z > -37 && z < -27;
+    const clear = (x, z) => x > -114 && x < -78 && z > -50 && z < -25;
     treeList.forEach((tr, i) => { if (clear(tr[0], tr[1])) { trunk.setMatrixAt(i, ZERO); crown.setMatrixAt(i, ZERO); } });
     lampList.forEach((l, i) => { if (clear(l[0], l[1])) { pole.setMatrixAt(i, ZERO); lampHead.setMatrixAt(i, ZERO); } });
     [trunk, crown, pole, lampHead].forEach((m) => { m.instanceMatrix.needsUpdate = true; });
@@ -124,11 +124,11 @@
         if (on || stop) { x += p.gv[0] * sT; z += p.gv[1] * sT; rot += p.spin * sT; mode = stop ? p.stopKind : (sT < p.tSlip ? "slip" : p.kind); p.face = stop ? 3 : (i % 3 ? 4 : 7); }
         else p.face = p.face0 !== undefined ? p.face0 : (p.face0 = p.face);
         if (i === COP && (on || stop)) { rot = Math.PI / 2 + copSpin; mode = stop ? "split" : "glide"; }
-        if (i === VIOL) { mode = stop ? "sit" : "violin"; x = p.x0 + vg; z = p.z0 - vg * 0.5; rot = Math.PI + vg * 0.4; }
+        if (i === VIOL) { mode = stop ? "sit" : "violin"; p.face = stop ? 3 : (on ? 2 : 7); x = p.x0 + vg; z = p.z0 - vg * 0.5; rot = Math.PI + vg * 0.4; }
         if (i === VEND && (on || stop)) { x = p.x0 + cg; mode = stop ? "kneel" : "slip"; }
         p.x = x; p.z = z; p.rot = rot; p.mode = mode; p.y = 0.15;
-        p.hidden = i !== VIOL && i !== VEND && i !== COP && pos[1] < 3.5 && Math.hypot(x - pos[0], z - pos[2]) < 4.0; });
-      A.walkers.u.uHide.value.set(pos[0], pos[2], pos[1] < 3.5 ? 4.0 : -1);
+        p.hidden = i !== VIOL && i !== VEND && i !== COP && pos[1] < 3.5 && Math.hypot(x - pos[0], z - pos[2]) < 6.0; });
+      A.walkers.u.uHide.value.set(pos[0], pos[2], pos[1] < 3.5 ? 6.0 : -1);
       // no traffic car may drive through a low camera: hide cars within 7 m of it
       if (pos[1] < 6) { const [body] = A.carParts; let dirty = false;
         for (let i = 0; i < body.count; i++) { body.getMatrixAt(i, M4); V.setFromMatrixPosition(M4);
