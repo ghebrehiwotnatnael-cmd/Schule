@@ -258,6 +258,10 @@ def build(v):
     v.key(61.0, 1.2, phoneSlip=1.0)
     v.key(62.25, 0, item="none")
     v.hands(62.3, "reach", 0.35)
+    # closing image: rise above the corner, everybody still on the ground (quiet)
+    v.hands(64.6, "hidden", 0.0)
+    v.path(64.6, 68.0, [[-103.5, 5.5, -29.0], [-101.0, 16.0, -22.0], [-98.0, 30.0, -14.0]], [[-109.5, 0.0, -36.5], [-110.0, 0.0, -37.0], [-110.5, 0.0, -38.0]], fov=55, dof=0.0)
+    v.sfx("whoosh", 64.45, 0.25)
 
     # ---------------- callouts on the freeze frame
     v.callout(10.55, 11.45, 455, 860, "THAT'S YOU", lx=330, ly=520)

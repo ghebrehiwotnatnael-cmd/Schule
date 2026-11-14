@@ -245,7 +245,8 @@ window.WI_BLOCKY = function (WI) {
           transformed.y += 0.15 * max(fall, uStop * step(r, 0.35));
           transformed.z += uSlipD * (0.6 + aMode.z * 0.6); transformed.x += uSlipD * (r - 0.5) * 0.6; }
         transformed.y += bodyY;
-        vec4 wc = instanceMatrix * vec4(0.0, 0.0, 0.0, 1.0); if (uHide.z > 0.0 && distance(wc.xz, uHide.xy) < uHide.z) transformed *= 0.0;
+        vec3 slipOff = md == 6.0 ? vec3(uSlipD * (r - 0.5) * 0.6, 0.0, uSlipD * (0.6 + aMode.z * 0.6)) : vec3(0.0);
+        vec4 wc = instanceMatrix * vec4(slipOff, 1.0); if (uHide.z > 0.0 && distance(wc.xz, uHide.xy) < uHide.z) transformed *= 0.0;
         vMC = pk == 0.0 ? cLegs : pk == 1.0 ? cShirt : pk == 4.0 ? cHair : cSkin;`);
       sh.fragmentShader = "varying vec3 vMC;\n" + sh.fragmentShader.replace("vec4 diffuseColor = vec4( diffuse, opacity );", "vec4 diffuseColor = vec4( diffuse * vMC, opacity );"); };
     mat.customProgramCacheKey = () => "wi-mass";
