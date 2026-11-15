@@ -341,10 +341,13 @@ window.__timelines["widget"] = tl;
                 items.append((max(0.1, ln["start"] - 0.06), min(nxt, ln["end"] + 0.9), " ".join(w["w"] for w in ln["words"])))
         else:
             items = sorted(self.caps)
+        cap_tops = list(getattr(self.m, "CAPTION_TOPS", []))   # [(t0, t1, top_px)]: move captions out of the way (e.g. above a held phone)
         for k, (s0, s1, text) in enumerate(items):
             s0, s1 = r3(s0), r3(s1)
             gid = f"cap-{k}"
-            groups.append(f'<div id="{gid}" class="clip cap" data-start="{s0}" data-duration="{r3(s1 - s0)}" data-track-index="0">'
+            top = next((tp for a, b, tp in cap_tops if a <= s0 < b), None)
+            style = f' style="top:{top}px"' if top is not None else ""
+            groups.append(f'<div id="{gid}" class="clip cap"{style} data-start="{s0}" data-duration="{r3(s1 - s0)}" data-track-index="0">'
                           f'<div class="cap-in">{esc(text)}</div></div>')
             js.append(f'tl.fromTo("#{gid} .cap-in",{{opacity:0,y:8}},{{opacity:1,y:0,duration:.28,ease:"power2.out"}},{s0});'
                       f'tl.to("#{gid} .cap-in",{{opacity:0,duration:.18}},{r3(max(s0 + .3, s1 - .19))});')

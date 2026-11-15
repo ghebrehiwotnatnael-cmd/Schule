@@ -52,6 +52,8 @@ CAPTIONS = [
     (65.8, 68.0, "Would you stay on your feet?"),
 ]
 
+CAPTION_TOPS = [(56.0, 64.6, 1060)]   # POV with the phone: captions above the phone
+
 DAY = dict(set="nyc", env="day", envI=0.65, skyTop="#3f7fd6", skyHorizon="#d9e0e6", skyBottom="#8a8f96", fogFar=9000, camFar=10000,
            light=1.1, ambient=0.45, ambientColor="#e9eef4", lightColor="#ffe6c2", sunDir=[0.45, 0.62, 0.38],
            tonemap=1.0, exposure=1.05, contrast=1.07, saturation=1.14, warmth=0.05, vignette=0.2, grain=0.012, bloom=0.3, windowsLit=0.35)
