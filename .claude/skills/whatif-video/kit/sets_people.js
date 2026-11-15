@@ -214,11 +214,11 @@ window.WI_BLOCKY = function (WI) {
       const s = p.s || rr(0.9, 1.08); Q.setFromAxisAngle(Y, p.rot || 0); M4.compose(V.set(p.x, p.y || 0, p.z), Q, S.set(s, s, s)); mesh.setMatrixAt(i, M4); });
     geo.setAttribute("cShirt", new THREE.InstancedBufferAttribute(cS, 3)); geo.setAttribute("cLegs", new THREE.InstancedBufferAttribute(cL, 3));
     geo.setAttribute("cSkin", new THREE.InstancedBufferAttribute(cK, 3)); geo.setAttribute("cHair", new THREE.InstancedBufferAttribute(cH, 3)); geo.setAttribute("aMode", new THREE.InstancedBufferAttribute(aM, 4));
-    const u = { uTime: { value: 0 }, uCheer: { value: 0 }, uJump: { value: 0 }, uFilm: { value: 0 }, uRun: { value: 0 }, uSlip: { value: 0 }, uSlipD: { value: 0 }, uStop: { value: 0 }, uHide: { value: new THREE.Vector3(0, 0, -1) }, uScale: { value: 1 } };
+    const u = { uTime: { value: 0 }, uCheer: { value: 0 }, uJump: { value: 0 }, uFilm: { value: 0 }, uRun: { value: 0 }, uSlip: { value: 0 }, uSlipD: { value: 0 }, uStop: { value: 0 }, uEast: { value: 0 }, uHide: { value: new THREE.Vector3(0, 0, -1) }, uScale: { value: 1 } };
     const mat = new THREE.MeshLambertMaterial({ color: 0xffffff });
     mat.onBeforeCompile = (sh) => { Object.assign(sh.uniforms, u);
       sh.vertexShader = `attribute float part; attribute vec3 cShirt; attribute vec3 cLegs; attribute vec3 cSkin; attribute vec3 cHair; attribute vec4 aMode;
-        uniform float uTime; uniform float uCheer; uniform float uJump; uniform float uFilm; uniform float uRun; uniform float uSlip; uniform float uSlipD; uniform float uStop; uniform vec3 uHide; varying vec3 vMC;
+        uniform float uTime; uniform float uCheer; uniform float uJump; uniform float uFilm; uniform float uRun; uniform float uSlip; uniform float uSlipD; uniform float uStop; uniform float uEast; uniform vec3 uHide; varying vec3 vMC;
         vec3 rotX(vec3 p, vec3 pv, float a){ p -= pv; float c = cos(a), s = sin(a); return vec3(p.x, p.y * c - p.z * s, p.y * s + p.z * c) + pv; }
         vec3 rotZ(vec3 p, vec3 pv, float a){ p -= pv; float c = cos(a), s = sin(a); return vec3(p.x * c - p.y * s, p.x * s + p.y * c, p.z) + pv; }
         ` + sh.vertexShader.replace("#include <begin_vertex>", `#include <begin_vertex>
@@ -246,7 +246,8 @@ window.WI_BLOCKY = function (WI) {
           transformed.z += uSlipD * (0.6 + aMode.z * 0.6); transformed.x += uSlipD * (r - 0.5) * 0.6; }
         transformed.y += bodyY;
         vec3 slipOff = md == 6.0 ? vec3(uSlipD * (r - 0.5) * 0.6, 0.0, uSlipD * (0.6 + aMode.z * 0.6)) : vec3(0.0);
-        vec4 wc = instanceMatrix * vec4(slipOff, 1.0); if (uHide.z > 0.0 && distance(wc.xz, uHide.xy) < uHide.z) transformed *= 0.0;
+        transformed += vec3(instanceMatrix[0].x, instanceMatrix[1].x, instanceMatrix[2].x) / dot(instanceMatrix[0].xyz, instanceMatrix[0].xyz) * uEast;   // world-space shift east (Earth stopped: everybody keeps going)
+        vec4 wc = instanceMatrix * vec4(slipOff, 1.0); wc.x += uEast; if (uHide.z > 0.0 && distance(wc.xz, uHide.xy) < uHide.z) transformed *= 0.0;
         vMC = pk == 0.0 ? cLegs : pk == 1.0 ? cShirt : pk == 4.0 ? cHair : cSkin;`);
       sh.fragmentShader = "varying vec3 vMC;\n" + sh.fragmentShader.replace("vec4 diffuseColor = vec4( diffuse, opacity );", "vec4 diffuseColor = vec4( diffuse * vMC, opacity );"); };
     mat.customProgramCacheKey = () => "wi-mass";

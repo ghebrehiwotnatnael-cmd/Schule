@@ -321,27 +321,30 @@
       pigeon.traverse((o) => { if (o.isMesh) o.castShadow = true; }); }
 
     // ================================================================ extensions (video-specific props, e.g. sets_slip.js)
-    const exts = (window.WI_NYC_EXT || []).map((f) => f({ WI, scene, K, MK, BL, C, add, TX, TZ, BX, BZ, AVE, STR, taxi, star, walkers, pigeon, glowTex, canvasTex, trunk, crown, pole, lampHead, treeList, lampList, iron, carParts: [carBody, cab, roofs, seats], cabEdge }));
+    const exts = (window.WI_NYC_EXT || []).map((f) => f({ WI, scene, K, MK, BL, C, add, TX, TZ, BX, BZ, AVE, STR, taxi, star, walkers, pigeon, glowTex, canvasTex, trunk, crown, pole, lampHead, treeList, lampList, iron, carParts: [carBody, cab, roofs, seats], cabEdge, blds, facades, boxGeo, deckY, deck }));
 
     // ================================================================ update
     const cTop = new THREE.Color(), cHor = new THREE.Color();
     return { name: "nyc", scene, update(t, look, pos) {
       sky(t, num, col); env(t);
-      L.update(t, num, col, new THREE.Vector3(pos[0] * 0.7 + look[0] * 0.3, pos[1] > 200 ? deckY : 0, pos[2] * 0.7 + look[2] * 0.3), num("shadowSize", t, pos[1] > 200 ? 70 : 60));
+      if (!scene.userData.skyMesh) scene.userData.skyMesh = scene.children.find((o) => o.isMesh && o.material && o.material.uniforms && o.material.uniforms.horizon);
+      if (scene.userData.skyMesh) scene.userData.skyMesh.position.set(pos[0], 0, pos[2]);   // the sky dome follows the camera (shots far from the origin)
+      const shY = val("shadowY", t);
+      L.update(t, num, col, new THREE.Vector3(pos[0] * 0.7 + look[0] * 0.3, shY !== undefined ? shY : (pos[1] > 200 ? deckY : 0), pos[2] * 0.7 + look[2] * 0.3), num("shadowSize", t, pos[1] > 200 ? 70 : 60));
       const gl = num("glass", t, 1); fU.uGlass.value = gl; fU.uLit.value = num("windowsLit", t, 0.35); fU.uSkyT.value.copy(col("skyTop", t)); fU.uSkyH.value.copy(col("skyHorizon", t));
       const sd = val("sunDir", t) || [0.3, 0.5, 0.4]; fU.uSun.value.set(sd[0], sd[1], sd[2]); fU.uDay.value = 1;
-      rails.forEach((r) => { r.visible = gl > 0.5; }); taxiGlass.visible = gl > 0.5;
+      const railsOn = num("railsOn", t, 1) > 0.5; rails.forEach((r) => { r.visible = gl > 0.5 && railsOn; }); taxiGlass.visible = gl > 0.5;
       driver.update(t, (p) => { const wpos = new THREE.Vector3(-0.42, 0.62, 0.15).applyAxisAngle(new THREE.Vector3(0, 1, 0), taxi.rotation.y).add(taxi.position); p.x = wpos.x; p.y = wpos.y; p.z = wpos.z; p.rot = taxi.rotation.y; p.mode = gl > 0.5 ? "sit" : "sit"; p.face = gl > 0.5 ? 1 : 3; }); cabMat.opacity = 0.85 * gl; cab.visible = gl > 0.02; aquaGlass.visible = gl > 0.5;
       // cars
       const mv = num("carsMove", t, 1); const M4 = new THREE.Matrix4(), Q = new THREE.Quaternion(), V = new THREE.Vector3(), S = new THREE.Vector3(1, 1, 1), Y = new THREE.Vector3(0, 1, 0);
-      const cT = val("carT", t), spin = num("carSpin", t, 0);
-      carM.forEach((c, i) => { const along = c.v * (cT === undefined ? mv * t : cT); let x = c.x, z = c.z; if (c.r === 0) z = c.z + ((along % TZ) + TZ) % TZ - TZ / 2 * 0; else x = c.x + along % 60;
+      const cT = val("carT", t), spin = num("carSpin", t, 0), carE = num("carEast", t, 0);
+      carM.forEach((c, i) => { const along = c.v * (cT === undefined ? mv * t : cT); let x = c.x, z = c.z; if (c.r === 0) { z = c.z + ((along % TZ) + TZ) % TZ - TZ / 2 * 0; x += Math.min(carE, 5); } else x = c.x + along % 60 + carE;
         Q.setFromAxisAngle(Y, c.r + (c.v < 0 ? Math.PI : 0) + spin * c.sp); M4.compose(V.set(x, 0.55, z), Q, S); carBody.setMatrixAt(i, M4);
         M4.compose(V.set(x, 1.24, z), Q, S); cab.setMatrixAt(i, M4); M4.compose(V.set(x, 1.58, z), Q, S); roofs.setMatrixAt(i, M4); M4.compose(V.set(x, 1.0, z), Q, S); seats.setMatrixAt(i, M4);
         for (let k = 0; k < 4; k++) { const ox = (k % 2 ? 0.8 : -0.8), oz = (k < 2 ? 1.1 : -1.1); V.set(ox, 0, oz).applyQuaternion(Q); M4.compose(V.set(x + V.x, 1.24, z + V.z), Q, S); cabEdge.setMatrixAt(i * 4 + k, M4); } });
       [carBody, cab, roofs, seats, cabEdge].forEach((m) => { m.instanceMatrix.needsUpdate = true; });
       walkers.u.uTime.value = t; walkers.u.uFilm.value = num("crowdFilm", t, 0.1); walkers.u.uCheer.value = num("crowdCheer", t, 0); walkers.u.uJump.value = 0;
-      walkers.u.uSlip.value = num("crowdSlip", t, 0); walkers.u.uSlipD.value = num("crowdSlipD", t, 0); walkers.u.uStop.value = num("crowdStop", t, 0);
+      walkers.u.uSlip.value = num("crowdSlip", t, 0); walkers.u.uSlipD.value = num("crowdSlipD", t, 0); walkers.u.uStop.value = num("crowdStop", t, 0); walkers.u.uEast.value = num("crowdEast", t, 0);
       { const tp = val("taxiPos", t); if (tp) taxi.position.set(tp[0], tp[1], tp[2]); taxi.rotation.y = num("taxiRot", t, -Math.PI / 2); }
       // tourists + friend
       const tv2 = num("tourists", t, 1); const tmode = val("tourMood", t) || "calm";

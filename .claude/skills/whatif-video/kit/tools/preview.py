@@ -44,7 +44,7 @@ page_url = f"{H}/_preview/" + os.path.basename(vdir) + ".html"
 runner = os.path.join(out, "shot.js")
 open(runner, "w").write('''const { chromium } = require('playwright');
 (async()=>{const b=await chromium.launch({args:['--use-gl=swiftshader','--enable-unsafe-swiftshader','--allow-file-access-from-files']});
-const p=await b.newPage({viewport:{width:1080,height:1920}}); p.setDefaultTimeout(600000); p.on('pageerror',e=>console.log('ERR',e.message));
+const p=await b.newPage({viewport:{width:1080,height:1920}}); p.setDefaultTimeout(600000); p.on('pageerror',e=>console.log('ERR',e.message)); p.on('console',m=>{ if (m.text().startsWith('DBG')) console.log(m.text()); });
 await p.goto(process.argv[2]); await p.waitForFunction('window.WI_DRAW'); await p.evaluate(()=>window.__hf.buildReady.world);
 for (const t of process.argv.slice(3)) { try { await p.evaluate((t)=>window.WI_DRAW(+t), t); await p.screenshot({path: process.env.OUT + '/t_' + t + '.png'}); } catch (e) { console.log('FRAME FAIL', t, e.message); } }
 await b.close();})();''')
