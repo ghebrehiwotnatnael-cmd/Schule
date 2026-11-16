@@ -74,15 +74,15 @@
     const rings = SPL.map(() => { const m = add(new THREE.Mesh(new THREE.RingGeometry(0.82, 1, 28), new THREE.MeshBasicMaterial({ color: 0xdff2fb, transparent: true, opacity: 0, side: THREE.DoubleSide, depthWrite: false }))); m.rotation.x = -Math.PI / 2; m.visible = false; return m; });
     // ---- the North Pole, far away from the city (camera looks away from Manhattan)
     const NP = [0, 0, 7000]; const bear = add(new THREE.Group()); let bearHead, bearLids = [];
-    { const ice = add(new THREE.Mesh(new THREE.PlaneGeometry(3000, 3000), MK.std(C("#eef4f8"), { roughness: 0.95 }))); ice.rotation.x = -Math.PI / 2; ice.position.set(NP[0], 0.4, NP[2] + 600); ice.receiveShadow = true;
+    { const ice = add(new THREE.Mesh(new THREE.PlaneGeometry(3000, 3000), MK.std(C("#cfe0ec"), { roughness: 0.95 }))); ice.rotation.x = -Math.PI / 2; ice.position.set(NP[0], 0.4, NP[2] + 600); ice.receiveShadow = true;
       const iceM = MK.std(C("#b4d3e8"), { roughness: 0.5 }); for (let i = 0; i < 40; i++) { const s = rr(1.5, 9); const b = add(new THREE.Mesh(new THREE.BoxGeometry(s * rr(1, 2), s * rr(0.4, 1.2), s), iceM)); b.position.set(NP[0] + rr(-90, 90), 0.4, NP[2] + rr(25, 260)); b.rotation.set(rr(-0.15, 0.15), R() * 3, rr(-0.15, 0.15)); b.castShadow = true; }
       const igloo = add(new THREE.Mesh(new THREE.SphereGeometry(2.6, 20, 12, 0, 6.283, 0, Math.PI / 2), MK.std(C("#f6fafc"), { roughness: 0.8 }))); igloo.position.set(NP[0] + 5.2, 0.4, NP[2] + 19); igloo.castShadow = true;
       const door = add(new THREE.Mesh(new THREE.BoxGeometry(1.1, 1.2, 0.9), MK.std(C("#27323b")))); door.position.set(NP[0] + 5.2, 1.0, NP[2] + 16.6);
       const poleT = canvasTex(64, 256, (g, w, h) => { for (let i = 0; i < 8; i++) { g.fillStyle = i % 2 ? "#ffffff" : "#d62828"; g.fillRect(0, i * h / 8, w, h / 8); } }); poleT.encoding = THREE.sRGBEncoding;
       const pl = add(new THREE.Mesh(new THREE.CylinderGeometry(0.09, 0.09, 3.4, 10), new THREE.MeshStandardMaterial({ map: poleT }))); pl.position.set(NP[0] - 2.7, 2.1, NP[2] + 10.5); pl.castShadow = true;
       const sgT = canvasTex(512, 160, (g, w, h) => { g.fillStyle = "#f4f4f0"; g.fillRect(0, 0, w, h); g.strokeStyle = "#d62828"; g.lineWidth = 12; g.strokeRect(6, 6, w - 12, h - 12); g.fillStyle = "#1d3557"; g.font = "bold 74px Arial"; g.textAlign = "center"; g.fillText("NORTH POLE", w / 2, 106); }); sgT.encoding = THREE.sRGBEncoding;
-      const sg = add(new THREE.Mesh(new THREE.BoxGeometry(2.3, 0.72, 0.06), [iceM, iceM, iceM, iceM, iceM, new THREE.MeshStandardMaterial({ map: sgT })])); sg.position.set(NP[0] - 2.7, 3.5, NP[2] + 10.5); sg.castShadow = true;
-      const fur = MK.std(C("#f3f0e6"), { roughness: 0.95 }), blk = MK.std(C("#141414"), { roughness: 0.4 });
+      const sg = add(new THREE.Mesh(new THREE.BoxGeometry(2.3, 0.72, 0.06), [iceM, iceM, iceM, iceM, iceM, new THREE.MeshStandardMaterial({ map: sgT })])); sg.position.set(NP[0] - 2.7, 3.5, NP[2] + 10.36); sg.castShadow = true;
+      const fur = MK.std(C("#eadfc4"), { roughness: 0.95 }), blk = MK.std(C("#141414"), { roughness: 0.4 });
       const torso = new THREE.Mesh(new THREE.BoxGeometry(1.5, 1.5, 1.3), fur); torso.position.set(0, 1.0, 0); torso.rotation.x = -0.25; bear.add(torso);
       const belly = new THREE.Mesh(new THREE.BoxGeometry(1.2, 1.0, 0.5), MK.std(C("#fbf9f2"))); belly.position.set(0, 0.95, -0.62); bear.add(belly);
       [-0.55, 0.55].forEach((x) => { const leg = new THREE.Mesh(new THREE.BoxGeometry(0.5, 0.45, 1.1), fur); leg.position.set(x, 0.25, -0.75); bear.add(leg); const paw = new THREE.Mesh(new THREE.BoxGeometry(0.4, 0.4, 0.08), blk); paw.position.set(x, 0.27, -1.31); bear.add(paw);

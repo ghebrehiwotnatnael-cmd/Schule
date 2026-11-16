@@ -159,16 +159,17 @@ def build(v):
         v.key(t, 0.1, lin=True, starPos=p)
     def you_at(t):
         u = min(1.0, max(0.0, (t - T_GO) / (T_SPLASH - T_GO)))
-        p = O(t, (YOU[0] + (-1.1 - YOU[0]) * u, 0.0, YOU[2] + (0.8 - YOU[2]) * u))
+        p = O(t, (YOU[0] + (0.0 - YOU[0]) * u, 0.0, YOU[2] + (1.0 - YOU[2]) * u))
         return [p[0], max(p[1], D - 251.2), p[2]]
     for t, p in follow(T_STOP, T_SPLASH + 0.1, you_at):
         v.key(t, 0.1, lin=True, youPos=p)
     v.key(T_STOP, 0, starMode="slip", starFace=4.0, starRot=0.6, youMode="slip", youFace=4.0, youRot=0.5)
     v.key(9.3, 0, starMode="slip", starFace=4.0, starRot=0.9, starTilt=0.45, youMode="flail", youFace=4.0, youRot=1.5708, youTilt=0.2, youRoll=0.3)
-    v.key(11.4, 0.5, starTilt=-0.5)
+    v.key(11.4, 0, starTilt=-0.5)
     v.key(11.4, 0, starMode="faceplant", starFace=7.0, starRot=1.5708)
     v.key(22.5, 0, youMode="faceplant", youFace=2.0, youTilt=-0.1, youRoll=0.0)
     v.key(37.5, 0, starMode="selfie", starTilt=0.15, starFace=7.0)
+    v.key(41.0, 0, starMode="faceplant", starTilt=-0.5, starFace=2.0)
     v.key(T_GO, 0, starMode="panic", starTilt=0.0, starFace=4.0, youMode="panic", youTilt=0.0, youFace=4.0, starRot=0.9, youRot=0.9)
     v.key(T_SPLASH, 0, starMode="idle", starFace=2.0, youMode="idle", youFace=2.0, starRot=0.95, youRot=0.8)
     v.key(49.6, 0, starFace=7.0, youFace=7.0)
@@ -220,11 +221,11 @@ def build(v):
     # ================= G (22.5-26.5): the pigeons do not even notice
     cam(v, 22.5, 26.5, (6.0, 2.9, 5.8), (3.0, 2.3, 2.4), (5.6, 2.8, 5.4), (2.9, 2.3, 2.3), fov=36, dof=0.25, focus=4.4)
     # ================= H (26.5-33): the globe has stopped, the clouds have not
-    v.key(26.5, 0, set="space", earthSun=1.0, earthLights=0.0, earthIce=0.0, earthTilt=0.0, earthRot=-0.15, spaceFov=40, spaceCam=[0, 9, 62],
+    v.key(26.5, 0, set="space", earthSun=1.0, earthLights=0.0, earthIce=0.0, earthTilt=0.0, earthRot=-0.45, spaceFov=40, spaceCam=[0, 9, 62],
           cloudRot=0.0, dof=0.0, bloom=0.5, chroma=0.0, shake=0.0)
     v.key(26.501, 6.5, lin=True, cloudRot=0.5, spaceCam=[0, 9, 58])
     # ================= I (33-37.5): the North Pole
-    v.key(33.0, 0, **mix(DAY, set="nyc", camPos=[0.4, 1.8, 6998.0], camLook=[-1.3, 2.6, 7012.0], fov=46, dof=0.1, focus=14.0, shadowY=0.4, skyTop="#5f9fe0", skyHorizon="#eef4f8"))
+    v.key(33.0, 0, **mix(DAY, set="nyc", camPos=[0.4, 1.8, 6998.0], camLook=[-1.3, 2.6, 7012.0], fov=46, dof=0.1, focus=14.0, shadowY=0.4, skyTop="#2f6fc8", skyHorizon="#a9cbe6", exposure=0.95, contrast=1.14))
     v.key(33.001, 4.5, camPos=[0.2, 1.9, 6999.4])
     v.key(34.6, 0.12, bearBlink=1.0)
     v.key(34.8, 0.12, bearBlink=0.0)
@@ -238,7 +239,7 @@ def build(v):
     v.sfx(m + "shutter", 39.2, 0.6)
     v.key(39.2, 0.05, exposure=1.3)
     v.key(39.3, 0.4, exposure=1.05)
-    cam(v, 41.0, 44.0, (-9.0, 4.6, 5.0), (10.0, -4.0, -1.0), (-8.0, 4.2, 4.6), (10.0, -5.0, -1.0), fov=54, dof=0.0, camNear=0.8)
+    cam(v, 41.0, 44.0, (-13.0, 6.5, -2.5), (10.0, -5.0, -3.0), (-11.5, 5.8, -2.5), (10.0, -6.0, -3.0), fov=54, dof=0.0, camNear=0.8)
     # ================= K (44-51.5): the Earth spins again: the drop, the splash, the sunglasses
     hit(v, T_GO, 0.6, 0.35, "impact-bass-1", 0.9)
     lx = O(60)[0]
@@ -255,15 +256,15 @@ def build(v):
     v.key(51.6, 0, camPos=[lx + 7.8, 1.3, 1.6], camLook=[lx - 2.0, 5.0, -9.0], fov=50, dof=0.0)
     v.key(51.601, 4.9, camPos=[lx + 7.0, 1.2, 1.2], camLook=[lx - 2.2, 3.3, -9.2])
     # ================= M (56.5-65): the twist: you are spinning right now
-    v.key(56.5, 0, set="space", earthSun=1.0, earthLights=0.0, earthIce=0.0, earthTilt=0.0, earthRot=-0.9, spaceFov=40, spaceCam=[0, 9, 60],
+    v.key(56.5, 0, set="space", earthSun=1.0, earthLights=0.0, earthIce=0.0, earthTilt=0.0, earthRot=-1.9, spaceFov=40, spaceCam=[0, 9, 60],
           cloudRot=0.0, dof=0.0, bloom=0.5, chroma=0.0, shake=0.0, pigeonPos=[0, -500, 0])
-    v.key(56.501, 8.5, lin=True, earthRot=0.9, spaceCam=[0, 9, 52])
+    v.key(56.501, 8.5, lin=True, earthRot=-0.45, spaceCam=[0, 9, 52])
 
     # ---------------- callouts
-    v.callout(7.55, 8.4, 519, 870, "THAT'S YOU", lx=300, ly=520)
-    v.callout(8.4, 9.3, 660, 980, "STILL 1,270 KM/H", lx=560, ly=1320)
-    v.callout(27.0, 29.5, 583, 1030, "1,670 KM/H", lx=780, ly=1340)
-    v.callout(29.7, 32.9, 463, 719, "1,270 KM/H", lx=280, ly=430)
+    v.callout(7.55, 8.4, 470, 866, "THAT'S YOU", lx=300, ly=520)
+    v.callout(8.4, 9.3, 560, 1040, "STILL 1,270 KM/H", lx=560, ly=1330)
+    v.callout(27.0, 29.5, 583, 1030, "EQUATOR: 1,670 KM/H", lx=540, ly=1420)
+    v.callout(29.7, 32.9, 486, 690, "NEW YORK: 1,270 KM/H", lx=540, ly=400)
 
     # ---------------- widgets
     v.widget(0, T_STOP, "NEW YORK SPINS AT", "787 MPH · TO THE EAST", "text", value="1,270 KM/H")

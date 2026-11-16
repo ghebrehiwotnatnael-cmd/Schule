@@ -38,7 +38,7 @@ function fmt(seg, t){
   return seg.value;
 }
 const BCS = [{"t0": 3.5, "t1": 6.5, "label": "THE EARTH STOPS SPINNING IN", "n0": 3, "n1": 0}];
-const COS = [{"t0": 7.55, "t1": 8.4, "x": 519, "y": 870, "lx": 300, "ly": 520, "text": "THAT'S YOU", "color": "#ffe14d"}, {"t0": 8.4, "t1": 9.3, "x": 660, "y": 980, "lx": 560, "ly": 1320, "text": "STILL 1,270 KM/H", "color": "#ffe14d"}, {"t0": 27.0, "t1": 29.5, "x": 583, "y": 1030, "lx": 780, "ly": 1340, "text": "1,670 KM/H", "color": "#ffe14d"}, {"t0": 29.7, "t1": 32.9, "x": 463, "y": 719, "lx": 280, "ly": 430, "text": "1,270 KM/H", "color": "#ffe14d"}];
+const COS = [{"t0": 7.55, "t1": 8.4, "x": 470, "y": 866, "lx": 300, "ly": 520, "text": "THAT'S YOU", "color": "#ffe14d"}, {"t0": 8.4, "t1": 9.3, "x": 560, "y": 1040, "lx": 560, "ly": 1330, "text": "STILL 1,270 KM/H", "color": "#ffe14d"}, {"t0": 27.0, "t1": 29.5, "x": 583, "y": 1030, "lx": 540, "ly": 1420, "text": "EQUATOR: 1,670 KM/H", "color": "#ffe14d"}, {"t0": 29.7, "t1": 32.9, "x": 486, "y": 690, "lx": 540, "ly": 400, "text": "NEW YORK: 1,270 KM/H", "color": "#ffe14d"}];
 function renderCO(t){
   let c=null; for(const s of COS){ if(s.t0<=t && t<s.t1) c=s; }
   const e=el("co"); if(!c){ e.style.opacity=0; return; }
