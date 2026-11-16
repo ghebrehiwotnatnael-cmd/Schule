@@ -130,7 +130,9 @@ Models live in `kit/models/` (gitignored, fetch with `python3 kit/tools/fetch_mo
       (saturation ~1.0-1.1, no plastic over-saturation), still rich and never pale or dark.
     - **Dynamic sound**: integrated loudness ~-16 LUFS with a wide range (LRA 9-17): quiet start, build, a hard sound hit at
       every turning point (5-10 per minute), near silence at the very end.  Motion and cuts front-loaded (fastest in the first half).
-    - **Delivery**: ~8 Mbit/s H.264 (crf 18) so more detail survives TikTok's re-encode.
+    - **Delivery** (changed 2026-11-16, creator: "make the file always smaller so I can post it directly on TikTok"):
+      small file, about 20-30 MB per minute: `-c:v libx264 -preset slow -crf 23 -maxrate 3500k -bufsize 7000k -pix_fmt yuv420p
+      -c:a aac -b:a 128k -ar 44100 -movflags +faststart` (a 70 s video is ~25 MB).  Never deliver the ~8 Mbit/s crf 18 file again.
   - (approved 2026-11-12, creator asked for "more entertaining, more interesting, slower/better sound") **Fun pass**:
     - **A gag every 3-4 s**: small funny surprises in the world (props sliding away, animals and bystanders reacting,
       rule-of-three jokes), not only spectacle.
