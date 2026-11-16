@@ -8,7 +8,7 @@
 #wg-label{font:600 27px "Inter";letter-spacing:2.6px;}
 #wg-value{margin-top:2px;font:400 66px/1 "WI Serif";letter-spacing:1px;font-variant-numeric:tabular-nums;}
 #wg-sub{margin-top:18px;font:500 18px "IBM Plex Mono";letter-spacing:3px;opacity:.82;}
-#bc{position:absolute;left:0;right:0;top:300px;text-align:center;color:#ff3b3b;text-shadow:0 0 18px rgba(255,40,40,.45),0 2px 6px rgba(0,0,0,.5);opacity:0;}
+#bc{position:absolute;left:0;right:0;top:150px;text-align:center;color:#ff3b3b;text-shadow:0 0 18px rgba(255,40,40,.45),0 2px 6px rgba(0,0,0,.5);opacity:0;}
 #bc-label{font:700 30px "IBM Plex Mono";letter-spacing:7px;}
 #bc-num{font:500 150px/1 "IBM Plex Mono";margin-top:4px;}
 </style>
@@ -23,7 +23,7 @@
 </div>
 <script>
 (function(){
-const S = [{"t0": 0.0, "t1": 6.5, "label": "NEW YORK SPINS AT", "sub": "787 MPH \u00b7 TO THE EAST", "mode": "text", "v0": 0, "v1": 0, "value": "1,270 KM/H"}, {"t0": 6.5, "t1": 9.3, "label": "THE GROUND", "sub": "YOU: STILL 1,270 KM/H", "mode": "text", "v0": 0, "v1": 0, "value": "0 KM/H"}, {"t0": 9.3, "t1": 18.0, "label": "DISTANCE FLOWN", "sub": "MACH 1.03 \u00b7 NO SEATBELT", "mode": "num:0: M", "v0": 21, "v1": 458, "value": ""}, {"t0": 18.0, "t1": 22.5, "label": "ALL TRAFFIC", "sub": "NOTHING IS BOLTED DOWN", "mode": "text", "v0": 0, "v1": 0, "value": "EASTBOUND"}, {"t0": 22.5, "t1": 26.5, "label": "WIND IN YOUR FACE", "sub": "THE AIR FLIES WITH YOU", "mode": "text", "v0": 0, "v1": 0, "value": "0 KM/H"}, {"t0": 26.5, "t1": 33.0, "label": "THE EARTH", "sub": "THE AIR: STILL MOVING", "mode": "text", "v0": 0, "v1": 0, "value": "STOPPED"}, {"t0": 33.0, "t1": 37.5, "label": "SPEED AT THE POLE", "sub": "LUCKY BEAR", "mode": "text", "v0": 0, "v1": 0, "value": "0 KM/H"}, {"t0": 37.5, "t1": 44.0, "label": "EARTH RESTARTS IN", "sub": "TIME SLOWED DOWN", "mode": "sec", "v0": 0.925, "v1": 0.0, "value": ""}, {"t0": 44.0, "t1": 47.0, "label": "ALTITUDE", "sub": "NO PARACHUTE", "mode": "num:0: M", "v0": 127, "v1": 0, "value": ""}, {"t0": 47.0, "t1": 56.5, "label": "DISTANCE FLOWN", "sub": "IN 5 SECONDS", "mode": "text", "v0": 0, "v1": 0, "value": "1,763 M"}, {"t0": 56.5, "t1": 65.0, "label": "YOU, RIGHT NOW", "sub": "UP TO 1,670 KM/H", "mode": "text", "v0": 0, "v1": 0, "value": "SPINNING"}];
+const S = [{"t0": 0.0, "t1": 6.5, "label": "NEW YORK SPINS AT", "sub": "787 MPH \u00b7 TO THE EAST", "mode": "text", "v0": 0, "v1": 0, "value": "1,270 KM/H", "color": "", "shadow": ""}, {"t0": 6.5, "t1": 9.3, "label": "THE GROUND", "sub": "YOU: STILL 1,270 KM/H", "mode": "text", "v0": 0, "v1": 0, "value": "0 KM/H", "color": "", "shadow": ""}, {"t0": 9.3, "t1": 18.0, "label": "DISTANCE FLOWN", "sub": "MACH 1.03 \u00b7 NO SEATBELT", "mode": "num:0: M", "v0": 21, "v1": 458, "value": "", "color": "", "shadow": ""}, {"t0": 18.0, "t1": 22.5, "label": "ALL TRAFFIC", "sub": "NOTHING IS BOLTED DOWN", "mode": "text", "v0": 0, "v1": 0, "value": "EASTBOUND", "color": "", "shadow": ""}, {"t0": 22.5, "t1": 26.5, "label": "WIND IN YOUR FACE", "sub": "THE AIR FLIES WITH YOU", "mode": "text", "v0": 0, "v1": 0, "value": "0 KM/H", "color": "", "shadow": ""}, {"t0": 26.5, "t1": 33.0, "label": "THE EARTH", "sub": "THE AIR: STILL MOVING", "mode": "text", "v0": 0, "v1": 0, "value": "STOPPED", "color": "", "shadow": ""}, {"t0": 33.0, "t1": 37.5, "label": "SPEED AT THE POLE", "sub": "LUCKY BEAR", "mode": "text", "v0": 0, "v1": 0, "value": "0 KM/H", "color": "#12305c", "shadow": "0 0 12px rgba(255,255,255,.9),0 0 3px rgba(255,255,255,.9)"}, {"t0": 37.5, "t1": 44.0, "label": "EARTH RESTARTS IN", "sub": "TIME SLOWED DOWN", "mode": "sec", "v0": 0.925, "v1": 0.0, "value": "", "color": "", "shadow": ""}, {"t0": 44.0, "t1": 47.0, "label": "ALTITUDE", "sub": "NO PARACHUTE", "mode": "num:0: M", "v0": 127, "v1": 0, "value": "", "color": "", "shadow": "0 0 5px rgba(0,0,0,.95),0 2px 16px rgba(0,0,0,.8),0 0 30px rgba(0,0,0,.5)"}, {"t0": 47.0, "t1": 56.5, "label": "DISTANCE FLOWN", "sub": "IN 5 SECONDS", "mode": "text", "v0": 0, "v1": 0, "value": "1,763 M", "color": "", "shadow": "0 0 5px rgba(0,0,0,.95),0 2px 16px rgba(0,0,0,.8),0 0 30px rgba(0,0,0,.5)"}, {"t0": 56.5, "t1": 65.0, "label": "YOU, RIGHT NOW", "sub": "UP TO 1,670 KM/H", "mode": "text", "v0": 0, "v1": 0, "value": "SPINNING", "color": "", "shadow": ""}];
 const el = (id)=>document.getElementById(id);
 const p2 = (n)=>String(Math.floor(n)).padStart(2,"0");
 function fmt(seg, t){
@@ -64,6 +64,7 @@ function render(t){
   const prev=S.find(s=>Math.abs(s.t1-seg.t0)<1e-3 && s.label===seg.label);
   const next=S.find(s=>Math.abs(s.t0-seg.t1)<1e-3 && s.label===seg.label);
   w.style.opacity = Math.min(prev?1:fadeIn, next?1:fadeOut);
+  w.style.color=seg.color||""; w.style.textShadow=seg.shadow||"";
   el("wg-label").textContent=seg.label; el("wg-sub").textContent=seg.sub; el("wg-value").textContent=fmt(seg,t);
 }
 const tl = gsap.timeline({paused:true,defaults:{lazy:false}});

@@ -55,7 +55,12 @@ CAPTIONS = [
     (59.8, 62.4, "At up to 1,670 km/h."),
     (62.6, 65.0, "You just can't feel it."),
 ]
-CAPTION_TOPS = [(26.5, 33.0, 1500), (56.5, 65.0, 1500)]   # globe shots: captions below the globe
+NAVY = "#12305c"
+HALO = "0 0 5px rgba(0,0,0,.95),0 2px 16px rgba(0,0,0,.8),0 0 30px rgba(0,0,0,.5)"   # stronger shadow over bright facades
+CAPTION_TOPS = [(26.5, 33.0, 1500), (56.5, 65.0, 1500),   # globe shots: captions below the globe
+                (33.0, 37.5, 1400, "color:%s;text-shadow:0 0 12px rgba(255,255,255,.9),0 0 3px rgba(255,255,255,.9)" % NAVY),   # white ice: dark text
+                (44.0, 56.5, None, "text-shadow:" + HALO)]
+BIGCOUNT_TOP = 150   # the red helicopter flies through the usual countdown spot
 
 D = 250.0
 PAD = [21.0, D, -7.0]
@@ -273,10 +278,11 @@ def build(v):
     v.widget(18.0, 22.5, "ALL TRAFFIC", "NOTHING IS BOLTED DOWN", "text", value="EASTBOUND")
     v.widget(22.5, 26.5, "WIND IN YOUR FACE", "THE AIR FLIES WITH YOU", "text", value="0 KM/H")
     v.widget(26.5, 33.0, "THE EARTH", "THE AIR: STILL MOVING", "text", value="STOPPED")
-    v.widget(33.0, 37.5, "SPEED AT THE POLE", "LUCKY BEAR", "text", value="0 KM/H")
+    v.widget(33.0, 37.5, "SPEED AT THE POLE", "LUCKY BEAR", "text", value="0 KM/H", color=NAVY,
+             shadow="0 0 12px rgba(255,255,255,.9),0 0 3px rgba(255,255,255,.9)")
     v.widget(37.5, T_GO, "EARTH RESTARTS IN", "TIME SLOWED DOWN", "sec", round(5 - T(37.5), 3), 0.0)
-    v.widget(T_GO, T_SPLASH, "ALTITUDE", "NO PARACHUTE", "num:0: M", 127, 0)
-    v.widget(T_SPLASH, 56.5, "DISTANCE FLOWN", "IN 5 SECONDS", "text", value="1,763 M")
+    v.widget(T_GO, T_SPLASH, "ALTITUDE", "NO PARACHUTE", "num:0: M", 127, 0, shadow=HALO)
+    v.widget(T_SPLASH, 56.5, "DISTANCE FLOWN", "IN 5 SECONDS", "text", value="1,763 M", shadow=HALO)
     v.widget(56.5, 65.0, "YOU, RIGHT NOW", "UP TO 1,670 KM/H", "text", value="SPINNING")
 
     # ---------------- sound: ukulele -> record scratch -> adventure orchestra -> calm piano -> silence
@@ -285,7 +291,7 @@ def build(v):
     v.ambient(m + "heli", 1.5, 6.5, 0.22, 1.2)
     v.sfx(m + "scratch", 6.42, 0.9)
     v.sfx(m + "whoa", 6.75, 0.6)
-    v.ambient(m + "flight", 9.3, 44.0, 0.5, 0.25)
+    v.ambient(m + "flight", 9.3, 44.0, 0.5, 0.15, offset=1.25)   # skip the quiet lead-in: the orchestra hits when the freeze frame ends
     v.ambient(m + "wind", 9.3, 18.0, 0.2, 0.6)
     v.sfx("whoosh", 9.2, 0.5)
     v.sfx(m + "boing", 11.4, 0.5)
@@ -308,6 +314,7 @@ def build(v):
     v.sfx(m + "fall", 44.3, 0.7)
     v.sfx(m + "whoa", 44.5, 0.45)
     v.ambient(m + "calm", 48.2, 69.5, 0.5, 2.0)
+    v.sfx("impact-bass-2", T_SPLASH - 0.03, 0.6)
     v.sfx(m + "spit", 47.8, 0.8)
     v.sfx(m + "coo", 49.7, 0.7)
     v.sfx(m + "boing", 49.6, 0.35)

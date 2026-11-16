@@ -120,9 +120,11 @@ class Cinema:
                      camLook=[round(x, 3) for x in cr(look_pts, u)])
         return self
 
-    def widget(self, t0, t1, label, sub="", mode="text", v0=0, v1=0, value=""):
-        """left widget segment: mode 'sec' (m:ss.mmm counting v0->v1 seconds), 'days' (Nd hh:mm:ss, v in days), 'text'"""
-        self.widgets.append(dict(t0=r3(t0), t1=r3(t1), label=label, sub=sub, mode=mode, v0=v0, v1=v1, value=value))
+    def widget(self, t0, t1, label, sub="", mode="text", v0=0, v1=0, value="", color="", shadow=""):
+        """left widget segment: mode 'sec' (m:ss.mmm counting v0->v1 seconds), 'days' (Nd hh:mm:ss, v in days), 'text';
+        color/shadow (CSS) override white text + dark shadow, e.g. dark text over a bright background"""
+        self.widgets.append(dict(t0=r3(t0), t1=r3(t1), label=label, sub=sub, mode=mode, v0=v0, v1=v1, value=value,
+                                 color=color, shadow=shadow))
         return self
 
     def bigcount(self, t0, t1, label, n0, n1):
@@ -255,6 +257,7 @@ window.__timelines["title"] = tl;
         segs = json.dumps(self.widgets)
         bcs = json.dumps(self.bigcounts)
         cos = json.dumps(self.callouts)
+        bc_top = int(getattr(self.m, "BIGCOUNT_TOP", 300))   # move the big countdown if something passes behind it
         return f'''<template>
 <style>
 {FONTS}
@@ -263,7 +266,7 @@ window.__timelines["title"] = tl;
 #wg-label{{font:600 27px "Inter";letter-spacing:2.6px;}}
 #wg-value{{margin-top:2px;font:400 66px/1 "WI Serif";letter-spacing:1px;font-variant-numeric:tabular-nums;}}
 #wg-sub{{margin-top:18px;font:500 18px "IBM Plex Mono";letter-spacing:3px;opacity:.82;}}
-#bc{{position:absolute;left:0;right:0;top:300px;text-align:center;color:#ff3b3b;text-shadow:0 0 18px rgba(255,40,40,.45),0 2px 6px rgba(0,0,0,.5);opacity:0;}}
+#bc{{position:absolute;left:0;right:0;top:{bc_top}px;text-align:center;color:#ff3b3b;text-shadow:0 0 18px rgba(255,40,40,.45),0 2px 6px rgba(0,0,0,.5);opacity:0;}}
 #bc-label{{font:700 30px "IBM Plex Mono";letter-spacing:7px;}}
 #bc-num{{font:500 150px/1 "IBM Plex Mono";margin-top:4px;}}
 </style>
@@ -319,6 +322,7 @@ function render(t){{
   const prev=S.find(s=>Math.abs(s.t1-seg.t0)<1e-3 && s.label===seg.label);
   const next=S.find(s=>Math.abs(s.t0-seg.t1)<1e-3 && s.label===seg.label);
   w.style.opacity = Math.min(prev?1:fadeIn, next?1:fadeOut);
+  w.style.color=seg.color||""; w.style.textShadow=seg.shadow||"";
   el("wg-label").textContent=seg.label; el("wg-sub").textContent=seg.sub; el("wg-value").textContent=fmt(seg,t);
 }}
 const tl = gsap.timeline({{paused:true,defaults:{{lazy:false}}}});
@@ -341,14 +345,18 @@ window.__timelines["widget"] = tl;
                 items.append((max(0.1, ln["start"] - 0.06), min(nxt, ln["end"] + 0.9), " ".join(w["w"] for w in ln["words"])))
         else:
             items = sorted(self.caps)
-        cap_tops = list(getattr(self.m, "CAPTION_TOPS", []))   # [(t0, t1, top_px)]: move captions out of the way (e.g. above a held phone)
+        # [(t0, t1, top_px or None, optional css)]: move captions out of the way (e.g. above a held phone) / restyle them over a bright background
+        cap_tops = list(getattr(self.m, "CAPTION_TOPS", []))
         for k, (s0, s1, text) in enumerate(items):
             s0, s1 = r3(s0), r3(s1)
             gid = f"cap-{k}"
-            top = next((tp for a, b, tp in cap_tops if a <= s0 < b), None)
+            ent = next((e for e in cap_tops if e[0] <= s0 < e[1]), None)
+            top = ent[2] if ent else None
+            css = ent[3] if ent and len(ent) > 3 else ""
             style = f' style="top:{top}px"' if top is not None else ""
+            istyle = f' style="{css}"' if css else ""
             groups.append(f'<div id="{gid}" class="clip cap"{style} data-start="{s0}" data-duration="{r3(s1 - s0)}" data-track-index="0">'
-                          f'<div class="cap-in">{esc(text)}</div></div>')
+                          f'<div class="cap-in"{istyle}>{esc(text)}</div></div>')
             js.append(f'tl.fromTo("#{gid} .cap-in",{{opacity:0,y:8}},{{opacity:1,y:0,duration:.28,ease:"power2.out"}},{s0});'
                       f'tl.to("#{gid} .cap-in",{{opacity:0,duration:.18}},{r3(max(s0 + .3, s1 - .19))});')
         return f'''<template>
